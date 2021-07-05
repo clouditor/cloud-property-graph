@@ -14,6 +14,7 @@ plugins {
     application
     java
     idea
+    `maven`
 }
 
 val generatedDir = "${projectDir}/generated"
