@@ -318,7 +318,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
     }
 
     private fun handleWorkspace(t: TranslationResult, workspace: Workspace): ResourceLogging {
-        val logging = ResourceLogging( t.locationForRegion(workspace.region()), mapOf())
+        val logging = ResourceLogging(t.locationForRegion(workspace.region()), mapOf())
         logging.name = workspace.name()
 
         return logging
@@ -352,7 +352,6 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 log,
                 mutableListOf(),
                 "https://${cluster.innerModel().fqdn()}",
-                
                 t.locationForRegion(cluster.region()),
                 mapOf()
             )
@@ -412,7 +411,6 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 ObjectStorage(
                     endpoint,
                     AtRestEncryption("AES-256", null),
-                    
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
