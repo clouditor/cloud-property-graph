@@ -14,7 +14,10 @@ plugins {
     application
     java
     idea
+    `maven-publish`
 }
+
+group = "io.clouditor"
 
 val generatedDir = "${projectDir}/generated"
 
@@ -38,8 +41,15 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}
+
 repositories {
-    mavenLocal()
     mavenCentral()
 
     maven { setUrl("https://jitpack.io") }
