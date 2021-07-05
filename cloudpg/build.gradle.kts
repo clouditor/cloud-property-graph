@@ -112,3 +112,7 @@ spotless {
         ktfmt().kotlinlangStyle()
     }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn("spotlessApply")
+}

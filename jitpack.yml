@@ -1,2 +1,4 @@
+before_install:
+  - ./build-ontology.sh
 jdk:
   - openjdk11

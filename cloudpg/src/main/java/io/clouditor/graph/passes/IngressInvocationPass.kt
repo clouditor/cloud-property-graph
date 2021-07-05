@@ -26,7 +26,7 @@ class IngressInvocationPass : Pass() {
         for (ingress in ingresses) {
             // look for containers
             for (backend in ingress.backend) {
-                handle(t, backend, ingress.url, ingress.httpEndpoint.transportEncryption)
+                handle(t, backend, ingress.url, ingress.httpEndpoints.first().transportEncryption)
             }
         }
     }

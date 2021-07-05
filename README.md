@@ -14,7 +14,7 @@ This project primarily serves as a research sandbox and playground, so please do
 
 ## Build
 
-Build using `./gradlew installDist`.
+First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. The build using `./gradlew installDist`.
 
 ## Usage
  
