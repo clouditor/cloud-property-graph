@@ -59,6 +59,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 null,
                                 null,
                                 null,
+                                
                                 result.locationForRegion(Region.US_EAST),
                                 mutableMapOf()
                             )
@@ -83,6 +84,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                             compute,
                                             ArrayList(listOf(host)),
                                             ArrayList(listOf(port)),
+                                            
                                             compute.geoLocation,
                                             mutableMapOf()
                                         )
@@ -122,7 +124,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 result.additionalNodes += application
 
                 // we need to assume, that GH stores its images in the US
-                val image = Image(application, result.location("US"), mapOf())
+                val image = Image(application,  result.location("US"), mapOf())
                 image.name = name
 
                 result.images += image

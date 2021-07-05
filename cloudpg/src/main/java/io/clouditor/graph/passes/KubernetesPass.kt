@@ -14,6 +14,7 @@ import io.kubernetes.client.util.ClientBuilder
 import io.kubernetes.client.util.KubeConfig
 import java.io.FileReader
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -239,13 +240,17 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         hasTLS
                     ) // if it is enabled, it is enforced in Kubernetes
 
+                // TODO: add multiple endpoints
                 // lets set method as null for now, and lets mean that it accepts all methods
                 val node =
                     LoadBalancer(
-                        HttpEndpoint(NoAuthentication(), te, path.path, url, null, null),
+                        listOf(HttpEndpoint(NoAuthentication(), te, path.path, url, null, null)),
                         listOf(service),
                         null,
                         url,
+                        null,
+                        ArrayList(),
+                        ArrayList(),
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         mapOf()
                     )
