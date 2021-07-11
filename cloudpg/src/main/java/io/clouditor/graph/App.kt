@@ -58,6 +58,7 @@ object App : Callable<Int> {
 
     @ExperimentalGolang
     @ExperimentalPython
+    @ExperimentalTypeScript
     override fun call(): Int {
         val config =
             TranslationConfiguration.builder()
