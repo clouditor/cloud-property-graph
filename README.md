@@ -18,7 +18,7 @@ First, the graph classes need to be built from the Ontology definitions by calli
 
 ## Usage
  
-Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j` or `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j/neo4j-arm64-experimental:4.3.1-arm64` on ARM systems. 
+Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j` or `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j/neo4j-arm64-experimental:4.3.2-arm64` on ARM systems. 
 
 Run `cloudpg/build/install/cloudpg/bin/cloudpg`. This will print a help message with any additional needed parameters.
 
