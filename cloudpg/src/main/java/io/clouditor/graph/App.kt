@@ -6,10 +6,10 @@ package io.clouditor.graph
 import de.fraunhofer.aisec.cpg.*
 import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguageFrontend
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
+import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.js.JavaScriptLanguageFrontend
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
@@ -71,12 +71,12 @@ object App : Callable<Int> {
                     RubyLanguageFrontend.RUBY_EXTENSIONS
                 )
                 .registerLanguage(
-                    JavaScriptLanguageFrontend::class.java,
-                    JavaScriptLanguageFrontend.JS_EXTENSIONS
+                    TypeScriptLanguageFrontend::class.java,
+                    TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
-                    JavaScriptLanguageFrontend::class.java,
-                    JavaScriptLanguageFrontend.JS_EXTENSIONS
+                    TypeScriptLanguageFrontend::class.java,
+                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
                     PythonLanguageFrontend::class.java,

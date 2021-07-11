@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
     //implementation("de.fraunhofer.aisec", "cpg", "0.0.0-SNAPSHOT") {
-    implementation("com.github.Fraunhofer-AISEC:cpg:fcc2b9d16") {
+    implementation("com.github.Fraunhofer-AISEC:cpg:f483bd7c") {
         isChanging = true
     }
 
@@ -71,7 +71,6 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     implementation("org.jruby:jruby-core:9.2.17.0")
-    implementation("org.mozilla:rhino-runtime:1.7.13")
 
     implementation("info.picocli:picocli:4.6.1")
 
