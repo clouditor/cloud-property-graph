@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
     //implementation("de.fraunhofer.aisec", "cpg", "0.0.0-SNAPSHOT") {
-    implementation("com.github.Fraunhofer-AISEC:cpg:f483bd7c") {
+    implementation("com.github.Fraunhofer-AISEC:cpg:41dc19dc") {
         isChanging = true
     }
 
