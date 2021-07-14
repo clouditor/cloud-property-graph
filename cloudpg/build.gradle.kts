@@ -73,6 +73,7 @@ dependencies {
     implementation("org.jruby:jruby-core:9.2.17.0")
 
     implementation("info.picocli:picocli:4.6.1")
+    //annotationProcessor("info.picocli:picocli-codegen:4.6.1")
 
     implementation("com.azure.resourcemanager:azure-resourcemanager:2.3.0")
     implementation("com.azure.resourcemanager:azure-resourcemanager-loganalytics:1.0.0-beta.2")
