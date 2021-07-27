@@ -44,7 +44,7 @@ class SpringBootPass : Pass() {
 
         if (annotations.any { it.name == "RestController" }) {
             // handle it as a request handler
-            val handler = HttpRequestHandler(mutableListOf(), app, "")
+            val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = recordDeclaration.name
 
             app?.functionalitys?.plusAssign(handler)
@@ -83,10 +83,10 @@ class SpringBootPass : Pass() {
                 HttpEndpoint(
                     NoAuthentication(),
                     te,
-                    getPath(mapping),
                     null,
                     getMethod(mapping),
-                    methodDeclaration
+                    methodDeclaration,
+                    getPath(mapping),
                 )
             endpoint.name = endpoint.path
 

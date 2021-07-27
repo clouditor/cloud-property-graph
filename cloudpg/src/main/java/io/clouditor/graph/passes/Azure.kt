@@ -356,8 +356,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
         // generic compute for now
         val compute =
             ContainerOrchestration(
-                log,
                 mutableListOf(),
+                log,
                 "https://${cluster.innerModel().fqdn()}",
                 t.locationForRegion(cluster.region()),
                 mapOf()
@@ -383,10 +383,10 @@ class AzurePass : CloudResourceDiscoveryPass() {
         for (blob in paged.collectList().block()) {
             val te =
                 TransportEncryption(
-                    "TLS",
-                    account.innerModel().minimumTlsVersion().toString(),
                     account.innerModel().enableHttpsTrafficOnly(),
-                    true
+                    true,
+                    account.innerModel().minimumTlsVersion().toString(),
+                    "TLS"
                 )
 
             // TODO: also include other endpoints
@@ -407,9 +407,9 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 HttpEndpoint(
                     auth,
                     te,
-                    null,
                     account.innerModel().primaryEndpoints().blob() + blob.name(),
                     "GET",
+                    null,
                     null
                 )
 
@@ -417,7 +417,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             val storage =
                 ObjectStorage(
                     endpoint,
-                    AtRestEncryption("AES-256", null),
+                    AtRestEncryption(null, "AES-256", true),
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
@@ -435,13 +435,14 @@ class AzurePass : CloudResourceDiscoveryPass() {
         var atRest: AtRestEncryption? = null
 
         if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_PLATFORM_KEY) {
-            atRest = ManagedKeyEncryption("AES-256", null)
+            atRest = ManagedKeyEncryption(null, "AES-256", true)
         } else if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY) {
             atRest =
                 CustomerKeyEncryption(
                     e.diskEncryptionSetId(),
+                    null,
                     "AES-256",
-                    null
+                    true
                 ) // not the actual key, but close enough
         }
 

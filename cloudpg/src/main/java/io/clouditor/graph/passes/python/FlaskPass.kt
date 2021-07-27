@@ -48,7 +48,7 @@ class FlaskPass : Pass() {
 
         if ((v.initializer as? CallExpression)?.name == "Flask") {
             // handle it as a request handler
-            val handler = HttpRequestHandler(mutableListOf(), app, "")
+            val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = v.name
 
             app?.functionalitys?.plusAssign(handler)
@@ -83,10 +83,10 @@ class FlaskPass : Pass() {
                 HttpEndpoint(
                     NoAuthentication(),
                     te,
-                    getPath(mapping),
                     null,
                     getMethod(mapping),
-                    func
+                    func,
+                    getPath(mapping)
                 )
             endpoint.name = endpoint.path
 

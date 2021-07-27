@@ -40,7 +40,7 @@ class HttpDispatcherPass : Pass() {
         if (v.name == "dispatcher") {
             val app = result.findApplicationByTU(tu)
 
-            val requestHandler = HttpRequestHandler(mutableListOf(), app, "/")
+            val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
             requestHandler.name = requestHandler.path
 
             v.accept(
@@ -76,7 +76,7 @@ class HttpDispatcherPass : Pass() {
                     ?.refersTo as?
                     FunctionDeclaration
 
-            val endpoint = HttpEndpoint(NoAuthentication(), null, path, null, getMethod(mce), func)
+            val endpoint = HttpEndpoint(NoAuthentication(), null, null, getMethod(mce), func, path)
             endpoint.name = path
 
             endpoint

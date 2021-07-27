@@ -50,11 +50,11 @@ class GinGonicPass : Pass() {
                     HttpEndpoint(
                         NoAuthentication(),
                         null,
-                        getPath(m),
                         null,
                         "GET",
                         (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
-                            FunctionDeclaration
+                            FunctionDeclaration,
+                        getPath(m)
                     )
                 endpoint.name = endpoint.path
 
@@ -67,8 +67,8 @@ class GinGonicPass : Pass() {
 
                 val requestHandler =
                     HttpRequestHandler(
-                        mutableListOf(),
                         app,
+                        mutableListOf(),
                         client?.path?.appendPath(getPath(m)) ?: "/"
                     )
                 requestHandler.name = requestHandler.path
@@ -108,7 +108,7 @@ class GinGonicPass : Pass() {
         ) {
             val app = result.findApplicationByTU(tu)
 
-            val requestHandler = HttpRequestHandler(mutableListOf(), app, "/")
+            val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
             requestHandler.name = requestHandler.path
 
             clients[r] = requestHandler

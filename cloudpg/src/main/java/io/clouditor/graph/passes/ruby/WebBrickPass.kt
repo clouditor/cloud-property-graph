@@ -24,8 +24,7 @@ class WebBrickPass : Pass() {
                 val app = result.findApplicationByTU(tu)
 
                 // one handler per file
-                val handler =
-                    HttpRequestHandler(mutableListOf(), result.findApplicationByTU(tu), "/")
+                val handler = HttpRequestHandler(app, mutableListOf(), "/")
 
                 tu.accept(
                     Strategy::AST_FORWARD,
@@ -87,7 +86,7 @@ class WebBrickPass : Pass() {
                 }
             }
 
-            val endpoint = HttpEndpoint(NoAuthentication(), null, path, null, "GET", func)
+            val endpoint = HttpEndpoint(NoAuthentication(), null, null, "GET", func, path)
             endpoint.name = path
 
             handler.httpEndpoints.plusAssign(endpoint)

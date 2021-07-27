@@ -64,11 +64,11 @@ class GolangHttpPass : Pass() {
                     HttpEndpoint(
                         NoAuthentication(),
                         null,
-                        literal?.value as String?,
                         null,
                         "GET",
                         (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
-                            FunctionDeclaration
+                            FunctionDeclaration,
+                        literal?.value as String?
                     )
                 endpoint.name = endpoint.path
 
@@ -90,7 +90,7 @@ class GolangHttpPass : Pass() {
         ) {
             val app = result.findApplicationByTU(tu)
 
-            val requestHandler = HttpRequestHandler(mutableListOf(), app, "/")
+            val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
             requestHandler.name = requestHandler.path
 
             clients[r] = requestHandler
