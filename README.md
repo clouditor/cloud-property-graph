@@ -33,3 +33,5 @@ Run `cloudpg/build/install/cloudpg/bin/cloudpg`. This will print a help message 
 ## Further reading
 
 We will share more details soon.
+
+[1] Christian Banse, Immanuel Kunz, Angelika Schneider and Konrad Weiss. Cloud Property Graph: Connecting Cloud Security Assessments with Static Code Analysis. To appear in: IEEE CLOUD 2021 https://conferences.computer.org/cloud/2021/program/
