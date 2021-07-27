@@ -46,7 +46,7 @@ class FetchPass : HttpClientPass() {
         // first parameter is the URL
         val url = ValueResolver().resolve(call.arguments.first())
 
-        // second paramater are (optional) options
+        // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
 
         createHttpRequest(t, url as String, call, method, app)
