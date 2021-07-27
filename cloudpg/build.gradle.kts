@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
     //implementation("de.fraunhofer.aisec", "cpg", "0.0.0-SNAPSHOT") {
-    implementation("com.github.Fraunhofer-AISEC:cpg:223452ff5") {
+    implementation("com.github.Fraunhofer-AISEC:cpg:4.0.0-beta.3") {
         isChanging = true
     }
 
@@ -71,9 +71,9 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     implementation("org.jruby:jruby-core:9.2.17.0")
-    implementation("org.mozilla:rhino-runtime:1.7.13")
 
     implementation("info.picocli:picocli:4.6.1")
+    //annotationProcessor("info.picocli:picocli-codegen:4.6.1")
 
     implementation("com.azure.resourcemanager:azure-resourcemanager:2.3.0")
     implementation("com.azure.resourcemanager:azure-resourcemanager-loganalytics:1.0.0-beta.2")

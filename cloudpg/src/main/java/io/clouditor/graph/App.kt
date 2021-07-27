@@ -6,10 +6,10 @@ package io.clouditor.graph
 import de.fraunhofer.aisec.cpg.*
 import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguageFrontend
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
+import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.js.JavaScriptLanguageFrontend
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
@@ -18,6 +18,7 @@ import io.clouditor.graph.passes.golang.GolangHttpPass
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
+import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.HttpDispatcherPass
 import io.clouditor.graph.passes.python.FlaskPass
 import io.clouditor.graph.passes.python.LogPass
@@ -58,6 +59,7 @@ object App : Callable<Int> {
 
     @ExperimentalGolang
     @ExperimentalPython
+    @ExperimentalTypeScript
     override fun call(): Int {
         val config =
             TranslationConfiguration.builder()
@@ -70,12 +72,12 @@ object App : Callable<Int> {
                     RubyLanguageFrontend.RUBY_EXTENSIONS
                 )
                 .registerLanguage(
-                    JavaScriptLanguageFrontend::class.java,
-                    JavaScriptLanguageFrontend.JS_EXTENSIONS
+                    TypeScriptLanguageFrontend::class.java,
+                    TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
-                    JavaScriptLanguageFrontend::class.java,
-                    JavaScriptLanguageFrontend.JS_EXTENSIONS
+                    TypeScriptLanguageFrontend::class.java,
+                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
                     PythonLanguageFrontend::class.java,
@@ -93,6 +95,7 @@ object App : Callable<Int> {
                 .registerPass(GinGonicPass())
                 .registerPass(WebBrickPass())
                 .registerPass(HttpDispatcherPass())
+                .registerPass(FetchPass())
                 .registerPass(FlaskPass())
                 .registerPass(AzurePass())
                 .registerPass(AzureClientSDKPass())

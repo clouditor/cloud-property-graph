@@ -3,6 +3,7 @@ package io.clouditor.graph.passes
 import com.azure.core.credential.TokenCredential
 import com.azure.core.management.AzureEnvironment
 import com.azure.core.management.Region
+import com.azure.core.management.exception.ManagementException
 import com.azure.core.management.profile.AzureProfile
 import com.azure.identity.AzureCliCredentialBuilder
 import com.azure.identity.ChainedTokenCredentialBuilder
@@ -257,63 +258,69 @@ class AzurePass : CloudResourceDiscoveryPass() {
             )
 
         // first, storage accounts
-        val storages = azure.storageAccounts().listByResourceGroup(App.azureResourceGroup)
-        for (storage in storages) {
-            t.additionalNodes.addAll(handleStorageAccounts(t, storage, azure))
-        }
-
-        // next, look for our log workbench
-        val workspaces = logAnalytics.workspaces().listByResourceGroup(App.azureResourceGroup)
-        for (workspace in workspaces) {
-            val log = handleWorkspace(t, workspace)
-
-            t += log
-
-            val exports =
-                logAnalytics.dataExports().listByWorkspace(App.azureResourceGroup, workspace.name())
-
-            exports.forEach { _ ->
-                val storage =
-                    t.additionalNodes.filterIsInstance<ObjectStorage>().firstOrNull {
-                        // TODO:  unique names
-                        it.name == "am-containerlog"
-                    }
-
-                // model data export as ObjectStorageRequest
-                val request = ObjectStorageRequest(listOf(storage), log, "append")
-                storage?.let { request.addNextDFG(it) }
-
-                // add DFG from the source to the sink
-                request.to.forEach { request.source.nextDFG.add(it) }
-                request.name = request.type
-
-                t += request
+        try {
+            val storages = azure.storageAccounts().listByResourceGroup(App.azureResourceGroup)
+            for (storage in storages) {
+                t.additionalNodes.addAll(handleStorageAccounts(t, storage, azure))
             }
-        }
 
-        val clusters = azure.kubernetesClusters().listByResourceGroup(App.azureResourceGroup)
-        for (cluster in clusters) {
-            val compute = handleCluster(t, cluster)
+            // next, look for our log workbench
+            val workspaces = logAnalytics.workspaces().listByResourceGroup(App.azureResourceGroup)
+            for (workspace in workspaces) {
+                val log = handleWorkspace(t, workspace)
 
-            t += compute
-        }
+                t += log
 
-        val vms = azure.virtualMachines().listByResourceGroup(App.azureResourceGroup)
-        for (vm in vms) {
-            val compute = handleVirtualMachine(t, vm)
+                val exports =
+                    logAnalytics
+                        .dataExports()
+                        .listByWorkspace(App.azureResourceGroup, workspace.name())
 
-            // look for the image tag to connect services
-            val name = vm.tags().getOrDefault("image", null)
+                exports.forEach { _ ->
+                    val storage =
+                        t.additionalNodes.filterIsInstance<ObjectStorage>().firstOrNull {
+                            // TODO:  unique names
+                            it.name == "am-containerlog"
+                        }
 
-            val image = t.getImageByName(name)
+                    // model data export as ObjectStorageRequest
+                    val request = ObjectStorageRequest(listOf(storage), log, "append")
+                    storage?.let { request.addNextDFG(it) }
 
-            // image?.implements?.forEach { it.deployedOn.add(compute) }
-            t.computes += compute
-        }
+                    // add DFG from the source to the sink
+                    request.to.forEach { request.source.nextDFG.add(it) }
+                    request.name = request.type
 
-        val disks = azure.disks().listByResourceGroup(App.azureResourceGroup)
-        for (disk in disks) {
-            t.additionalNodes.add(handleDisk(t, disk))
+                    t += request
+                }
+            }
+
+            val clusters = azure.kubernetesClusters().listByResourceGroup(App.azureResourceGroup)
+            for (cluster in clusters) {
+                val compute = handleCluster(t, cluster)
+
+                t += compute
+            }
+
+            val vms = azure.virtualMachines().listByResourceGroup(App.azureResourceGroup)
+            for (vm in vms) {
+                val compute = handleVirtualMachine(t, vm)
+
+                // look for the image tag to connect services
+                val name = vm.tags().getOrDefault("image", null)
+
+                val image = t.getImageByName(name)
+
+                // image?.implements?.forEach { it.deployedOn.add(compute) }
+                t.computes += compute
+            }
+
+            val disks = azure.disks().listByResourceGroup(App.azureResourceGroup)
+            for (disk in disks) {
+                t.additionalNodes.add(handleDisk(t, disk))
+            }
+        } catch (ex: ManagementException) {
+            log.error("Could not fetch Azure resources: {}", ex.message)
         }
     }
 
