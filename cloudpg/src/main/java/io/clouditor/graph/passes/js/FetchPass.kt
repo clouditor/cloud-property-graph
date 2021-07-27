@@ -56,13 +56,12 @@ class FetchPass : HttpClientPass() {
         var method = "GET"
 
         // for now, assume that options is a object construct. it could also be a reference to
-        // one
-        // we could extend the variable resolver to return a hashmap
+        // one we could extend the variable resolver to return a hashmap
 
         ValueResolver()
             .resolve(
                 options?.initializers?.firstOrNull {
-                    it is KeyValueExpression && it.key?.name == "method "
+                    it is KeyValueExpression && it.key?.name == "method"
                 }
             )
             ?.let { method = it as String }
