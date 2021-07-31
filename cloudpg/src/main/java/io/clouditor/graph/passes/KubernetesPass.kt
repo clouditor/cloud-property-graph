@@ -119,6 +119,9 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         it.name == item.metadata?.name
                     }
 
+                // some quick and dirty database heuristics
+                heuristics(service, container, t)
+
                 // was runsOn
                 service?.compute = container
             }
@@ -144,6 +147,34 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         }
     }
 
+    private fun heuristics(service: NetworkService?, container: Container?, t: TranslationResult) {
+        if (service?.name == "postgres") {
+            val db =
+                RelationalDatabaseService(
+                    container,
+                    service.ips,
+                    service.ports,
+                    service.geoLocation,
+                    mapOf()
+                )
+            db.name = service.name
+            t += db
+        }
+
+        if (service?.name == "mongo") {
+            val db =
+                DocumentDatabaseService(
+                    container,
+                    service.ips,
+                    service.ports,
+                    service.geoLocation,
+                    mapOf()
+                )
+            db.name = service.name
+            t += db
+        }
+    }
+
     private fun handlePod(
         t: TranslationResult,
         pod: V1Pod,
@@ -152,40 +183,42 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val name = pod.spec?.containers?.first()?.image?.split(":")?.first()
 
         // just the first image for now
-        val image = t.getImageByName(name)
+        val image: Image =
+            t.getImageByName(name)
+                ?: Image(null, null, mapOf()).let {
+                    name?.let { n -> it.name = n }
+                    t += it
+                    it
+                }
+        val container =
+            pod.metadata?.let { meta ->
+                val c =
+                    Container(
+                        null,
+                        image,
+                        cluster?.geoLocation ?: GeoLocation("Europe"),
+                        meta.labels?.toMap(HashMap())
+                    )
+                c.name = meta.name ?: ""
 
-        image?.let { i ->
-            val container =
-                pod.metadata?.let { meta ->
-                    val c =
-                        Container(
-                            image,
-                            cluster?.geoLocation ?: GeoLocation("Europe"),
-                            meta.labels?.toMap(HashMap())
-                        )
-                    c.name = meta.name ?: ""
-
-                    // add env to labels with env_ prefix
-                    pod.spec?.containers?.first()?.env?.forEach {
-                        c.labels["env_" + it.name] = it.value
-                    }
-
-                    // if the cluster has resource logging, also add a DFG edge to it
-                    cluster?.resourceLogging?.let { c.nextDFG.add(it) }
-
-                    c
+                // add env to labels with env_ prefix
+                pod.spec?.containers?.first()?.env?.forEach {
+                    c.labels["env_" + it.name] = it.value
                 }
 
-            // runsOn is a shortcut for an application to a compute resource
-            i.application.runsOn.add(container)
+                // if the cluster has resource logging, also add a DFG edge to it
+                cluster?.resourceLogging?.let { c.nextDFG.add(it) }
 
-            // add dataflow from image to container
-            container?.let { i.addNextDFG(it) }
+                c
+            }
 
-            return container
-        }
+        // runsOn is a shortcut for an application to a compute resource
+        image.application?.runsOn?.add(container)
 
-        return null
+        // add dataflow from image to container
+        container?.let { image.addNextDFG(it) }
+
+        return container
     }
 
     private fun handleService(
@@ -207,7 +240,12 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     cluster?.geoLocation ?: GeoLocation("Europe"),
                     mapOf()
                 )
-            node.name = service.metadata?.name ?: ""
+            service.metadata?.name?.let {
+                node.name = it
+
+                // also add the name as IP / host
+                node.ips.add(it)
+            }
 
             node
         }
@@ -244,9 +282,9 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 // lets set method as null for now, and lets mean that it accepts all methods
                 val node =
                     LoadBalancer(
+                        listOf(service),
                         null,
                         listOf(HttpEndpoint(NoAuthentication(), te, path.path, url, null, null)),
-                        listOf(service),
                         url,
                         null,
                         ArrayList(),
