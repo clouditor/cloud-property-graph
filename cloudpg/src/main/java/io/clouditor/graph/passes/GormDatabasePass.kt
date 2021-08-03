@@ -8,34 +8,41 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
-import io.clouditor.graph.Application
-import io.clouditor.graph.ValueResolver
-import io.clouditor.graph.findApplicationByTU
-import io.clouditor.graph.plusAssign
+import io.clouditor.graph.*
 
 class GormDatabasePass : DatabaseOperationPass() {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
             val app = t.findApplicationByTU(tu)
 
+            // we need to find the connect first
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
                     fun visit(call: MemberCallExpression) {
-                        handleMemberCall(t, tu, call, app)
+                        findConnect(t, tu, call, app)
+                    }
+                }
+            )
+
+            // TODO: does not work yet, if the TU where the query is, is processed before :(
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(call: MemberCallExpression) {
+                        findQuery(t, tu, call, app)
                     }
                 }
             )
         }
     }
 
-    private fun handleMemberCall(
+    private fun findConnect(
         result: TranslationResult,
         tu: TranslationUnitDeclaration,
         call: CallExpression,
         app: Application?
     ) {
-
         if (call.fqn == "postgres.Open") {
             call.arguments.firstOrNull()?.let { expr ->
                 val dsn = resolveDSN(expr, app) as? String
@@ -53,7 +60,27 @@ class GormDatabasePass : DatabaseOperationPass() {
                     val op = createDatabaseConnect(result, host, call, app)
 
                     result += op
+                    app?.functionalitys?.plusAssign(op)
                 }
+            }
+        }
+    }
+
+    private fun findQuery(
+        result: TranslationResult,
+        tu: TranslationUnitDeclaration,
+        call: CallExpression,
+        app: Application?
+    ) {
+        if (call.name == "Where") {
+            val op =
+                app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                    createDatabaseQuery(result, false, it, call, app)
+                }
+
+            if (op != null) {
+                result += op
+                app.functionalitys?.plusAssign(op)
             }
         }
     }

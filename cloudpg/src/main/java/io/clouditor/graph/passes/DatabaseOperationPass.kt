@@ -21,6 +21,19 @@ abstract class DatabaseOperationPass : Pass() {
         return op
     }
 
+    protected fun createDatabaseQuery(
+        t: TranslationResult,
+        modify: Boolean,
+        connect: DatabaseConnect,
+        call: CallExpression,
+        app: Application?
+    ): DatabaseOperation {
+        val op = DatabaseQuery(modify, connect.to, call)
+        op.location = app?.location
+
+        return op
+    }
+
     private fun getDatabaseForHost(t: TranslationResult, host: String): List<DatabaseService> {
         log.info("Looking for databases hosted at {}", host)
 
