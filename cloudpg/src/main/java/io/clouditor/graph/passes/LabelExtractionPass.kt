@@ -1,22 +1,60 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.labels.PrivacyLabel
+import java.util.function.Consumer
+import java.util.function.Predicate
 
 class LabelExtractionPass : Pass() {
+
+    val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
+
     override fun accept(t: TranslationResult) {
         // loop through services
-        val parameters =
-            SubgraphWalker.flattenAST(t).filterIsInstance(ParamVariableDeclaration::class.java)
+        val nodes = SubgraphWalker.flattenAST(t)
 
-        for (param in parameters) {
-            // look for containers
-            handleParamVariableDeclaration(t, param)
+        nodes.forEach { node: Node ->
+            predicatesToHandle.forEach { predicate, handler ->
+                when (predicate.test(node)) {
+                    true -> handler.accept(node)
+                }
+            }
         }
+
+        // Register default extractor that gets Label from Annotation
+        predicatesToHandle.put(
+            { node -> node.annotations.count() > 0 },
+            { node -> handleAnnotations(t, node) }
+        )
+    }
+
+    private fun handleAnnotations(t: TranslationResult, annotationParent: Node) {
+        annotationParent.annotations
+            .filter { annotation -> annotation.name == "PrivacyLabel" }
+            .forEach { privacyAnnotation ->
+                {
+                    val values: List<Expression> =
+                        privacyAnnotation.members.filter { member -> member.name == "level" }.map {
+                            member ->
+                            member.value
+                        }
+                    if (!values.isEmpty()) {
+                        val literal: Literal<Int>? = values.get(0) as? Literal<Int>
+                        literal?.let {
+                            val label = PrivacyLabel(annotationParent)
+                            label.protectionlevel = it.value
+                            t += label
+                        }
+                    }
+                }
+            }
     }
 
     private fun handleParamVariableDeclaration(
