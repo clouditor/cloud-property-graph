@@ -6,6 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
+import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
@@ -19,13 +20,16 @@ class GormDatabasePass : DatabaseOperationPass() {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
+                    fun visit(call: CallExpression) {
                         findConnect(t, tu, call, app)
                     }
                 }
             )
+        }
 
-            // TODO: does not work yet, if the TU where the query is, is processed before :(
+        for (tu in t.translationUnits) {
+            val app = t.findApplicationByTU(tu)
+
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
@@ -69,18 +73,23 @@ class GormDatabasePass : DatabaseOperationPass() {
     private fun findQuery(
         result: TranslationResult,
         tu: TranslationUnitDeclaration,
-        call: CallExpression,
+        call: MemberCallExpression,
         app: Application?
     ) {
-        if (call.name == "Where") {
-            val op =
-                app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
-                    createDatabaseQuery(result, false, it, call, app)
-                }
+        // make sure, the base call is really to a gorm DB object
+        if (call.base.type is PointerType && call.base.type.name == "gorm.DB*") {
+            if (call.name == "Where" || call.name == "Find") {
+                val op =
+                    app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                        createDatabaseQuery(result, false, it, call, app)
+                    }
 
-            if (op != null) {
-                result += op
-                app.functionalitys?.plusAssign(op)
+                if (op != null) {
+                    op.location = call.location
+                    op.name = "SELECT"
+                    result += op
+                    app.functionalitys?.plusAssign(op)
+                }
             }
         }
     }
