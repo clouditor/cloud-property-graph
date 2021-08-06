@@ -60,9 +60,7 @@ repositories {
 
 dependencies {
     //implementation("de.fraunhofer.aisec", "cpg", "0.0.0-SNAPSHOT") {
-    implementation("com.github.Fraunhofer-AISEC:cpg:4f62631b") {
-        isChanging = true
-    }
+    implementation("com.github.Fraunhofer-AISEC:cpg:5c69b6d5")
 
     api("org.neo4j", "neo4j-ogm-core", "3.2.21")
     api("org.neo4j", "neo4j-ogm", "3.2.21")
