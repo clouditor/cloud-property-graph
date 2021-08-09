@@ -6,10 +6,13 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.graph.types.Type
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
+import io.clouditor.graph.nodes.getStorageOrCreate
 
 class GormDatabasePass : DatabaseOperationPass() {
     override fun accept(t: TranslationResult) {
@@ -76,22 +79,117 @@ class GormDatabasePass : DatabaseOperationPass() {
         call: MemberCallExpression,
         app: Application?
     ) {
+        // it can either be a direct call, without any chained selectors, such as Where
+        val directCall = call.base.type is PointerType && call.base.type.name == "gorm.DB*"
+
         // make sure, the base call is really to a gorm DB object
-        if (call.base.type is PointerType && call.base.type.name == "gorm.DB*") {
-            if (call.name == "Where" || call.name == "Find") {
-                val op =
-                    app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
-                        createDatabaseQuery(result, false, it, call, app)
+        if (call.name == "First" || call.name == "Find") {
+            val calls = mutableListOf<CallExpression>(call)
+
+            if (!directCall) {
+                // if it is not a direct call, lets see, whether we have a chain of member calls
+                // that go
+                // to the base. We store the list of calls for future reference
+                var memberCall: MemberCallExpression? = call.base as? MemberCallExpression
+                var found = false
+                while (memberCall != null) {
+                    // add the call to the list of chained calls
+                    calls += memberCall
+
+                    // check, if its base is already of our database type
+                    if (memberCall.base.type is PointerType &&
+                            memberCall.base.type.name == "gorm.DB*"
+                    ) {
+                        // found it, yay!
+                        found = true
+
+                        // we can break immediately
+                        break
                     }
 
-                if (op != null) {
-                    op.location = call.location
-                    op.name = "SELECT"
-                    result += op
-                    app.functionalitys?.plusAssign(op)
+                    // otherwise, go to the next base
+                    memberCall = memberCall.base as? MemberCallExpression
+                }
+
+                if (!found) {
+                    // we did not find a link to a gorm.DB*, this is something else, ignore it
+                    return
                 }
             }
+
+            val op =
+                app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                    val op = createDatabaseQuery(result, false, it, mutableListOf(), calls, app)
+                    op.name = call.name
+
+                    // loop through the calls and set DFG edges
+                    calls.forEach {
+                        if (it.name == "First") {
+                            handleFirst(it, op)
+                        } else if (it.name == "Where") {
+                            handleWhere(it, op)
+                        } else if (it.name == "Find") {
+                            handleFind(it, op)
+                        }
+                    }
+
+                    op
+                }
+
+            if (op != null) {
+                op.location = call.location
+                result += op
+                app.functionalitys?.plusAssign(op)
+            }
         }
+    }
+
+    private fun handleFind(call: CallExpression, op: DatabaseOperation) {
+        // find should have at last one argument, the first is the target, second is an optional
+        // where specifier. A little trick: follow the same approach as for First, first
+        handleFirst(call, op)
+
+        // then, check if we have a second argument
+        call.arguments.getOrNull(1)?.let {
+            // add it as an incoming DFG edge
+            op.addPrevDFG(it)
+        }
+    }
+
+    private fun handleWhere(call: CallExpression, op: DatabaseOperation) {
+        // simply add all arguments as incoming DFG edges
+        call.arguments.forEach { op.addPrevDFG(it) }
+    }
+
+    private fun handleFirst(call: CallExpression, op: DatabaseOperation) {
+        // first should have one argument, that specifies the variable in which it is
+        // stored
+        var target = call.arguments.firstOrNull()
+
+        // it could be wrapped in a UnaryExpression, if a non-pointer object was
+        // supplied. this
+        // is actually something we should fix at the CPG level
+        if (target is UnaryOperator) {
+            target = target.input
+        }
+
+        // add a DFG edge towards our target
+        if (target != null) {
+            op.addNextDFG(target)
+
+            // add storage
+            op.to.forEach {
+                var storage = it.getStorageOrCreate(deriveName(target.type))
+                op.storage.add(storage)
+            }
+        }
+    }
+
+    private fun deriveName(type: Type): String {
+        // short name
+        val shortName = type.name.substringAfterLast(".")
+
+        return shortName.toLowerCase() + "s"
     }
 
     override fun cleanup() {}
