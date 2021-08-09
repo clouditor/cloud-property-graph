@@ -96,7 +96,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
     override fun cleanup() {}
 
-    fun resolveDSN(expr: Expression, app: Application?): Any? {
+    private fun resolveDSN(expr: Expression, app: Application?): Any? {
         // assume that we are only on one client
         val env =
             app?.runsOn?.firstOrNull()?.labels?.filter { it.key.startsWith("env_") }?.mapKeys {
