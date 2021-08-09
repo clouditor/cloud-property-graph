@@ -144,7 +144,7 @@ class GormDatabasePass : DatabaseOperationPass() {
         }
     }
 
-    private fun handleFind(call: CallExpression, op: DatabaseOperation) {
+    private fun handleFind(call: CallExpression, op: DatabaseQuery) {
         // find should have at last one argument, the first is the target, second is an optional
         // where specifier. A little trick: follow the same approach as for First, first
         handleFirst(call, op)
@@ -156,12 +156,12 @@ class GormDatabasePass : DatabaseOperationPass() {
         }
     }
 
-    private fun handleWhere(call: CallExpression, op: DatabaseOperation) {
+    private fun handleWhere(call: CallExpression, op: DatabaseQuery) {
         // simply add all arguments as incoming DFG edges
         call.arguments.forEach { op.addPrevDFG(it) }
     }
 
-    private fun handleFirst(call: CallExpression, op: DatabaseOperation) {
+    private fun handleFirst(call: CallExpression, op: DatabaseQuery) {
         // first should have one argument, that specifies the variable in which it is
         // stored
         var target = call.arguments.firstOrNull()
@@ -179,8 +179,15 @@ class GormDatabasePass : DatabaseOperationPass() {
 
             // add storage
             op.to.forEach {
-                var storage = it.getStorageOrCreate(deriveName(target.type))
+                val storage = it.getStorageOrCreate(deriveName(target.type))
                 op.storage.add(storage)
+
+                // also add DFG edges from or towards the storage, depending on the query type
+                if (op.isModify) {
+                    op.addNextDFG(storage)
+                } else {
+                    op.addPrevDFG(storage)
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ abstract class DatabaseOperationPass : Pass() {
         storage: List<DatabaseStorage>,
         calls: List<CallExpression>,
         app: Application?
-    ): DatabaseOperation {
+    ): DatabaseQuery {
         val op = DatabaseQuery(modify, connect.to, storage, calls)
         op.location = app?.location
 
