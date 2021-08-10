@@ -119,8 +119,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 val application =
                     Application(
                         mutableListOf(),
-                        mutableListOf(),
                         "Java",
+                        mutableListOf(),
                         tus,
                     )
                 application.name = path

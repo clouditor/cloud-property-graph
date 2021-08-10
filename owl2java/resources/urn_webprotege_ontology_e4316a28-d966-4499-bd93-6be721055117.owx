@@ -90,13 +90,25 @@
         <Class IRI="http://graph.clouditor.io/classes/DDosProtection"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseConnect"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/DeviceProvisioningService"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
@@ -151,6 +163,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/Job"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/KeyValueDB"/>
@@ -291,7 +306,13 @@
         <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty abbreviatedIRI="prop:storage"/>
+    </Declaration>
+    <Declaration>
         <ObjectProperty abbreviatedIRI="prop:to"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/calls"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:activated"/>
@@ -349,6 +370,9 @@
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:method"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty abbreviatedIRI="prop:modify"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:path"/>
@@ -727,6 +751,13 @@
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Container"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerImage"/>
         <Class IRI="http://graph.clouditor.io/classes/Image"/>
     </SubClassOf>
@@ -775,30 +806,74 @@
         <Class IRI="http://graph.clouditor.io/classes/Availability"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseConnect"/>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
         <Class IRI="http://graph.clouditor.io/classes/Functionality"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:storage"/>
+            <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
         <ObjectSomeValuesFrom>
             <ObjectProperty abbreviatedIRI="prop:to"/>
             <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
+        <DataHasValue>
+            <DataProperty IRI="http://graph.clouditor.io/classes/calls"/>
+            <Literal>xsd:java.util.List&lt;de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression&gt;</Literal>
+        </DataHasValue>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:type"/>
-            <Datatype abbreviatedIRI="xsd:string"/>
+            <DataProperty abbreviatedIRI="prop:modify"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
-        <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
+        <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
+        <Class IRI="http://graph.clouditor.io/classes/Storage"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:parent"/>
+            <Class IRI="http://graph.clouditor.io/classes/Storage"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DeviceProvisioningService"/>
         <Class IRI="http://graph.clouditor.io/classes/IoT"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
@@ -995,6 +1070,17 @@
         <Class IRI="http://graph.clouditor.io/classes/CICDService"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
+        <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:enforced"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/KeyValueDB"/>
         <Class IRI="http://graph.clouditor.io/classes/KeyValueDatabaseService"/>
     </SubClassOf>
@@ -1009,15 +1095,15 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:backend"/>
-            <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <ObjectSomeValuesFrom>
             <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
-            <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
+            <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
@@ -1770,6 +1856,10 @@ name = metadata.name</Literal>
         <DataProperty abbreviatedIRI="prop:url"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
+    <DataPropertyRange>
+        <DataProperty abbreviatedIRI="prop:enabled"/>
+        <Datatype abbreviatedIRI="xsd:boolean"/>
+    </DataPropertyRange>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/ABAC</IRI>
@@ -1897,6 +1987,16 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/DatabaseConnect</IRI>
+        <Literal>DatabaseConnect</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/DatabaseOperation</IRI>
+        <Literal>DatabaseOperation</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/DatabaseQuery</IRI>
         <Literal>DatabaseQuery</Literal>
     </AnnotationAssertion>
@@ -1907,8 +2007,18 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/DatabaseStorage</IRI>
+        <Literal>DatabaseStorage</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/DeviceProvisioningService</IRI>
         <Literal xml:lang="english">DeviceProvisioningService</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/DocumentDatabaseService</IRI>
+        <Literal>DocumentDatabaseService</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -1999,6 +2109,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Job</IRI>
         <Literal xml:lang="english">Job</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/JwtBasedAuthentication</IRI>
+        <Literal>JwtBasedAuthentication</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2174,6 +2289,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Workflow</IRI>
         <Literal xml:lang="english">Workflow</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/calls</IRI>
+        <Literal>calls</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2543,7 +2663,7 @@ name = metadata.name</Literal>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:keyManager</AbbreviatedIRI>
-        <Literal xml:lang="english">keymanager</Literal>
+        <Literal xml:lang="english">keyManager</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2564,6 +2684,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:method</AbbreviatedIRI>
         <Literal xml:lang="english">method</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:modify</AbbreviatedIRI>
+        <Literal>modify</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2647,6 +2772,11 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:storage</AbbreviatedIRI>
+        <Literal>storage</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:tlsVersion</AbbreviatedIRI>
         <Literal xml:lang="english">tlsVersion</Literal>
     </AnnotationAssertion>
@@ -2690,3 +2820,4 @@ name = metadata.name</Literal>
 
 
 <!-- Generated by the OWL API (version 4.5.13) https://github.com/owlcs/owlapi -->
+

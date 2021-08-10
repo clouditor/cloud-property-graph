@@ -104,6 +104,7 @@ object App : Callable<Int> {
                 .registerPass(JaxRsClientPass())
                 .registerPass(RequestsPass())
                 .registerPass(LogPass())
+                .registerPass(GormDatabasePass())
                 .registerPass(LabelExtractionPass())
                 .processAnnotations(true)
                 .build()

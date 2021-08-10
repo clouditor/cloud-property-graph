@@ -46,7 +46,7 @@ class JaxRsPass : Pass() {
             val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = r.name
 
-            app?.functionalitys?.plusAssign(handler)
+            app?.functionalities?.plusAssign(handler)
 
             // the path of the controller is in the Path annotation, if it is set
             handler.path = getPath(r.annotations.firstOrNull { it.name == "Path" })
@@ -56,7 +56,7 @@ class JaxRsPass : Pass() {
                 handleMapping(method)?.let {
                     handler.httpEndpoints.plusAssign(it)
 
-                    app?.functionalitys?.plusAssign(handler)
+                    app?.functionalities?.plusAssign(handler)
                 }
             }
 
@@ -78,11 +78,11 @@ class JaxRsPass : Pass() {
             val endpoint =
                 HttpEndpoint(
                     NoAuthentication(),
-                    te,
-                    null,
-                    getMethod(mapping),
                     methodDeclaration,
+                    getMethod(mapping),
                     getPath(pathMapping),
+                    te,
+                    null
                 )
             endpoint.name = endpoint.path
 

@@ -47,7 +47,7 @@ class SpringBootPass : Pass() {
             val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = recordDeclaration.name
 
-            app?.functionalitys?.plusAssign(handler)
+            app?.functionalities?.plusAssign(handler)
 
             // the path of the controller is in the requestmapping annotation, if it is set
             val mapping = recordDeclaration.annotations.firstOrNull { it.name == "RequestMapping" }
@@ -58,7 +58,7 @@ class SpringBootPass : Pass() {
                 handleMapping(method)?.let {
                     handler.httpEndpoints.plusAssign(it)
 
-                    app?.functionalitys?.plusAssign(it)
+                    app?.functionalities?.plusAssign(it)
                 }
             }
 
@@ -82,11 +82,11 @@ class SpringBootPass : Pass() {
             val endpoint =
                 HttpEndpoint(
                     NoAuthentication(),
-                    te,
-                    null,
-                    getMethod(mapping),
                     methodDeclaration,
+                    getMethod(mapping),
                     getPath(mapping),
+                    te,
+                    null
                 )
             endpoint.name = endpoint.path
 

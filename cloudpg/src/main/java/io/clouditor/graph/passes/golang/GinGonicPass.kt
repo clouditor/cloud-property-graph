@@ -49,12 +49,12 @@ class GinGonicPass : Pass() {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
-                        null,
-                        null,
-                        "GET",
                         (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
                             FunctionDeclaration,
-                        getPath(m)
+                        "GET",
+                        getPath(m),
+                        null,
+                        null
                     )
                 endpoint.name = endpoint.path
 
