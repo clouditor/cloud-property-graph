@@ -16,7 +16,7 @@ class IngressInvocationPass : Pass() {
                 t,
                 service,
                 "${service.name}:${service.ports.firstOrNull()}",
-                TransportEncryption(false, false, null, null)
+                TransportEncryption(null, false, false, null)
             )
         }
 
@@ -57,12 +57,12 @@ class IngressInvocationPass : Pass() {
                     ProxiedEndpoint(
                         listOf(endpoint),
                         authentication,
+                        endpoint.handler,
+                        endpoint.method,
+                        endpoint.path,
                         // use the TE of the ingress's TE
                         transportEncryption,
-                        url,
-                        endpoint.method,
-                        endpoint.handler,
-                        endpoint.path
+                        url
                     )
 
                 t += proxy

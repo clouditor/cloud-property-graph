@@ -63,12 +63,12 @@ class GolangHttpPass : Pass() {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
-                        null,
-                        null,
-                        "GET",
                         (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
                             FunctionDeclaration,
-                        literal?.value as String?
+                        "GET",
+                        literal?.value as String?,
+                        null,
+                        null
                     )
                 endpoint.name = endpoint.path
 

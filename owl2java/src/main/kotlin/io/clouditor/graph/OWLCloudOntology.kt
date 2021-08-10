@@ -110,9 +110,7 @@ class OWLCloudOntology(filepath: String) {
 
         // Format super class name
         superClassName = formatString(superClassName)
-        if (javaClass.name == "HttpRequest") {
-            javaClass.superType = "de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration"
-        } else if (!superClassName.isEmpty()) {
+        if (!superClassName.isEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
@@ -275,9 +273,6 @@ class OWLCloudOntology(filepath: String) {
         val javaClassPropertiesList = javaClass.properties
         javaClassPropertiesList.sortWith(Comparator.comparing { obj: PropertySource<JavaClassSource?> -> obj.name })
 
-        // make sure, that the properties are sorted, so that constructor calls are consistent
-        javaClassPropertiesList.sortBy { it.name }
-
         // Set parameters and body of constructor
         for (elem in javaClassPropertiesList) {
             javaClassConstructor.addParameter(
@@ -406,14 +401,14 @@ class OWLCloudOntology(filepath: String) {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
-                    "runsOn" -> {
+                    /*"runsOn" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
                     "proxyTarget" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
-                    }
+                    }*/
                     "hasMultiple" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
@@ -427,7 +422,7 @@ class OWLCloudOntology(filepath: String) {
                         )
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
-                    "collectionOf" -> {
+                    /*"collectionOf" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
                                 formatString(
@@ -444,11 +439,11 @@ class OWLCloudOntology(filepath: String) {
                         // TODO What does 'to' mean?
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
-                    }
+                    }*/
                     else -> {
                         // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
-                        property.propertyName = formatString(getClassName(superClass, ontology))
-                        property.propertyType = classRelationshipPropertyName
+                        property.propertyType = formatString(getClassName(superClass, ontology))
+                        property.propertyName = classRelationshipPropertyName
                     }
                 }
                 propertiesList.add(property)
@@ -480,23 +475,10 @@ class OWLCloudOntology(filepath: String) {
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
                     )
-                    "runsOn" -> javaClass.addProperty(
-                        formatString(getClassName(superClass, ontology)),
-                        decapitalizeString(formatString(getClassName(superClass, ontology)))
-                    )
                     "hasMultiple" -> javaClass.addProperty(
                         formatString(getArrayClassName(superClass, ontology)),
                         decapitalizeString(formatString(getPlural(getClassName(superClass, ontology))))
                     )
-                    "collectionOf" -> javaClass.addProperty(
-                        formatString(getArrayClassName(superClass, ontology)),
-                        decapitalizeString(formatString(getPlural(getClassName(superClass, ontology))))
-                    )
-                    "to" ->                         // TODO What does 'to' mean?
-                        javaClass.addProperty(
-                            formatString(getClassName(superClass, ontology)),
-                            decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        )
                     else ->                         // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
                         javaClass.addProperty(
                             formatString(getArrayClassName(superClass, ontology)),
@@ -560,13 +542,6 @@ class OWLCloudOntology(filepath: String) {
         // Format super class name
         superClassName = formatString(superClassName)
 
-//        if(gs.getName().equals("HttpRequest")) {
-//            gs.setParentClass("de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration");
-//        } else if(!superClassName.isEmpty()) {
-//            gs.setParentClass(superClassName);
-//        } else {
-//            gs.setParentClass("de.fraunhofer.aisec.cpg.graph.Node");
-//        }
         return superClassName
     }
 

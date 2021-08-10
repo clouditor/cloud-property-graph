@@ -37,7 +37,7 @@ class WebBrickPass : Pass() {
 
                 result += handler
 
-                app?.functionalitys?.plusAssign(handler)
+                app?.functionalities?.plusAssign(handler)
             }
         }
     }
@@ -86,11 +86,11 @@ class WebBrickPass : Pass() {
                 }
             }
 
-            val endpoint = HttpEndpoint(NoAuthentication(), null, null, "GET", func, path)
+            val endpoint = HttpEndpoint(NoAuthentication(), func, "GET", path, null, null)
             endpoint.name = path
 
             handler.httpEndpoints.plusAssign(endpoint)
-            app?.functionalitys?.plusAssign(endpoint)
+            app?.functionalities?.plusAssign(endpoint)
 
             result += endpoint
         }

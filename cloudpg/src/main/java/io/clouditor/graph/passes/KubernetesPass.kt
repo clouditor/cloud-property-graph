@@ -235,19 +235,19 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
 
                 val te =
                     TransportEncryption(
+                        "TLS",
                         hasTLS,
                         hasTLS,
                         null,
-                        null
                     ) // if it is enabled, it is enforced in Kubernetes
 
                 // TODO: add multiple endpoints
                 // lets set method as null for now, and lets mean that it accepts all methods
                 val node =
                     LoadBalancer(
-                        listOf(service),
                         null,
-                        listOf(HttpEndpoint(NoAuthentication(), te, path.path, url, null, null)),
+                        listOf(HttpEndpoint(NoAuthentication(), null, null, path.path, te, url)),
+                        listOf(service),
                         url,
                         null,
                         ArrayList(),
