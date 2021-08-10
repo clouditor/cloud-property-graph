@@ -138,17 +138,17 @@ class PythonASTToCPG(ast.NodeVisitor):
         obj.setFile(self.fname)
         uri = URI("file://" + self.fname)
         obj.setLocation(PhysicalLocation(uri,
-                                         Region(node.lineno,
-                                                node.col_offset,
-                                                node.end_lineno,
-                                                node.end_col_offset)
-                                         )
-                        )
+            Region(node.lineno,
+                node.col_offset,
+                node.end_lineno,
+                node.end_col_offset)
+            )
+            )
         obj.setCode(self.sourcecode.get_snippet(node.lineno,
-                                                node.col_offset,
-                                                node.end_lineno,
-                                                node.end_col_offset)
-                    )
+            node.col_offset,
+            node.end_lineno,
+            node.end_col_offset)
+            )
         # obj.setCode(ast.unparse(node)) # alternative to CodeExtractor class
 
     ### LITERALS ###
@@ -814,7 +814,7 @@ class PythonASTToCPG(ast.NodeVisitor):
         vd = VariableDeclaration()
         self.add_loc_info(node, vd)
         vd.setName(node.names[0].name)
-        self.scopemanager.addGlobal(vd)
+        self.scopemanager.addDeclaration(vd)
         return imp
 
     def visit_ImportFrom(self, node):
@@ -829,7 +829,7 @@ class PythonASTToCPG(ast.NodeVisitor):
         vd = VariableDeclaration()
         self.add_loc_info(node, vd)
         vd.setName(node.module)
-        self.scopemanager.addGlobal(vd)
+        self.scopemanager.addDeclaration(vd)
         return imp
 
     def visit_alias(self, node):
@@ -863,7 +863,7 @@ class PythonASTToCPG(ast.NodeVisitor):
             dummy = CompoundStatement()
             self.add_loc_info(node, dummy)
             return dummy
-
+        
         # do not wrap a single statement as CompoundStatement
         if len(node_list) == 1:
             s = self.visit(node_list[0])
@@ -1078,7 +1078,7 @@ class PythonASTToCPG(ast.NodeVisitor):
             self.add_loc_info(node.args[0], slf)
             slf.setName(node.args[0].arg)
             slf.setType(TypeParser.createFrom(fd.getRecordDeclaration().getName(),
-                                              False))
+                    False))
             fd.setReceiver(slf)
             self.scopemanager.addDeclaration(slf)
             for p in node.args[1:]:
@@ -1257,8 +1257,9 @@ class PythonASTToCPG(ast.NodeVisitor):
 
     ### CATCH ALL ###
     def generic_visit(self, node):
-        self.log_with_loc(ast.dump(node))
-        self.log_with_loc(NOT_IMPLEMENTED_MSG, loglevel="ERROR")
+        if node is not None:
+            self.log_with_loc(ast.dump(node))
+            self.log_with_loc(NOT_IMPLEMENTED_MSG, loglevel="ERROR")
         return
 
     def isMethodOrCtor(self, f):

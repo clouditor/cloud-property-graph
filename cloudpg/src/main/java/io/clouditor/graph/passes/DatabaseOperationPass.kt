@@ -12,7 +12,7 @@ abstract class DatabaseOperationPass : Pass() {
         host: String,
         call: CallExpression,
         app: Application?
-    ): DatabaseOperation {
+    ): DatabaseConnect {
         val db = getDatabaseForHost(t, host)
 
         val op = DatabaseConnect(listOf(call), null, db)
@@ -31,6 +31,14 @@ abstract class DatabaseOperationPass : Pass() {
     ): DatabaseQuery {
         val op = DatabaseQuery(modify, calls, storage, connect.to)
         op.location = app?.location
+
+        storage.forEach {
+            if (op.isModify) {
+                op.addNextDFG(it)
+            } else {
+                op.addPrevDFG(it)
+            }
+        }
 
         return op
     }
