@@ -160,6 +160,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     val c =
                         Container(
                             image,
+                            null,
                             cluster?.geoLocation ?: GeoLocation("Europe"),
                             meta.labels?.toMap(HashMap())
                         )
@@ -244,9 +245,9 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 // lets set method as null for now, and lets mean that it accepts all methods
                 val node =
                     LoadBalancer(
+                        listOf(service),
                         null,
                         listOf(HttpEndpoint(NoAuthentication(), te, path.path, url, null, null)),
-                        listOf(service),
                         url,
                         null,
                         ArrayList(),

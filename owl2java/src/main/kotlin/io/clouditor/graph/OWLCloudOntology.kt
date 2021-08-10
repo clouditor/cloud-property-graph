@@ -275,6 +275,9 @@ class OWLCloudOntology(filepath: String) {
         val javaClassPropertiesList = javaClass.properties
         javaClassPropertiesList.sortWith(Comparator.comparing { obj: PropertySource<JavaClassSource?> -> obj.name })
 
+        // make sure, that the properties are sorted, so that constructor calls are consistent
+        javaClassPropertiesList.sortBy { it.name }
+
         // Set parameters and body of constructor
         for (elem in javaClassPropertiesList) {
             javaClassConstructor.addParameter(
