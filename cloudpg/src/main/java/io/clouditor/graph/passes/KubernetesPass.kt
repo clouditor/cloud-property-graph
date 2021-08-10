@@ -196,8 +196,8 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
             pod.metadata?.let { meta ->
                 val c =
                     Container(
-                        image,
                         null,
+                        image,
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         meta.labels?.toMap(HashMap())
                     )

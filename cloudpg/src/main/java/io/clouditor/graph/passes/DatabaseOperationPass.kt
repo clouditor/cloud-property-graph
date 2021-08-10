@@ -15,7 +15,7 @@ abstract class DatabaseOperationPass : Pass() {
     ): DatabaseOperation {
         val db = getDatabaseForHost(t, host)
 
-        val op = DatabaseConnect(db, null, listOf(call))
+        val op = DatabaseConnect(null, db, listOf(call))
         op.location = app?.location
 
         return op
@@ -29,7 +29,7 @@ abstract class DatabaseOperationPass : Pass() {
         calls: List<CallExpression>,
         app: Application?
     ): DatabaseQuery {
-        val op = DatabaseQuery(modify, connect.to, storage, calls)
+        val op = DatabaseQuery(modify, storage, connect.to, calls)
         op.location = app?.location
 
         return op
