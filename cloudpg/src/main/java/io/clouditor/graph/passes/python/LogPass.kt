@@ -46,7 +46,7 @@ class LogPass : Pass() {
                     ?: emptyList()
 
             val out =
-                LogOutput(log as List<Logging>, m.arguments.firstOrNull() as CallExpression, m)
+                LogOutput(m.arguments.firstOrNull() as CallExpression, log as List<Logging>, m)
 
             // add DFG from expression to sink
             out.to.forEach { out.value.nextDFG.add((it)) }

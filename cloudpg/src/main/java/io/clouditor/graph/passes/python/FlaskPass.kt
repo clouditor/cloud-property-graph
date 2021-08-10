@@ -51,7 +51,7 @@ class FlaskPass : Pass() {
             val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = v.name
 
-            app?.functionalitys?.plusAssign(handler)
+            app?.functionalities?.plusAssign(handler)
 
             // look for functions
             tu.accept(
@@ -61,7 +61,7 @@ class FlaskPass : Pass() {
                         handleMapping(v)?.let {
                             handler.httpEndpoints.plusAssign(it)
 
-                            app?.functionalitys?.plusAssign(it)
+                            app?.functionalities?.plusAssign(it)
                         }
                     }
                 }
@@ -82,11 +82,11 @@ class FlaskPass : Pass() {
             val endpoint =
                 HttpEndpoint(
                     NoAuthentication(),
-                    te,
-                    null,
-                    getMethod(mapping),
                     func,
-                    getPath(mapping)
+                    getMethod(mapping),
+                    getPath(mapping),
+                    te,
+                    null
                 )
             endpoint.name = endpoint.path
 

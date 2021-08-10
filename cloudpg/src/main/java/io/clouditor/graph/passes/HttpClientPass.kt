@@ -19,7 +19,7 @@ abstract class HttpClientPass : Pass() {
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
 
-        val request = HttpRequest(endpoints, call)
+        val request = HttpRequest(call, endpoints)
         request.name = method
 
         endpoints.forEach { request.addNextDFG(it) }
@@ -38,7 +38,7 @@ abstract class HttpClientPass : Pass() {
             println("Connecting $it to $call")
         }
 
-        app?.functionalitys?.plusAssign(request)
+        app?.functionalities?.plusAssign(request)
 
         return request
     }

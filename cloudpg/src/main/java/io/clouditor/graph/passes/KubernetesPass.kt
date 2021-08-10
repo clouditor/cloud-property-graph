@@ -160,6 +160,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     val c =
                         Container(
                             image,
+                            null,
                             cluster?.geoLocation ?: GeoLocation("Europe"),
                             meta.labels?.toMap(HashMap())
                         )
@@ -234,10 +235,10 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
 
                 val te =
                     TransportEncryption(
+                        "TLS",
                         hasTLS,
                         hasTLS,
                         null,
-                        null
                     ) // if it is enabled, it is enforced in Kubernetes
 
                 // TODO: add multiple endpoints
@@ -245,7 +246,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 val node =
                     LoadBalancer(
                         null,
-                        listOf(HttpEndpoint(NoAuthentication(), te, path.path, url, null, null)),
+                        listOf(HttpEndpoint(NoAuthentication(), null, null, path.path, te, url)),
                         listOf(service),
                         url,
                         null,
