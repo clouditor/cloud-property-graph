@@ -20,6 +20,12 @@ class LabelExtractionPass : Pass() {
         // loop through services
         val nodes = SubgraphWalker.flattenAST(t)
 
+        // Register default extractor that gets Label from Annotation
+        predicatesToHandle.put(
+            { node -> node.annotations.count() > 0 },
+            { node -> handleAnnotations(t, node) }
+        )
+
         nodes.forEach { node: Node ->
             predicatesToHandle.forEach { predicate, handler ->
                 when (predicate.test(node)) {
@@ -27,31 +33,22 @@ class LabelExtractionPass : Pass() {
                 }
             }
         }
-
-        // Register default extractor that gets Label from Annotation
-        predicatesToHandle.put(
-            { node -> node.annotations.count() > 0 },
-            { node -> handleAnnotations(t, node) }
-        )
     }
 
     private fun handleAnnotations(t: TranslationResult, annotationParent: Node) {
         annotationParent.annotations
             .filter { annotation -> annotation.name == "PrivacyLabel" }
-            .forEach { privacyAnnotation ->
-                {
-                    val values: List<Expression> =
-                        privacyAnnotation.members.filter { member -> member.name == "level" }.map {
-                            member ->
-                            member.value
-                        }
-                    if (!values.isEmpty()) {
-                        val literal: Literal<Int>? = values.get(0) as? Literal<Int>
-                        literal?.let {
-                            val label = PrivacyLabel(annotationParent)
-                            label.protectionlevel = it.value
-                            t += label
-                        }
+            .forEach {
+                val values: List<Expression> =
+                    it.members.filter { member -> member.name == "level" }.map { member ->
+                        member.value
+                    }
+                if (!values.isEmpty()) {
+                    val literal: Literal<Int>? = values.get(0) as? Literal<Int>
+                    literal?.let {
+                        val label = PrivacyLabel(annotationParent)
+                        label.protectionlevel = it.value
+                        t += label
                     }
                 }
             }
