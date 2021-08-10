@@ -67,7 +67,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                     val op = createDatabaseConnect(result, host, call, app)
 
                     result += op
-                    app?.functionalitys?.plusAssign(op)
+                    app?.functionalities?.plusAssign(op)
                 }
             }
         }
@@ -118,18 +118,16 @@ class GormDatabasePass : DatabaseOperationPass() {
             }
 
             val op =
-                app?.functionalitys?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
                     val op = createDatabaseQuery(result, false, it, mutableListOf(), calls, app)
                     op.name = call.name
 
                     // loop through the calls and set DFG edges
                     calls.forEach {
-                        if (it.name == "First") {
-                            handleFirst(it, op)
-                        } else if (it.name == "Where") {
-                            handleWhere(it, op)
-                        } else if (it.name == "Find") {
-                            handleFind(it, op)
+                        when (it.name) {
+                            "First" -> handleFirst(it, op)
+                            "Where" -> handleWhere(it, op)
+                            "Find" -> handleFind(it, op)
                         }
                     }
 
@@ -139,7 +137,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
                 result += op
-                app.functionalitys?.plusAssign(op)
+                app.functionalities?.plusAssign(op)
             }
         }
     }

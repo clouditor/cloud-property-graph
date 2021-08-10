@@ -52,14 +52,14 @@ class HttpDispatcherPass : Pass() {
                         endpoint?.let {
                             requestHandler.httpEndpoints.plusAssign(it)
                             result += endpoint
-                            app?.functionalitys?.plusAssign(endpoint)
+                            app?.functionalities?.plusAssign(endpoint)
                         }
                     }
                 }
             )
 
             result += requestHandler
-            app?.functionalitys?.plusAssign(requestHandler)
+            app?.functionalities?.plusAssign(requestHandler)
         }
     }
 
@@ -76,7 +76,7 @@ class HttpDispatcherPass : Pass() {
                     ?.refersTo as?
                     FunctionDeclaration
 
-            val endpoint = HttpEndpoint(NoAuthentication(), null, null, getMethod(mce), func, path)
+            val endpoint = HttpEndpoint(NoAuthentication(), func, getMethod(mce), path, null, null)
             endpoint.name = path
 
             endpoint

@@ -191,24 +191,24 @@ class AzureClientSDKPass : Pass() {
         if (c.name == "create") {
             System.out.println("We got an interesting call: create")
 
-            val request = ObjectStorageRequest(listOf(storage), c, "create")
+            val request = ObjectStorageRequest(c, listOf(storage), "create")
             request.addNextDFG(storage)
             request.name = request.type
 
             t += request
 
-            app?.functionalitys?.plusAssign(request)
+            app?.functionalities?.plusAssign(request)
         } else if (c.name == "appendBlock") {
             println("We got an interesting call: appendBlock")
 
             // create an object storage request
-            val request = ObjectStorageRequest(listOf(storage), c, "append")
+            val request = ObjectStorageRequest(c, listOf(storage), "append")
             request.addNextDFG(storage)
             request.name = request.type
 
             t += request
 
-            app?.functionalitys?.plusAssign(request)
+            app?.functionalities?.plusAssign(request)
 
             // the following is more or less specific to our example application and should be
             // documented as a graph query in the paper
@@ -284,7 +284,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                         }
 
                     // model data export as ObjectStorageRequest
-                    val request = ObjectStorageRequest(listOf(storage), log, "append")
+                    val request = ObjectStorageRequest(log, listOf(storage), "append")
                     storage?.let { request.addNextDFG(it) }
 
                     // add DFG from the source to the sink
@@ -357,8 +357,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
         val compute =
             ContainerOrchestration(
                 mutableListOf(),
-                log,
                 "https://${cluster.innerModel().fqdn()}",
+                log,
                 t.locationForRegion(cluster.region()),
                 mapOf()
             )
@@ -383,10 +383,10 @@ class AzurePass : CloudResourceDiscoveryPass() {
         for (blob in paged.collectList().block()) {
             val te =
                 TransportEncryption(
-                    account.innerModel().enableHttpsTrafficOnly(),
+                    "TLS",
                     true,
+                    account.innerModel().enableHttpsTrafficOnly(),
                     account.innerModel().minimumTlsVersion().toString(),
-                    "TLS"
                 )
 
             // TODO: also include other endpoints
@@ -406,18 +406,18 @@ class AzurePass : CloudResourceDiscoveryPass() {
             val endpoint =
                 HttpEndpoint(
                     auth,
-                    te,
-                    account.innerModel().primaryEndpoints().blob() + blob.name(),
+                    null,
                     "GET",
                     null,
-                    null
+                    te,
+                    account.innerModel().primaryEndpoints().blob() + blob.name(),
                 )
 
             // at rest seems to be default anyway now
             val storage =
                 ObjectStorage(
                     endpoint,
-                    AtRestEncryption(null, "AES-256", true),
+                    AtRestEncryption("AES-256", true, null),
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
@@ -435,14 +435,14 @@ class AzurePass : CloudResourceDiscoveryPass() {
         var atRest: AtRestEncryption? = null
 
         if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_PLATFORM_KEY) {
-            atRest = ManagedKeyEncryption(null, "AES-256", true)
+            atRest = ManagedKeyEncryption("AES-256", true, null)
         } else if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY) {
             atRest =
                 CustomerKeyEncryption(
                     e.diskEncryptionSetId(),
-                    null,
                     "AES-256",
-                    true
+                    true,
+                    null
                 ) // not the actual key, but close enough
         }
 
