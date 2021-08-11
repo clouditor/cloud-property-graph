@@ -45,46 +45,7 @@ class RequestsPass : HttpClientPass() {
     ) {
         val app = t.findApplicationByTU(tu)
 
-        // assume that we are only on one client
-        val env =
-            app?.runsOn?.firstOrNull()?.labels?.filter { it.key.startsWith("env_") }?.mapKeys {
-                it.key.substring(4)
-            }
-                ?: mutableMapOf()
-
-        val url =
-            ValueResolver { node, resolver ->
-                    when (node) {
-                        is MemberCallExpression -> {
-                            var base = resolver.resolve(node.base as Expression?).toString()
-
-                            // support for some special calls, i.e. format
-                            if (node.name == "format") {
-                                // basic sub for now, loop through arguments
-                                for (i in 0 until node.arguments.size) {
-                                    // sub on base
-                                    base =
-                                        base.replace(
-                                            "{$i}",
-                                            resolver.resolve(node.arguments[i]).toString()
-                                        )
-                                }
-
-                                return@ValueResolver base
-                            } else if (node.base.name == "environ" && node.name == "get") {
-                                // environment lookup on python
-                                val key = resolver.resolve(node.arguments.firstOrNull())
-
-                                return@ValueResolver env[key] ?: ""
-                            }
-
-                            // return placeholder
-                            return@ValueResolver "{${node.name}()}"
-                        }
-                        else -> return@ValueResolver "{${node?.name}}"
-                    }
-                }
-                .resolve(r.arguments.first())
+        val url = PythonValueResolver(app).resolve(r.arguments.first())
 
         createHttpRequest(t, url as String, r, method, app)
     }

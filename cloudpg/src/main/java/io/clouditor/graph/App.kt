@@ -22,6 +22,7 @@ import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.HttpDispatcherPass
 import io.clouditor.graph.passes.python.FlaskPass
 import io.clouditor.graph.passes.python.LogPass
+import io.clouditor.graph.passes.python.PyMongoPass
 import io.clouditor.graph.passes.python.RequestsPass
 import io.clouditor.graph.passes.ruby.WebBrickPass
 import java.nio.file.Path
@@ -105,6 +106,7 @@ object App : Callable<Int> {
                 .registerPass(RequestsPass())
                 .registerPass(LogPass())
                 .registerPass(GormDatabasePass())
+                .registerPass(PyMongoPass())
                 .processAnnotations(true)
                 .build()
 
