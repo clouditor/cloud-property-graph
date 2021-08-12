@@ -903,11 +903,15 @@ class PythonASTToCPG(ast.NodeVisitor):
 
         if ref.java_name == "de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression":
             # create a new variable
+            declStatement = DeclarationStatement()
+
             var = VariableDeclaration()
             self.add_loc_info(node.target, var)
             var.setName(ref.getName())
 
-            stmt.setVariable(var)
+            declStatement.setSingleDeclaration(var)
+
+            stmt.setVariable(declStatement)
         else:
             self.log_with_loc(ref.java_name)
             # tuple or list
@@ -1258,8 +1262,9 @@ class PythonASTToCPG(ast.NodeVisitor):
     ### CATCH ALL ###
     def generic_visit(self, node):
         if node is not None:
-            self.log_with_loc(ast.dump(node))
-            self.log_with_loc(NOT_IMPLEMENTED_MSG, loglevel="ERROR")
+            if is isinstance(node, list):
+                self.log_with_loc(ast.dump(node))
+                self.log_with_loc(NOT_IMPLEMENTED_MSG, loglevel="ERROR")
         return
 
     def isMethodOrCtor(self, f):
