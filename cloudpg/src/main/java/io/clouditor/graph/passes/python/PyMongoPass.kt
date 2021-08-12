@@ -2,9 +2,7 @@ package io.clouditor.graph.passes.python
 
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -167,21 +165,6 @@ class PyMongoPass : DatabaseOperationPass() {
         if (op != null) {
             op.name = mce.name
             t += op
-        }
-    }
-
-    private fun <T> storeDeclarationOrReference(map: MutableMap<Node, T>, target: Node, obj: T) {
-        // store it in our clients map
-        map[target] = obj
-
-        // if this is variable declaration, follow the DFG to its REFERS_TO references and store
-        // them as well
-        if (target is VariableDeclaration) {
-            target.nextDFG.forEach {
-                if (it is DeclaredReferenceExpression && it.refersTo == target) {
-                    map[it] = obj
-                }
-            }
         }
     }
 

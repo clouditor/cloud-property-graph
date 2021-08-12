@@ -1262,7 +1262,7 @@ class PythonASTToCPG(ast.NodeVisitor):
     ### CATCH ALL ###
     def generic_visit(self, node):
         if node is not None:
-            if is isinstance(node, list):
+            if isinstance(node, ast.AST):
                 self.log_with_loc(ast.dump(node))
                 self.log_with_loc(NOT_IMPLEMENTED_MSG, loglevel="ERROR")
         return

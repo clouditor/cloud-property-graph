@@ -95,7 +95,7 @@ object App : Callable<Int> {
                 .registerPass(HttpDispatcherPass())
                 .registerPass(FetchPass())
                 .registerPass(FlaskPass())
-                // .registerPass(AzurePass())
+                .registerPass(AzurePass())
                 .registerPass(AzureClientSDKPass())
                 .registerPass(KubernetesPass())
                 .registerPass(IngressInvocationPass())
