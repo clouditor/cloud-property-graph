@@ -20,10 +20,7 @@ import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
 import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.HttpDispatcherPass
-import io.clouditor.graph.passes.python.FlaskPass
-import io.clouditor.graph.passes.python.LogPass
-import io.clouditor.graph.passes.python.PyMongoPass
-import io.clouditor.graph.passes.python.RequestsPass
+import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
 import java.nio.file.Path
 import java.util.concurrent.Callable
@@ -107,6 +104,7 @@ object App : Callable<Int> {
                 .registerPass(LogPass())
                 .registerPass(GormDatabasePass())
                 .registerPass(PyMongoPass())
+                .registerPass(Psycopg2Pass())
                 .processAnnotations(true)
                 .build()
 
