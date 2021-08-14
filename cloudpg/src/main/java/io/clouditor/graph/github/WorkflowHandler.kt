@@ -75,7 +75,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                             val compose = mapper.readValue(reader, DockerCompose::class.java)
 
                             for (pair in compose.services) {
-
                                 pair.value.ports.forEach {
                                     val port = it.split(":").first().toShort()
                                     val networkService =
@@ -109,7 +108,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         val tuPath = Path.of(it.name)
 
                         try {
-                            tuPath.startsWith(path)
+                            tuPath.startsWith(Path.of(path).toAbsolutePath().normalize()) ||
+                                tuPath.startsWith(path)
                         } catch (e: IllegalArgumentException) {
                             false
                         }

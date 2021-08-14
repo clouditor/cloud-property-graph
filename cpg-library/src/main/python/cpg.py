@@ -865,16 +865,16 @@ class PythonASTToCPG(ast.NodeVisitor):
             return dummy
         
         # do not wrap a single statement as CompoundStatement
-        if len(node_list) == 1:
-            s = self.visit(node_list[0])
-            # TODO move to a new function. it repeats
-            if s is not None and s.java_name.startswith('de.fraunhofer.aisec.cpg.graph.declarations.'):
-                d = DeclarationStatement()
-                self.add_loc_info(node, d)
-                d.setSingleDeclaration(s)
-                return d
-            else:
-                return s
+       # if len(node_list) == 1:
+       #     s = self.visit(node_list[0])
+       #     # TODO move to a new function. it repeats
+       #     if s is not None and s.java_name.startswith('de.fraunhofer.aisec.cpg.graph.declarations.'):
+       #         d = DeclarationStatement()
+       #         self.add_loc_info(node, d)
+       #         d.setSingleDeclaration(s)
+       #         return d
+       #     else:
+       #         return s
 
         body = CompoundStatement()
         self.add_loc_info(node, body)

@@ -43,11 +43,12 @@ class HttpDispatcherPass : Pass() {
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
             requestHandler.name = requestHandler.path
 
-            v.accept(
-                Strategy::EOG_FORWARD,
+            tu.accept(
+                Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
+                // level statements
                 object : IVisitor<Node?>() {
                     fun visit(mce: MemberCallExpression) {
-                        val endpoint = handleEndpoint(result, tu, mce)
+                        val endpoint = handleEndpoint(result, tu, mce, v)
 
                         endpoint?.let {
                             requestHandler.httpEndpoints.plusAssign(it)
@@ -66,9 +67,12 @@ class HttpDispatcherPass : Pass() {
     private fun handleEndpoint(
         result: TranslationResult,
         tu: TranslationUnitDeclaration?,
-        mce: MemberCallExpression
+        mce: MemberCallExpression,
+        v: VariableDeclaration
     ): HttpEndpoint? {
-        return if (mce.name == "onPost" || mce.name == "onGet") {
+        return if ((mce.name == "onPost" || mce.name == "onGet") &&
+                (mce.base as? DeclaredReferenceExpression)?.refersTo == v
+        ) {
             val path: String =
                 unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
             val func =

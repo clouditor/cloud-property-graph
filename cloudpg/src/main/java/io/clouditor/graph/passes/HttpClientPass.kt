@@ -78,7 +78,7 @@ abstract class HttpClientPass : Pass() {
             matchUrl = "http://${matchUrl}"
         }
 
-        val match = endpointUrl.startsWith(matchUrl)
+        val match = matchUrl.startsWith(endpointUrl)
 
         log.debug("{},{},{} == {}: {}", endpointUrl, it.path, it.method, matchUrl, match)
 
