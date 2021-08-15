@@ -13,6 +13,7 @@ import io.clouditor.graph.passes.locationForRegion
 import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.name
 
 class WorkflowHandler(private val result: TranslationResult, val rootPath: Path) {
 
@@ -42,7 +43,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 ?.let { command ->
                     val application =
                         result.additionalNodes.filterIsInstance(Application::class.java)
-                            .firstOrNull { it.name == path }
+                            .firstOrNull { it.name == Path.of(path).fileName.toString() }
 
                     val rr = command.split(" ")
 
@@ -75,7 +76,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                             val compose = mapper.readValue(reader, DockerCompose::class.java)
 
                             for (pair in compose.services) {
-
                                 pair.value.ports.forEach {
                                     val port = it.split(":").first().toShort()
                                     val networkService =
@@ -109,7 +109,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         val tuPath = Path.of(it.name)
 
                         try {
-                            tuPath.startsWith(path)
+                            tuPath.startsWith(Path.of(path).toAbsolutePath().normalize()) ||
+                                tuPath.startsWith(path)
                         } catch (e: IllegalArgumentException) {
                             false
                         }
@@ -123,7 +124,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         mutableListOf(),
                         tus,
                     )
-                application.name = path
+                application.name = Path.of(path).fileName.toString()
 
                 result.additionalNodes += application
 

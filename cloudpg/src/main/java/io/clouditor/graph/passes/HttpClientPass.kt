@@ -21,6 +21,7 @@ abstract class HttpClientPass : Pass() {
 
         val request = HttpRequest(call, endpoints)
         request.name = method
+        request.location = call.location
 
         endpoints.forEach { request.addNextDFG(it) }
 
@@ -78,7 +79,7 @@ abstract class HttpClientPass : Pass() {
             matchUrl = "http://${matchUrl}"
         }
 
-        val match = endpointUrl.startsWith(matchUrl)
+        val match = matchUrl.startsWith(endpointUrl)
 
         log.debug("{},{},{} == {}: {}", endpointUrl, it.path, it.method, matchUrl, match)
 

@@ -71,11 +71,8 @@ object App : Callable<Int> {
                 )
                 .registerLanguage(
                     TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
-                )
-                .registerLanguage(
-                    TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS
+                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS +
+                        TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
                     PythonLanguageFrontend::class.java,
