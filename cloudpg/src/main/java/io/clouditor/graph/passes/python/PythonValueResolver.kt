@@ -36,7 +36,7 @@ class PythonValueResolver(
                         // environment lookup on python
                         val key = resolver.resolve(node.arguments.firstOrNull())
 
-                        env[key] ?: ""
+                        env[key] ?: resolver.resolve(node.arguments[1])
                     } else {
                         // return placeholder
                         "{${node.name}()}"
