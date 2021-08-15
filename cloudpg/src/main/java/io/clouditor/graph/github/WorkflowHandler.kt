@@ -13,6 +13,7 @@ import io.clouditor.graph.passes.locationForRegion
 import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.name
 
 class WorkflowHandler(private val result: TranslationResult, val rootPath: Path) {
 
@@ -42,7 +43,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 ?.let { command ->
                     val application =
                         result.additionalNodes.filterIsInstance(Application::class.java)
-                            .firstOrNull { it.name == path }
+                            .firstOrNull { it.name == Path.of(path).fileName.toString() }
 
                     val rr = command.split(" ")
 
@@ -123,7 +124,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         mutableListOf(),
                         tus,
                     )
-                application.name = path
+                application.name = Path.of(path).fileName.toString()
 
                 result.additionalNodes += application
 

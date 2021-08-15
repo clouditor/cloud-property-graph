@@ -21,6 +21,7 @@ abstract class HttpClientPass : Pass() {
 
         val request = HttpRequest(call, endpoints)
         request.name = method
+        request.location = call.location
 
         endpoints.forEach { request.addNextDFG(it) }
 
