@@ -11,5 +11,5 @@ open class Label constructor(labeledNode: Node) : Node() {
      * unique label of the same type and properties.
      */
     @field:Relationship(value = "LABELEDNODE", direction = "OUTGOING")
-    var labeledNodes: List<Node> = mutableListOf(labeledNode)
+    var labeledNodes: MutableList<Node> = mutableListOf(labeledNode)
 }
