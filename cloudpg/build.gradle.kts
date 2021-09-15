@@ -48,7 +48,7 @@ repositories {
     maven { setUrl("https://jitpack.io") }
 
     ivy {
-        setUrl("https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0/plugins")
+        setUrl("https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.2/plugins")
         metadataSources {
             artifact()
         }
@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
     //implementation("de.fraunhofer.aisec", "cpg", "0.0.0-SNAPSHOT") {
-    implementation("com.github.Fraunhofer-AISEC:cpg:9ed636d4")
+    implementation("com.github.Fraunhofer-AISEC:cpg:4.0.4")
 
     api("org.neo4j", "neo4j-ogm-core", "3.2.21")
     api("org.neo4j", "neo4j-ogm", "3.2.21")

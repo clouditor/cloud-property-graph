@@ -16,6 +16,7 @@ import com.azure.resourcemanager.loganalytics.LogAnalyticsManager
 import com.azure.resourcemanager.loganalytics.models.Workspace
 import com.azure.resourcemanager.storage.models.PublicAccess
 import com.azure.resourcemanager.storage.models.StorageAccount
+import de.fraunhofer.aisec.cpg.ExperimentalGolang
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
@@ -240,6 +241,7 @@ class AzureClientSDKPass : Pass() {
 class AzurePass : CloudResourceDiscoveryPass() {
     override fun cleanup() {}
 
+    @OptIn(ExperimentalGolang::class)
     override fun accept(t: TranslationResult) {
         val profile = AzureProfile(AzureEnvironment.AZURE)
         val credential: TokenCredential =
