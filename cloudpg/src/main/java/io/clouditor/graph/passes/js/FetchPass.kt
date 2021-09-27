@@ -3,27 +3,71 @@ package io.clouditor.graph.passes.js
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
+import io.clouditor.graph.App
 import io.clouditor.graph.ValueResolver
 import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
+import io.clouditor.graph.plusAssign
+import java.nio.file.Files
 
 class FetchPass : HttpClientPass() {
+    val map = mutableMapOf<String, VariableDeclaration>()
+
     override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            tu.accept(
-                Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(call: CallExpression) {
-                        handleCallExpression(t, tu, call)
+        val applications = listOf(App.rootPath)
+
+        for (rootPath in applications) {
+            // TODO use regex
+            val envPath = rootPath.resolve("frontend").resolve(".env.production")
+            envPath.toFile().walkTopDown().iterator().forEach { file ->
+                Files.newBufferedReader(file.toPath()).use {
+                    it.readLines().forEach {
+                        var key = it.split(" = ")?.get(0)
+                        // TODO should this be a literal, so the ValueResolver can resolve the url?
+                        var v = VariableDeclaration()
+                        v.name = key
+                        v.code = it
+                        map.put(key, v)
+                        t += v
+                        t.findApplicationByTU(t.translationUnits[0])?.addNextDFG(v)
                     }
                 }
-            )
+            }
         }
+        if (t != null) {
+            for (tu in t.translationUnits) {
+                tu.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(v: VariableDeclaration) {
+                            handleVariableDeclaration(v)
+                        }
+                    }
+                )
+            }
+            for (tu in t.translationUnits) {
+                tu.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(call: CallExpression) {
+                            handleCallExpression(t, tu, call)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun handleVariableDeclaration(v: VariableDeclaration) {
+        // TODO use regex
+        val variableName = v.code?.split("process.env.")?.get(1)?.split("!")?.get(0)
+        map.get(variableName)?.addNextDFG(v)
     }
 
     private fun handleCallExpression(
@@ -44,7 +88,12 @@ class FetchPass : HttpClientPass() {
         val app = t.findApplicationByTU(tu)
 
         // first parameter is the URL
-        val url = ValueResolver().resolve(call.arguments.first())
+        var url = ValueResolver().resolve(call.arguments.first())
+        // replace url with the corresponding process env value if it exists
+        // TODO doesn't work yet, because the ValueResolver cannot resolve the url for frontend urlAPIs
+        if (map.get(url) != null) {
+            url = map.get(url)!!.code?.split(" = ")?.get(1)
+        }
 
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
@@ -55,7 +104,7 @@ class FetchPass : HttpClientPass() {
     private fun getMethod(options: InitializerListExpression?): String {
         var method = "GET"
 
-        // for now, assume that options is a object construct. it could also be a reference to
+        // for now, assume that options is an object construct. it could also be a reference to
         // one we could extend the variable resolver to return a hashmap
 
         ValueResolver()
