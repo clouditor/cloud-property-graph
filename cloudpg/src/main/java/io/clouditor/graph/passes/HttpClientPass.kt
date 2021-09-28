@@ -3,10 +3,7 @@ package io.clouditor.graph.passes
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
-import io.clouditor.graph.Application
-import io.clouditor.graph.HttpEndpoint
-import io.clouditor.graph.HttpRequest
-import io.clouditor.graph.additionalNodes
+import io.clouditor.graph.*
 
 abstract class HttpClientPass : Pass() {
 
@@ -77,6 +74,13 @@ abstract class HttpClientPass : Pass() {
 
         if (!matchUrl.startsWith("http")) {
             matchUrl = "http://${matchUrl}"
+        }
+
+        // adding transport encryption if url is https
+        if (endpointUrl.startsWith("https")){
+            if (it.transportEncryption == null) {
+                it.transportEncryption = TransportEncryption("TLS", true, false, "")
+            }
         }
 
         val match = matchUrl.startsWith(endpointUrl)
