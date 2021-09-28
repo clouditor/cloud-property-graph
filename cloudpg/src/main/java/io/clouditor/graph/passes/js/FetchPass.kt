@@ -3,8 +3,8 @@ package io.clouditor.graph.passes.js
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -13,11 +13,10 @@ import io.clouditor.graph.App
 import io.clouditor.graph.ValueResolver
 import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
-import io.clouditor.graph.plusAssign
 import java.nio.file.Files
 
 class FetchPass : HttpClientPass() {
-    val map = mutableMapOf<String, VariableDeclaration>()
+    var map = mutableMapOf<String, String>()
 
     override fun accept(t: TranslationResult) {
         val applications = listOf(App.rootPath)
@@ -28,46 +27,23 @@ class FetchPass : HttpClientPass() {
             envPath.toFile().walkTopDown().iterator().forEach { file ->
                 Files.newBufferedReader(file.toPath()).use {
                     it.readLines().forEach {
-                        var key = it.split(" = ")?.get(0)
-                        // TODO should this be a literal, so the ValueResolver can resolve the url?
-                        var v = VariableDeclaration()
-                        v.name = key
-                        v.code = it
-                        map.put(key, v)
-                        t += v
-                        t.findApplicationByTU(t.translationUnits[0])?.addNextDFG(v)
+                        val key = it.split(" = ")?.get(0)
+                        val url = it.split(" = ")?.get(1)
+                        map.put(key, url)
                     }
                 }
             }
         }
-        if (t != null) {
-            for (tu in t.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(v: VariableDeclaration) {
-                            handleVariableDeclaration(v)
-                        }
+        for (tu in t.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(call: CallExpression) {
+                        handleCallExpression(t, tu, call)
                     }
-                )
-            }
-            for (tu in t.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(call: CallExpression) {
-                            handleCallExpression(t, tu, call)
-                        }
-                    }
-                )
-            }
+                }
+            )
         }
-    }
-
-    private fun handleVariableDeclaration(v: VariableDeclaration) {
-        // TODO use regex
-        val variableName = v.code?.split("process.env.")?.get(1)?.split("!")?.get(0)
-        map.get(variableName)?.addNextDFG(v)
     }
 
     private fun handleCallExpression(
@@ -86,14 +62,21 @@ class FetchPass : HttpClientPass() {
         call: CallExpression
     ) {
         val app = t.findApplicationByTU(tu)
+        // add env vars as labels
+        app?.runsOn?.forEach { it.labels = it.labels + map }
 
         // first parameter is the URL
         var url = ValueResolver().resolve(call.arguments.first())
         // replace url with the corresponding process env value if it exists
-        // TODO doesn't work yet, because the ValueResolver cannot resolve the url for frontend urlAPIs
-        if (map.get(url) != null) {
-            url = map.get(url)!!.code?.split(" = ")?.get(1)
-        }
+        val envVarName =
+            (call.arguments.first() as DeclaredReferenceExpression)
+                .refersTo
+                ?.code
+                ?.split("process.env.")
+                ?.get(1)
+                ?.split("!")
+                ?.get(0)
+        (call.arguments.first() as DeclaredReferenceExpression).refersTo?.code = map.get(envVarName)
 
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
