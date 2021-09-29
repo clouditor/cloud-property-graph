@@ -62,6 +62,8 @@ class FlaskPass : Pass() {
                             handler.httpEndpoints.plusAssign(it)
 
                             app?.functionalities?.plusAssign(it)
+
+                            result += it
                         }
                     }
                 }

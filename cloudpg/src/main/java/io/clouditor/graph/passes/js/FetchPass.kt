@@ -4,7 +4,6 @@ import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -66,17 +65,7 @@ class FetchPass : HttpClientPass() {
         app?.runsOn?.forEach { it.labels = it.labels + map }
 
         // first parameter is the URL
-        var url = ValueResolver().resolve(call.arguments.first())
-        // replace url with the corresponding process env value if it exists
-        val envVarName =
-            (call.arguments.first() as DeclaredReferenceExpression)
-                .refersTo
-                ?.code
-                ?.split("process.env.")
-                ?.get(1)
-                ?.split("!")
-                ?.get(0)
-        (call.arguments.first() as DeclaredReferenceExpression).refersTo?.code = map.get(envVarName)
+        var url = JSValueResolver(app).resolve(call.arguments.first())
 
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)

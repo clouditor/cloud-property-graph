@@ -59,6 +59,8 @@ class SpringBootPass : Pass() {
                     handler.httpEndpoints.plusAssign(it)
 
                     app?.functionalities?.plusAssign(it)
+
+                    result += it
                 }
             }
 
