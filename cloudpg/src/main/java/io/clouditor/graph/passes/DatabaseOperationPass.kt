@@ -44,11 +44,6 @@ abstract class DatabaseOperationPass : Pass() {
             }
         }
 
-        // add EOG edge
-        for (call in calls) {
-            op.addNextEOG(PropertyEdge(op, call))
-        }
-
         return op
     }
 
