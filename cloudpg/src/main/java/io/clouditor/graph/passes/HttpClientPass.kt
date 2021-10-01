@@ -18,7 +18,6 @@ abstract class HttpClientPass : Pass() {
         app: Application?
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
-
         val request = HttpRequest(call, endpoints)
         request.name = method
         request.location = call.location
@@ -69,6 +68,15 @@ abstract class HttpClientPass : Pass() {
         // get rid of variable names
         endpointUrl = endpointUrl?.replace("[{<].*[}>]".toRegex(), "{}")
         matchUrl = matchUrl.replace("[{<].*[}>]".toRegex(), "{}")
+        // TODO refactor this; might be specific to the patient community example
+        // environment variables might be stored with quotation marks
+        matchUrl = matchUrl.replace("\"", "")
+        // remove port
+        matchUrl = matchUrl.replace(":[0-9]{1,5}\\/".toRegex(), "/")
+        // add final "/" to match the endpointUrl
+        if (!matchUrl.endsWith("/")) {
+            matchUrl += "/"
+        }
 
         // add http, if not specified
         if (!endpointUrl.startsWith("http")) {

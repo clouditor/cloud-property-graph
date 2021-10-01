@@ -48,6 +48,8 @@ class IngressInvocationPass : Pass() {
             for (endpoint in controller.httpEndpoints) {
                 var url = inUrl.appendPath(controller.path)
                 url = url.appendPath(endpoint.path)
+                // add the url also to the endpoint
+                endpoint.url = url
 
                 // for now, NoAuthentication
                 val authentication = NoAuthentication()
