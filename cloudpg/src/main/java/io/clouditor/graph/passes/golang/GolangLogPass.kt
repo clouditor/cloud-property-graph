@@ -2,9 +2,8 @@ package io.clouditor.graph.passes.golang
 
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
-import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
@@ -17,26 +16,23 @@ class GolangLogPass : LogPass() {
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
                     fun visit(m: MemberCallExpression) {
-                        // TODO missing newEvent
                         val logMethods =
-                                arrayOf(
-                                        "log.Info()",
-                                        "log.Debug()",
-                                        "log.Trace()",
-                                        "log.Warn()",
-                                        "log.Error()",
-                                        "log.log()"
-                                )
-                        // very simple for now, the logging library needs to be called "log"
-                        // we assume that this is going to std out, resulting in log collection in k8s; the
-                        // kubernetes resource is only connected if it found
-                        if (m.base.code in logMethods) {
-                            handleLog(t, m, tu)
+                            arrayOf(
+                                "log.Info",
+                                "log.Debug",
+                                "log.Trace",
+                                "log.Warn",
+                                "log.Err",
+                            )
+                        // we are looking for calls to Msg, which have a base of one of the logging
+                        // specifiers above, e.g. log.Info().Msg("Hello")
+                        if (m.name == "Msg" && (m.base as? CallExpression)?.fqn in logMethods) {
+                            // the base name specifies the log severity, so we use this one as the "name" of the log operation
+                            handleLog(t, m, m.base.name, tu)
                         }
                     }
                 }
             )
         }
     }
-
 }

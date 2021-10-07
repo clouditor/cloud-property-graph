@@ -17,12 +17,11 @@ class PythonLogPass : LogPass() {
                 object : IVisitor<Node?>() {
                     fun visit(m: MemberCallExpression) {
                         if (m.name == "info" && m.base.name == "logging") {
-                            handleLog(t, m, tu)
+                            handleLog(t, m, m.name, tu)
                         }
                     }
                 }
             )
         }
     }
-
 }

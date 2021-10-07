@@ -54,13 +54,13 @@ abstract class HttpClientPass : Pass() {
         }
     }
 
-    private fun endpointMatches(it: HttpEndpoint, url: String): Boolean {
+    private fun endpointMatches(endpoint: HttpEndpoint, url: String): Boolean {
         // skip empty urls
-        if (it.url == null) {
+        if (endpoint.url == null) {
             return false
         }
 
-        var endpointUrl = it.url
+        var endpointUrl = endpoint.url
         var matchUrl = url
 
         // get rid of variable names
@@ -77,15 +77,22 @@ abstract class HttpClientPass : Pass() {
         }
 
         // adding transport encryption if url is https
-        if (endpointUrl.startsWith("https")){
-            if (it.transportEncryption == null) {
-                it.transportEncryption = TransportEncryption("TLS", true, false, "")
+        if (endpointUrl.startsWith("https")) {
+            if (endpoint.transportEncryption == null) {
+                endpoint.transportEncryption = TransportEncryption("TLS", true, false, "")
             }
         }
 
         val match = matchUrl.startsWith(endpointUrl)
 
-        log.debug("{},{},{} == {}: {}", endpointUrl, it.path, it.method, matchUrl, match)
+        log.debug(
+            "{},{},{} == {}: {}",
+            endpointUrl,
+            endpoint.path,
+            endpoint.method,
+            matchUrl,
+            match
+        )
 
         return match
     }
