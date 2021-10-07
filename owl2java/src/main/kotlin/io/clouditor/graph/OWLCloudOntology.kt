@@ -1,7 +1,6 @@
 package io.clouditor.graph
 
 import kotlin.Throws
-import io.clouditor.graph.GoStruct
 import org.apache.commons.lang3.StringUtils
 import java.util.LinkedHashMap
 import org.jboss.forge.roaster.Roaster
@@ -46,7 +45,7 @@ class OWLCloudOntology(filepath: String) {
             if (clazz.isOWLThing) continue
             val gs = getGoInformationFromOWLClass(clazz, classes)
             gs.packageName = packageName
-            if (gs != null) goList.add(gs)
+            goList.add(gs)
         }
         return goList
     }
@@ -62,7 +61,7 @@ class OWLCloudOntology(filepath: String) {
             }
             val jcs = getJavaClassSourceFromOWLClass(clazz)
             jcs!!.setPackage(packageName)
-            if (jcs != null) jcsList.add(jcs)
+            jcsList.add(jcs)
         }
 
         // Set superclass call, must be done here to have the parameters from the superclass constructor
@@ -473,7 +472,7 @@ class OWLCloudOntology(filepath: String) {
             // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
-                var property: PropertySource<JavaClassSource?>? = null
+                var property: PropertySource<JavaClassSource?>?
                 property = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
@@ -507,7 +506,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
-        var rootClassName = ""
+        var rootClassName: String
         rootClassName = getSuperClassName(clazz)
         if (rootClassName == "CloudResource") {
             return true
@@ -551,11 +550,11 @@ class OWLCloudOntology(filepath: String) {
 
     // Deletes not needed characters from string, e.g. space, '/', '-'
     private fun formatString(unformattedString: String): String {
-        var unformattedString = unformattedString
-        if (unformattedString.contains(" ")) unformattedString = unformattedString.replace(" ", "")
-        if (unformattedString.contains("/")) unformattedString = unformattedString.replace("/", "")
-        if (unformattedString.contains("-")) unformattedString = unformattedString.replace("-", "")
-        return unformattedString
+        var formattedString = unformattedString
+        if (formattedString.contains(" ")) formattedString = formattedString.replace(" ", "")
+        if (formattedString.contains("/")) formattedString = formattedString.replace("/", "")
+        if (formattedString.contains("-")) formattedString = formattedString.replace("-", "")
+        return formattedString
     }
 
     private fun getClassName(clazz: OWLClass): String {

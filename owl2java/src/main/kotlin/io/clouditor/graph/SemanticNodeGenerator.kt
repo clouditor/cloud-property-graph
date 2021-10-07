@@ -2,16 +2,12 @@ package io.clouditor.graph
 
 import kotlin.Throws
 import kotlin.jvm.JvmStatic
-import io.clouditor.graph.SemanticNodeGenerator
-import io.clouditor.graph.OWLCloudOntology
 import org.jboss.forge.roaster.model.source.JavaClassSource
-import io.clouditor.graph.GoStruct
 import org.apache.commons.lang3.StringUtils
 import org.semanticweb.owlapi.model.OWLOntologyCreationException
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.ArrayList
 import java.util.Arrays
 import java.util.Locale
 import java.util.stream.Collectors
@@ -75,8 +71,8 @@ object SemanticNodeGenerator {
     }
 
     private fun checkPath(outputBase: String): String {
-        var outputBase = outputBase
-        return if (outputBase[outputBase.length - 1] != '/') "/".let { outputBase += it; outputBase } else outputBase
+        var tmpOutputBase = outputBase
+        return if (tmpOutputBase[tmpOutputBase.length - 1] != '/') "/".let { tmpOutputBase += it; tmpOutputBase } else tmpOutputBase
     }
 
     // Create Go source code
@@ -235,8 +231,6 @@ object SemanticNodeGenerator {
     // Write Go source code to filesystem
     private fun writeGoStringsToFolder(goSources: List<GoStruct>, outputBase: String) {
         var filepath: String
-        var filename: String
-        val filenameList: List<String> = ArrayList()
         for (goSource in goSources) {
             filepath = getGoFilepath(goSource.name, outputBase)
             val f = File(filepath)
@@ -258,13 +252,12 @@ object SemanticNodeGenerator {
     }
 
     fun getGoFilepath(name: String, outputBase: String): String {
-        var filenameList: List<String?>? = ArrayList()
-        val filename: String
+        var filenameList: List<String?>?
         val filepath: String
         filenameList = Arrays.stream(name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])".toRegex()).toTypedArray())
             .map { obj: String -> obj.lowercase(Locale.getDefault()) }
             .collect(Collectors.toList())
-        filename = java.lang.String.join("_", filenameList)
+        val filename: String = java.lang.String.join("_", filenameList)
 
         // Create filepath
         filepath = "$outputBase$filename.go"
