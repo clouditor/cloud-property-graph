@@ -357,6 +357,10 @@ class OWLCloudOntology(filepath: String) {
                 classDataPropertyValue = getClassDataPropertyValue(superClass as OWLDataSomeValuesFromImpl)
                 if (classDataPropertyValue == "string") classDataPropertyValue =
                     StringUtils.capitalize(classDataPropertyValue)
+                if (classRelationshipPropertyName.equals("mixedDuties")) {
+                    System.out.println("TEST")
+                }
+
                 javaClass.addProperty(classDataPropertyValue, classRelationshipPropertyName).field.setProtected()
             } else if (superClass.classExpressionType == ClassExpressionType.DATA_HAS_VALUE) {
                 // little but hacky,
@@ -602,11 +606,7 @@ class OWLCloudOntology(filepath: String) {
     // Get class data property name (realtionship in OWL)
     private fun getClassDataPropertyName(nce: OWLClassExpression): String {
         for (elem in nce.dataPropertiesInSignature) {
-            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
-                if (item != null) {
-                    return item.value.toString().split("\"").toTypedArray()[1]
-                }
-            }
+            return elem.iri.fragment
         }
         return ""
     }
