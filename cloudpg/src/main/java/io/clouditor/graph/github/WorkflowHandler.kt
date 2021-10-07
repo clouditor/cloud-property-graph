@@ -44,7 +44,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                     val application =
                         result.additionalNodes.filterIsInstance(Application::class.java)
                             .firstOrNull { it.name == Path.of(path).fileName.toString() }
-
                     val rr = command.split(" ")
 
                     // look for the host
@@ -64,7 +63,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 mutableMapOf()
                             )
                         compute.name = host
-
                         application?.runsOn?.plusAssign(compute)
 
                         result += compute

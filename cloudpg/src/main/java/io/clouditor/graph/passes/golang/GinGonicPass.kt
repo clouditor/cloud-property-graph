@@ -61,6 +61,7 @@ class GinGonicPass : Pass() {
                 log.debug("Adding GET to {} - resolved to {}", client?.name, endpoint.handler?.name)
 
                 client?.httpEndpoints?.plusAssign(endpoint)
+                result += endpoint
             } else if (m.name == "Group") {
                 // add a new (sub) client
                 val app = result.findApplicationByTU(tu)

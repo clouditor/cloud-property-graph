@@ -15,7 +15,6 @@ abstract class HttpClientPass : Pass() {
         app: Application?
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
-
         val request = HttpRequest(call, endpoints)
         request.name = method
         request.location = call.location
@@ -66,6 +65,14 @@ abstract class HttpClientPass : Pass() {
         // get rid of variable names
         endpointUrl = endpointUrl?.replace("[{<].*[}>]".toRegex(), "{}")
         matchUrl = matchUrl.replace("[{<].*[}>]".toRegex(), "{}")
+
+        // normalize urls with trailing slashes
+        if (!matchUrl.endsWith("/")) {
+            matchUrl += "/"
+        }
+        if (!endpointUrl.endsWith("/")) {
+            endpointUrl += "/"
+        }
 
         // add http, if not specified
         if (!endpointUrl.startsWith("http")) {

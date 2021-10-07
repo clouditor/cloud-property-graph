@@ -28,7 +28,6 @@ abstract class LogPass : Pass() {
             }
                 ?: emptyList()
 
-
         val out = LogOutput(m, log as List<Logging>, m.arguments.firstOrNull())
         out.location = m.location
         out.name = name
