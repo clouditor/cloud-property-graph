@@ -122,9 +122,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         mutableListOf(),
                         tus,
                     )
-                // adding a simple container for now until we extend the GitHubWorkflowPass to
-                // correctly parse the workflow file
-                application.runsOn?.plusAssign(Container(null, null, null, mutableMapOf()))
                 application.name = Path.of(path).fileName.toString()
 
                 result.additionalNodes += application
