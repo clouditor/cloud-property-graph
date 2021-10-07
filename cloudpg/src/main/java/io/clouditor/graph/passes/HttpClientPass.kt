@@ -3,10 +3,7 @@ package io.clouditor.graph.passes
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
-import io.clouditor.graph.Application
-import io.clouditor.graph.HttpEndpoint
-import io.clouditor.graph.HttpRequest
-import io.clouditor.graph.additionalNodes
+import io.clouditor.graph.*
 
 abstract class HttpClientPass : Pass() {
 
@@ -56,13 +53,13 @@ abstract class HttpClientPass : Pass() {
         }
     }
 
-    private fun endpointMatches(it: HttpEndpoint, url: String): Boolean {
+    private fun endpointMatches(endpoint: HttpEndpoint, url: String): Boolean {
         // skip empty urls
-        if (it.url == null) {
+        if (endpoint.url == null) {
             return false
         }
 
-        var endpointUrl = it.url
+        var endpointUrl = endpoint.url
         var matchUrl = url
 
         // get rid of variable names
@@ -87,9 +84,23 @@ abstract class HttpClientPass : Pass() {
             matchUrl = "http://${matchUrl}"
         }
 
+        // adding transport encryption if url is https
+        if (endpointUrl.startsWith("https")) {
+            if (endpoint.transportEncryption == null) {
+                endpoint.transportEncryption = TransportEncryption("TLS", true, false, "")
+            }
+        }
+
         val match = matchUrl.startsWith(endpointUrl)
 
-        log.debug("{},{},{} == {}: {}", endpointUrl, it.path, it.method, matchUrl, match)
+        log.debug(
+            "{},{},{} == {}: {}",
+            endpointUrl,
+            endpoint.path,
+            endpoint.method,
+            matchUrl,
+            match
+        )
 
         return match
     }
