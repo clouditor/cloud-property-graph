@@ -21,18 +21,20 @@ class FetchPass : HttpClientPass() {
         val applications = listOf(App.rootPath)
 
         for (rootPath in applications) {
-            // TODO use regex
             val envPath = rootPath.resolve("frontend").resolve(".env.production")
+
             envPath.toFile().walkTopDown().iterator().forEach { file ->
-                Files.newBufferedReader(file.toPath()).use {
-                    it.readLines().forEach {
-                        val key = it.split(" = ")?.get(0)
-                        val url = it.split(" = ")?.get(1)
-                        map.put(key, url)
+                Files.newBufferedReader(file.toPath()).use { reader ->
+                    reader.readLines().forEach {
+                        val keyValue = it.split(" = ")
+                        val key = keyValue[0]
+                        val url = keyValue[1].trim('\"')
+                        map["env_$key"] = url
                     }
                 }
             }
         }
+
         for (tu in t.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,

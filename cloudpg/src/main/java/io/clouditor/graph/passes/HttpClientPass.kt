@@ -65,14 +65,13 @@ abstract class HttpClientPass : Pass() {
         // get rid of variable names
         endpointUrl = endpointUrl?.replace("[{<].*[}>]".toRegex(), "{}")
         matchUrl = matchUrl.replace("[{<].*[}>]".toRegex(), "{}")
-        // TODO refactor this; might be specific to the patient community example
-        // environment variables might be stored with quotation marks
-        matchUrl = matchUrl.replace("\"", "")
-        // remove port
-        matchUrl = matchUrl.replace(":[0-9]{1,5}\\/".toRegex(), "/")
-        // add final "/" to match the endpointUrl
+
+        // normalize urls with trailing slashes
         if (!matchUrl.endsWith("/")) {
             matchUrl += "/"
+        }
+        if (!endpointUrl.endsWith("/")) {
+            endpointUrl += "/"
         }
 
         // add http, if not specified

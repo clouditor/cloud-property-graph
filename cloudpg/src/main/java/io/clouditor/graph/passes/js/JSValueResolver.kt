@@ -10,7 +10,11 @@ class JSValueResolver(
     override val cannotResolve: (Node?, ValueResolver) -> Any? =
             { node: Node?, resolver: ValueResolver ->
         // assume that we are only on one client
-        val env = app?.runsOn?.firstOrNull()?.labels ?: mutableMapOf()
+        val env =
+            app?.runsOn?.firstOrNull()?.labels?.filter { it.key.startsWith("env_") }?.mapKeys {
+                it.key.substring(4)
+            }
+                ?: mutableMapOf()
 
         when (node) {
             is Expression -> {
@@ -20,7 +24,7 @@ class JSValueResolver(
                             node.code?.split("process.env.")?.get(1)?.split("!")?.get(0)
                         env[envVarName]
                     } else {
-                        "{${node?.name}}"
+                        "{${node.name}}"
                     }
                 s
             }
