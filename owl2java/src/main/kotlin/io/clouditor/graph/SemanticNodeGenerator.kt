@@ -261,7 +261,7 @@ object SemanticNodeGenerator {
         var filenameList: List<String?>? = ArrayList()
         val filename: String
         val filepath: String
-        filenameList = Arrays.stream(name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])").toTypedArray())
+        filenameList = Arrays.stream(name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])".toRegex()).toTypedArray())
             .map { obj: String -> obj.lowercase(Locale.getDefault()) }
             .collect(Collectors.toList())
         filename = java.lang.String.join("_", filenameList)
