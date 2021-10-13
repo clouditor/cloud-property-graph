@@ -5,7 +5,6 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.ConstructExpression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.Pass
-import java.util.function.Predicate
 
 class BidirectionalEdgesCachePass : Pass() {
 
@@ -13,7 +12,7 @@ class BidirectionalEdgesCachePass : Pass() {
         INSTANTIATES
     }
 
-    val predicatesToHandle: MutableMap<Predicate<Node>, Pair<EdgeLabel, (Node) -> List<Node>>> =
+    val predicatesToHandle: MutableMap<(Node) -> Boolean, Pair<EdgeLabel, (Node) -> List<Node>>> =
         mutableMapOf()
 
     val outgoingEdgesCache: MutableMap<Node, MutableMap<EdgeLabel, MutableList<Node>>> =
@@ -30,43 +29,35 @@ class BidirectionalEdgesCachePass : Pass() {
             { node -> node is ConstructExpression },
             Pair(
                 EdgeLabel.INSTANTIATES,
-                { node: Node -> listOf((node as ConstructExpression).instantiates as Node) }
+                { node: Node ->
+                    (node as ConstructExpression).instantiates?.let { listOf(it) }
+                        ?: emptyList<Node>()
+                }
             )
         )
 
         nodes.forEach { node: Node ->
             predicatesToHandle.forEach { predicate, pair ->
                 val targets: List<Node> =
-                    if (predicate.test(node)) {
+                    if (predicate(node)) {
                         pair.second(node)
                     } else {
                         emptyList<Node>()
                     }
                 if (!targets.isEmpty()) {
-                    val outgoingMap: MutableMap<EdgeLabel, MutableList<Node>> =
-                        outgoingEdgesCache[node]
-                            ?: outgoingEdgesCache.put(
-                                node,
-                                mutableMapOf<EdgeLabel, MutableList<Node>>()
-                            )!!
+                    if (!outgoingEdgesCache.containsKey(node))
+                        outgoingEdgesCache[node] = mutableMapOf<EdgeLabel, MutableList<Node>>()
 
-                    val outgoingList: MutableList<Node> =
-                        outgoingMap.get(pair.first)
-                            ?: outgoingMap.put(pair.first, mutableListOf<Node>())!!
-
-                    outgoingList.addAll(targets)
+                    if (!outgoingEdgesCache[node]!!.containsKey(pair.first))
+                        outgoingEdgesCache[node]?.put(pair.first, mutableListOf<Node>())
+                    outgoingEdgesCache[node]?.get(pair.first)?.addAll(targets)
 
                     targets.forEach {
-                        val incomingMap: MutableMap<EdgeLabel, MutableList<Node>> =
-                            incomingEdgesCache[it]
-                                ?: incomingEdgesCache.put(
-                                    it,
-                                    mutableMapOf<EdgeLabel, MutableList<Node>>()
-                                )!!
-                        val incomingList: MutableList<Node> =
-                            incomingMap.get(pair.first)
-                                ?: outgoingMap.put(pair.first, mutableListOf<Node>())!!
-                        incomingList.add(node)
+                        if (!incomingEdgesCache.containsKey(it))
+                            incomingEdgesCache[it] = mutableMapOf<EdgeLabel, MutableList<Node>>()
+                        if (!incomingEdgesCache[it]!!.containsKey(pair.first))
+                            incomingEdgesCache[it]?.put(pair.first, mutableListOf<Node>())
+                        incomingEdgesCache[it]?.get(pair.first)?.add(node)
                     }
                 }
             }
