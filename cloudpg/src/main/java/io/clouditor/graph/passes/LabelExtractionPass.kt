@@ -1,14 +1,19 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Annotation
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
+import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.Pass
+import io.clouditor.graph.nodes.labels.Identifier
 import io.clouditor.graph.nodes.labels.Label
 import io.clouditor.graph.nodes.labels.PrivacyLabel
+import io.clouditor.graph.nodes.labels.PseudoIdentifier
 import io.clouditor.graph.plusAssign
 import java.util.function.Consumer
 import java.util.function.Predicate
@@ -17,6 +22,12 @@ import java.util.stream.Collectors
 class LabelExtractionPass : Pass() {
 
     val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
+
+    var edgesCachePass: BidirectionalEdgesCachePass? = null
+
+    init {
+        // Todo Here you can add other predicates to add labels
+    }
 
     override fun accept(t: TranslationResult) {
         // loop through services
@@ -37,52 +48,135 @@ class LabelExtractionPass : Pass() {
         }
     }
 
+    /**
+     * Extracts labels from Annotations of name "PrivacyLabel" including the attribute of a privacy
+     * level. Edges are attached to the DFG-Border nodes. Nodes that are in the Sub-AST of the
+     * annotated node, and have an outgoing DFG-edge to another node not in the annotated nodes
+     * Sub-AST
+     */
     private fun handleAnnotations(t: TranslationResult, annotationParent: Node) {
-        annotationParent.annotations
-            .filter { annotation -> annotation.name == "PrivacyLabel" }
-            .forEach {
-                val values: List<Expression> =
-                    it.members.filter { member -> member.name == "level" }.map { member ->
-                        member.value
-                    }
-                if (!values.isEmpty()) {
-                    val literal: Literal<Int>? = values.get(0) as? Literal<Int>
-                    literal?.let {
-                        val label: PrivacyLabel =
-                            addLabelToDFGBorderEdges<PrivacyLabel>(annotationParent)
-                        label.protectionlevel = it.value
-                        t += label
-                    }
-                }
+        annotationParent.annotations.forEach {
+            var label: Label? = null
+            when (it.name) {
+                "PrivacyLabel" -> label = handlePrivacyLabelAnnotation(annotationParent, it)
+                "Identifier" -> label = handleIdentifierAnnotation(annotationParent, it)
+                "PseudoIdentifier" -> label = handlePseudoIdentifierAnnotation(annotationParent, it)
             }
+            label?.let { t += it }
+        }
     }
 
+    private fun handlePrivacyLabelAnnotation(
+        annotationParent: Node,
+        annotation: Annotation
+    ): Label? {
+        val values: MutableList<Expression> =
+            annotation
+                .members
+                .filter { member -> member.name == "level" }
+                .map { member -> member.value }
+                .toMutableList()
+        // This is to handle annotation that don't use named attributes, e.g. decorators in
+        // TypeScript that are
+        // more of meta calls to functions
+        if (values.isEmpty() && !annotation.members.isEmpty()) {
+            values.add(annotation.members.get(0).value)
+        }
+        if (!values.isEmpty()) {
+            val param: Node? = values.get(0) as? Node
+            param?.let {
+                val label = labelCreationDispatcher<PrivacyLabel>(annotationParent)
+
+                label.protectionlevel = it.code!!.toIntOrNull() ?: 0
+                return label
+            }
+        }
+        return null
+    }
+
+    /**
+     * Creates an Identifier label connected to the given node or its dataflows identified by the
+     * rules in the {@link labelCreationDispatcher}.
+     */
+    private fun handleIdentifierAnnotation(
+        annotationParent: Node,
+        annotation: Annotation
+    ): Identifier? {
+        return labelCreationDispatcher(annotationParent)
+    }
+
+    /**
+     * Creates an Identifier label connected to the given node or its dataflows identified by the
+     * rules in the {@link labelCreationDispatcher}.
+     */
+    private fun handlePseudoIdentifierAnnotation(
+        annotationParent: Node,
+        annotation: Annotation
+    ): PseudoIdentifier? {
+        return labelCreationDispatcher(annotationParent)
+    }
+
+    inline fun <reified T : Label> labelCreationDispatcher(node: Node): T {
+        var label: T = initLabel<T>(node)
+        when (node) {
+            is FunctionDeclaration -> {
+                addLabelToDFGBorderEdges(node, label)
+                // Todo or only add to returns addLabelToReturnedExpressions(node,label)
+                // Todo or to everything that is not a subcall to catch returns and writes to pass
+                // by reference objects
+            }
+            is RecordDeclaration -> {
+                addLabelToDFGBorderEdges(node, label)
+                addLabelToInstantiations(node, label)
+            }
+            else -> {
+                addLabelToDFGBorderEdges(node, label)
+            }
+        }
+        return label
+    }
+
+    /**
+     * Function to just add labels to the annotated node, the type of Label can me specified through
+     * the generic type specialization. Nodes that are in the Sub-AST of the annotated node, and
+     * have an outgoing DFG-edge to another node not in the annotated nodes Sub-AST.
+     */
     inline fun <reified T : Label> addLabelToAnnotatedNode(n: Node): T {
         var label: T = T::class.constructors.first().call(n)
         label.labeledNodes.add(n)
         return label
     }
 
-    inline fun <reified T : Label> addLabelToDFGBorderEdges(n: Node): T {
-        var label: T = T::class.constructors.first().call(n)
+    /** Adds a newly created Label to the DFG-Border nodes, */
+    fun addLabelToDFGBorderEdges(n: Node, label: Label) {
 
         var dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
 
         label.labeledNodes.addAll(dfgExitNodes)
-
-        return label
     }
 
-    private fun handleParamVariableDeclaration(
-        t: TranslationResult,
-        param: ParamVariableDeclaration
-    ) {
+    /**
+     * Labels are added to the dfg-edges that leave Nodes that create the given declaration. This is
+     * such that we can add a label to all object creations of a sensitive Class.
+     */
+    fun addLabelToInstantiations(n: Node, label: Label) {
+        if (n is Declaration) {
+            edgesCachePass?.getEdgeSourceOf(n, BidirectionalEdgesCachePass.EdgeLabel.INSTANTIATES)
+                ?.forEach { addLabelToDFGBorderEdges(it, label) }
+        }
+    }
 
-        val label: PrivacyLabel = PrivacyLabel(param)
+    inline fun <reified T : Label> initLabel(n: Node): T {
+        return T::class.constructors.first().call(n)
+    }
 
-        label.protectionlevel = 1
+    /** Adds a newly created Label to the DFG-Border nodes, */
+    fun addLabelToReturnedExpressions(n: Node, label: Label) {
 
-        t += label
+        val returns: List<ReturnStatement> =
+            SubgraphWalker.flattenAST(n).filterIsInstance<ReturnStatement>()
+
+        label.labeledNodes.addAll(returns)
     }
 
     /**

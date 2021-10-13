@@ -61,6 +61,10 @@ object App : Callable<Int> {
     @ExperimentalPython
     @ExperimentalTypeScript
     override fun call(): Int {
+        val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
+        val labelPass: LabelExtractionPass = LabelExtractionPass()
+        labelPass.edgesCachePass = edgesCache
+
         val config =
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
@@ -105,7 +109,9 @@ object App : Callable<Int> {
                 .registerPass(RequestsPass())
                 .registerPass(LogPass())
                 .registerPass(GormDatabasePass())
-                .registerPass(LabelExtractionPass())
+                .registerPass(DFGExtensionPass())
+                .registerPass(edgesCache)
+                .registerPass(labelPass)
                 .processAnnotations(true)
                 .build()
 
