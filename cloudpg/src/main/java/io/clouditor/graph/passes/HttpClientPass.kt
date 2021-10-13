@@ -87,7 +87,6 @@ abstract class HttpClientPass : Pass() {
         if (endpointUrl.startsWith("https")) {
             if (endpoint.transportEncryption == null) {
                 endpoint.transportEncryption = TransportEncryption("TLS", true, false, "")
-            }
         }
 
         val match = matchUrl.startsWith(endpointUrl)
