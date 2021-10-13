@@ -6,7 +6,8 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
+import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -30,7 +31,23 @@ class SpringBootPass : Pass() {
                         }
                     }
                 )
+                tu.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(e: MemberExpression) {
+                            handleExpression(e)
+                        }
+                    }
+                )
             }
+        }
+    }
+
+    fun handleExpression(e: MemberExpression) {
+        if (e.base.name == "HttpStatus") {
+            // use the code, e.g. "HttpStatus.CONFLICT", as we are using this Spring syntax across
+            // languages
+            e.name = e.code.toString()
         }
     }
 
@@ -91,6 +108,13 @@ class SpringBootPass : Pass() {
                     null
                 )
             endpoint.name = endpoint.path
+
+            // if it's a mapping and has a simple return statement, it is an HttpStatus.OK
+            val ret = methodDeclaration.prevDFG
+            if (ret is ReturnStatement) {
+                ret.name = "HttpStatus.OK"
+            }
+            // TODO add the response to the handler too?
 
             return endpoint
         }

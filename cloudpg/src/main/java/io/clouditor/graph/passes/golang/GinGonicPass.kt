@@ -5,10 +5,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -16,6 +13,50 @@ import io.clouditor.graph.*
 
 class GinGonicPass : Pass() {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
+
+    private val httpMap: Map<String, String> =
+        mapOf(
+            // TODO complete mapping
+            // harmonize the http status codes across frameworks; we use the names as used in Spring
+            // here
+            "http.StatusOK" to "HttpStatus.OK",
+            "http.StatusAccepted" to "HttpStatus.ACCEPTED",
+            "http.StatusNonAuthoritativeInformation" to "HttpStatus.NON_AUTHORITATIVE_INFORMATION",
+            "http.StatusNoContent" to "HttpStatus.NO_CONTENT",
+            "http.StatusMultipleChoices" to "HttpStatus.MULTIPLE_CHOICES",
+            "http.StatusMultipleMovedPermanently" to "HttpStatus.MOVED_PERMANENTLY",
+            "http.StatusFound" to "HttpStatus.FOUND",
+            "http.StatusSeeOther" to "HttpStatus.SEE_OTHER",
+            "http.StatusNotModified" to "HttpStatus.NOT_MODIFIED",
+            "http.StatusUseProxy" to "HttpStatus.USE_PROXY",
+            "http.StatusBadRequest" to "HttpStatus.BAD_REQUEST",
+            "http.StatusUnauthorized" to "HttpStatus.UNAUTHORIZED",
+            "http.StatusPaymentRequired" to "HttpStatus.PAYMENT_REQUIRED",
+            "http.StatusForbidden" to "HttpStatus.FORBIDDEN",
+            "http.StatusNotFound" to "HttpStatus.NOT_FOUND",
+            "http.StatusMethodNotAllowed" to "HttpStatus.METHOD_NOT_ALLOWED",
+            "http.StatusNotAcceptable" to "HttpStatus.NOT_ACCEPTABLE",
+            "http.StatusProxyAuthenticationRequired" to "HttpStatus.PROXY_AUTHENTICATION_REQUIRED",
+            "http.StatusRequestTimeout" to "HttpStatus.REQUEST_TIMEOUT",
+            "http.StatusConflict" to "HttpStatus.CONFLICT",
+            "http.StatusGone" to "HttpStatus.GONE",
+            "http.StatusLengthRequired" to "HttpStatus.LENGTH_REQUIRED",
+            "http.StatusPreconditionFailed" to "HttpStatus.PRECONDITION_FAILED",
+            "http.StatusPayloadTooLarge" to "HttpStatus.PAYLOAD_TOO_LARGE",
+            "http.StatusUriTooLong" to "HttpStatus.URI_TOO_LONG",
+            "http.StatusIAmATeapot" to "HttpStatus.I_AM_A_TEAPOT",
+            "http.StatusLocked" to "HttpStatus.LOCKED",
+            "http.StatusTooManyRequests" to "HttpStatus.TOO_MANY_REQUESTS",
+            "http.StatusUnavailableForLegalReasons" to "HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS",
+            "http.StatusInternalServerError" to "HttpStatus.INTERNAL_SERVER_ERROR",
+            "http.StatusNotImplemented" to "HttpStatus.NOT_IMPLEMENTED",
+            "http.StatusBadGateway" to "HttpStatus.BAD_GATEWAY",
+            "http.StatusServiceUnavailable" to "HttpStatus.SERVICE_UNAVAILABLE",
+            "http.StatusGatewayTimeout" to "HttpStatus.GATEWAY_TIMEOUT",
+            "http.StatusHttpVersionNotSupported" to "HttpStatus.HTTP_VERSION_NOT_SUPPORTED",
+            "http.StatusBadRequest" to "HttpStatus.BAD_REQUEST",
+            "http.StatusBadRequest" to "HttpStatus.BAD_REQUEST"
+        )
 
     override fun cleanup() {}
 
@@ -31,7 +72,25 @@ class GinGonicPass : Pass() {
                         }
                     }
                 )
+                tu.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(r: MemberCallExpression) {
+                            handleGinResponse(r)
+                        }
+                    }
+                )
             }
+        }
+    }
+
+    private fun handleGinResponse(m: MemberCallExpression) {
+        if (m.base.type.name.startsWith("gin.Context") &&
+                m.arguments.firstOrNull()?.name?.startsWith("http.Status") == true
+        ) {
+            // replace the status code name with the harmonized naming
+            m.arguments.firstOrNull()?.name =
+                httpMap.get(m.arguments.firstOrNull()?.name).toString()
         }
     }
 
@@ -59,6 +118,27 @@ class GinGonicPass : Pass() {
                 endpoint.name = endpoint.path
 
                 log.debug("Adding GET to {} - resolved to {}", client?.name, endpoint.handler?.name)
+
+                client?.httpEndpoints?.plusAssign(endpoint)
+                result += endpoint
+            } else if (m.name == "POST") {
+                val endpoint =
+                    HttpEndpoint(
+                        NoAuthentication(),
+                        (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
+                            FunctionDeclaration,
+                        "POST",
+                        getPath(m),
+                        null,
+                        null
+                    )
+                endpoint.name = endpoint.path
+
+                log.debug(
+                    "Adding POST to {} - resolved to {}",
+                    client?.name,
+                    endpoint.handler?.name
+                )
 
                 client?.httpEndpoints?.plusAssign(endpoint)
                 result += endpoint
@@ -103,9 +183,9 @@ class GinGonicPass : Pass() {
     ) {
         // check initializers for http.NewServeMux()
         // actually check for return types - but that does not work (yet) with the standard library
-
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).fqn == "gin.Default"
+                (r.initializer as CallExpression).fqn == "gin.Default" ||
+                (r.initializer as CallExpression).fqn == "gin.New"
         ) {
             val app = result.findApplicationByTU(tu)
 

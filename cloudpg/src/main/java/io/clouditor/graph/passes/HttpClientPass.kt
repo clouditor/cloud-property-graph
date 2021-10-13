@@ -8,11 +8,11 @@ import io.clouditor.graph.*
 abstract class HttpClientPass : Pass() {
 
     protected fun createHttpRequest(
-        t: TranslationResult,
-        url: String,
-        call: CallExpression,
-        method: String,
-        app: Application?
+            t: TranslationResult,
+            url: String,
+            call: CallExpression,
+            method: String,
+            app: Application?
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, endpoints)
@@ -41,15 +41,15 @@ abstract class HttpClientPass : Pass() {
     }
 
     private fun getEndpointsForUrl(
-        t: TranslationResult,
-        url: String,
-        method: String
+            t: TranslationResult,
+            url: String,
+            method: String
     ): List<HttpEndpoint> {
         log.info("Looking for endpoints for {} request to {}", method, url)
 
         return t.additionalNodes.filterIsInstance(HttpEndpoint::class.java).filter {
             endpointMatches(it, url) &&
-                (it.method == method || it.method == null) // TODO: make methods an array
+                    (it.method == method || it.method == null) // TODO: make methods an array
         }
     }
 
@@ -87,17 +87,18 @@ abstract class HttpClientPass : Pass() {
         if (endpointUrl.startsWith("https")) {
             if (endpoint.transportEncryption == null) {
                 endpoint.transportEncryption = TransportEncryption("TLS", true, false, "")
+            }
         }
 
         val match = matchUrl.startsWith(endpointUrl)
 
         log.debug(
-            "{},{},{} == {}: {}",
-            endpointUrl,
-            endpoint.path,
-            endpoint.method,
-            matchUrl,
-            match
+                "{},{},{} == {}: {}",
+                endpointUrl,
+                endpoint.path,
+                endpoint.method,
+                matchUrl,
+                match
         )
 
         return match

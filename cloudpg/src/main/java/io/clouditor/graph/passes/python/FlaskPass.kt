@@ -100,8 +100,8 @@ class FlaskPass : Pass() {
 
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
-
-        (mapping.members.firstOrNull { it.name == "methods" }?.value as? InitializerListExpression)
+        (mapping.members.firstOrNull() { it.name == "methods" }?.value as?
+                InitializerListExpression)
             ?.initializers?.firstOrNull()
             .let { (it as? Literal<*>)?.let { method = it.value.toString() } }
 

@@ -67,7 +67,7 @@ class FetchPass : HttpClientPass() {
         app?.runsOn?.forEach { it.labels = it.labels + map }
 
         // first parameter is the URL
-        var url = JSValueResolver(app).resolve(call.arguments.first())
+        val url = JSValueResolver(app).resolve(call.arguments.first())
 
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
