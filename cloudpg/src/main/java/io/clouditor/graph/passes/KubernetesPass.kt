@@ -285,7 +285,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 val node =
                     LoadBalancer(
                         null,
-                        listOf(HttpEndpoint(NoAuthentication(), null, path.path, url, te, null)),
+                        listOf(HttpEndpoint(NoAuthentication(), null, null, path.path, te, url)),
                         listOf(service),
                         url,
                         null,

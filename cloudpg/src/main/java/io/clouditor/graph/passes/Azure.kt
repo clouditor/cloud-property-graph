@@ -16,6 +16,7 @@ import com.azure.resourcemanager.loganalytics.LogAnalyticsManager
 import com.azure.resourcemanager.loganalytics.models.Workspace
 import com.azure.resourcemanager.storage.models.PublicAccess
 import com.azure.resourcemanager.storage.models.StorageAccount
+import de.fraunhofer.aisec.cpg.ExperimentalGolang
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
@@ -34,6 +35,8 @@ import io.clouditor.graph.nodes.location
 class AzureClientSDKPass : Pass() {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
+            var app = t.findApplicationByTU(tu)
+
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
@@ -41,7 +44,7 @@ class AzureClientSDKPass : Pass() {
                         handleCall(t, tu, c)
                     }*/
                     fun visit(c: NewExpression) {
-                        handleNewClient(t, tu, c)
+                        handleNewClient(t, tu, c, app)
                     }
                 }
             )
@@ -51,7 +54,8 @@ class AzureClientSDKPass : Pass() {
     private fun handleNewClient(
         t: TranslationResult,
         tu: TranslationUnitDeclaration,
-        c: NewExpression
+        c: NewExpression,
+        app: Application?
     ) {
         try {
             if (c.type.name == "com.azure.storage.blob.BlobContainerClientBuilder") {
@@ -150,13 +154,13 @@ class AzureClientSDKPass : Pass() {
 
                     append?.let {
                         val call = findCallWithByUsingEOG(append)
-                        call?.let { it1 -> handleCall(t, tu, it1, storage) }
+                        call?.let { it1 -> handleCall(t, tu, it1, storage, app) }
                     }
 
                     // look for all calls to the client
                     for (base in append?.nextDFG ?: listOf()) {
                         val call = findCallWithByUsingEOG(base)
-                        call?.let { it1 -> handleCall(t, tu, it1, storage) }
+                        call?.let { it1 -> handleCall(t, tu, it1, storage, app) }
                     }
                 }
             }
@@ -184,10 +188,9 @@ class AzureClientSDKPass : Pass() {
         t: TranslationResult,
         tu: TranslationUnitDeclaration,
         c: CallExpression,
-        storage: ObjectStorage
+        storage: ObjectStorage,
+        app: Application?
     ) {
-        val app = t.findApplicationByTU(tu)
-
         if (c.name == "create") {
             System.out.println("We got an interesting call: create")
 
@@ -238,6 +241,7 @@ class AzureClientSDKPass : Pass() {
 class AzurePass : CloudResourceDiscoveryPass() {
     override fun cleanup() {}
 
+    @OptIn(ExperimentalGolang::class)
     override fun accept(t: TranslationResult) {
         val profile = AzureProfile(AzureEnvironment.AZURE)
         val credential: TokenCredential =

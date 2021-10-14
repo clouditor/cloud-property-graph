@@ -15,12 +15,12 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
  * function, which is called when the default behaviour would not be able to resolve the value. This
  * way, language specific features such as string formatting can be modelled.
  */
-class ValueResolver(
+open class ValueResolver(
     /**
      * Contains a reference to a function that gets called if the value cannot be resolved by the
      * standard behaviour.
      */
-    val cannotResolve: (Node?, ValueResolver) -> Any? = { node: Node?, _: ValueResolver ->
+    open val cannotResolve: (Node?, ValueResolver) -> Any? = { node: Node?, _: ValueResolver ->
         // end of the line, lets just keep the expression name
         if (node != null) {
             "{${node.name}}"

@@ -9,20 +9,20 @@ import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.graph
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.GinGonicPass
 import io.clouditor.graph.passes.golang.GolangHttpPass
+import io.clouditor.graph.passes.golang.GolangLogPass
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
 import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.HttpDispatcherPass
-import io.clouditor.graph.passes.python.FlaskPass
-import io.clouditor.graph.passes.python.LogPass
-import io.clouditor.graph.passes.python.RequestsPass
+import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
 import java.nio.file.Path
 import java.util.concurrent.Callable
@@ -35,6 +35,12 @@ import picocli.CommandLine
     name = "cloud-property-graph",
     mixinStandardHelpOptions = true,
     description = ["Builds the Cloud Property Graph and persists it into a graph database."]
+)
+@OptIn(
+    ExperimentalTypeScript::class,
+    ExperimentalPython::class,
+    ExperimentalGolang::class,
+    ExperimentalGraph::class
 )
 object App : Callable<Int> {
     @CommandLine.Option(
@@ -57,14 +63,50 @@ object App : Callable<Int> {
 
     @CommandLine.Parameters(index = "0..*") lateinit var paths: List<Path>
 
-    @ExperimentalGolang
-    @ExperimentalPython
-    @ExperimentalTypeScript
     override fun call(): Int {
+        val configuration =
+            Configuration.Builder()
+                .uri("bolt://localhost")
+                .autoIndex("none")
+                .credentials("neo4j", neo4jPassword)
+                .build()
+
+        val sessionFactory =
+            SessionFactory(configuration, "de.fraunhofer.aisec.cpg.graph", "io.clouditor.graph")
+        val session = sessionFactory.openSession()
+
+        val result = doTranslate()
+
+        val nodes = mutableListOf<Node>()
+        nodes.addAll(result.graph.nodes)
+        nodes.addAll(result.translationUnits)
+        nodes.addAll(result.images)
+        nodes.addAll(result.builders)
+        nodes.addAll(result.computes)
+        nodes.addAll(result.translationUnits)
+        nodes.addAll(result.additionalNodes)
+
+        session.beginTransaction().use { transaction ->
+            session.purgeDatabase()
+
+            val b = Benchmark(App::class.java, "Saving nodes to database")
+            session.save(nodes)
+            b.stop()
+
+            transaction.commit()
+        }
+
+        session.clear()
+        sessionFactory.close()
+
+        return 0
+    }
+
+    fun doTranslate(): TranslationResult {
+
         val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
         val labelPass: LabelExtractionPass = LabelExtractionPass()
         labelPass.edgesCachePass = edgesCache
-
         val config =
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
@@ -77,11 +119,8 @@ object App : Callable<Int> {
                 )
                 .registerLanguage(
                     TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
-                )
-                .registerLanguage(
-                    TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS
+                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS +
+                        TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
                 )
                 .registerLanguage(
                     PythonLanguageFrontend::class.java,
@@ -99,16 +138,19 @@ object App : Callable<Int> {
                 .registerPass(GinGonicPass())
                 .registerPass(WebBrickPass())
                 .registerPass(HttpDispatcherPass())
-                .registerPass(FetchPass())
                 .registerPass(FlaskPass())
                 .registerPass(AzurePass())
                 .registerPass(AzureClientSDKPass())
                 .registerPass(KubernetesPass())
                 .registerPass(IngressInvocationPass())
                 .registerPass(JaxRsClientPass())
+                .registerPass(FetchPass())
                 .registerPass(RequestsPass())
-                .registerPass(LogPass())
+                .registerPass(PythonLogPass())
+                .registerPass(GolangLogPass())
                 .registerPass(GormDatabasePass())
+                .registerPass(PyMongoPass())
+                .registerPass(Psycopg2Pass())
                 .registerPass(DFGExtensionPass())
                 .registerPass(edgesCache)
                 .registerPass(labelPass)
@@ -117,43 +159,12 @@ object App : Callable<Int> {
 
         val analyzer = TranslationManager.builder().config(config).build()
         val o = analyzer.analyze()
-        val result = o.get()
 
-        val configuration =
-            Configuration.Builder()
-                .uri("bolt://localhost")
-                .autoIndex("none")
-                .credentials("neo4j", neo4jPassword)
-                .build()
-
-        val sessionFactory =
-            SessionFactory(configuration, "de.fraunhofer.aisec.cpg.graph", "io.clouditor.graph")
-        val session = sessionFactory.openSession()
-
-        session.beginTransaction().use { transaction ->
-            session.purgeDatabase()
-
-            val nodes = mutableListOf<Node>()
-            val b = Benchmark(App::class.java, "Saving nodes to database")
-            nodes.addAll(result.translationUnits)
-            nodes.addAll(result.images)
-            nodes.addAll(result.builders)
-            nodes.addAll(result.computes)
-            nodes.addAll(result.translationUnits)
-            nodes.addAll(result.additionalNodes)
-            session.save(nodes)
-            b.stop()
-
-            transaction.commit()
-        }
-
-        session.clear()
-        sessionFactory.close()
-
-        return 0
+        return o.get()
     }
 }
 
+@OptIn(ExperimentalPython::class, ExperimentalTypeScript::class, ExperimentalGolang::class)
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(App).execute(*args))
 
 val TranslationResult.images: MutableList<Image>

@@ -89,7 +89,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         val rhs = this.handle((node as AssignableNode).valueNode) as? Expression
 
         // can we resolve it?
-        var decl = this.lang.scopeManager.resolve(lhs)
+        var decl = this.lang.scopeManager.resolveReference(lhs)
 
         if (decl == null) {
             val stmt = NodeBuilder.newDeclarationStatement(lang.getCodeFromRawNode(lhs))

@@ -1,7 +1,10 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Node
+import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
 
@@ -12,7 +15,7 @@ abstract class DatabaseOperationPass : Pass() {
         host: String,
         call: CallExpression,
         app: Application?
-    ): DatabaseOperation {
+    ): DatabaseConnect {
         val db = getDatabaseForHost(t, host)
 
         val op = DatabaseConnect(listOf(call), null, db)
@@ -32,6 +35,14 @@ abstract class DatabaseOperationPass : Pass() {
         val op = DatabaseQuery(modify, calls, storage, connect.to)
         op.location = app?.location
 
+        storage.forEach {
+            if (op.isModify) {
+                op.addNextDFG(it)
+            } else {
+                op.addPrevDFG(it)
+            }
+        }
+
         return op
     }
 
@@ -40,6 +51,21 @@ abstract class DatabaseOperationPass : Pass() {
 
         return t.additionalNodes.filterIsInstance(DatabaseService::class.java).filter {
             it.name == host
+        }
+    }
+
+    internal fun <T> storeDeclarationOrReference(map: MutableMap<Node, T>, target: Node, obj: T) {
+        // store it in our clients/connection map
+        map[target] = obj
+
+        // if this is variable declaration, follow the DFG to its REFERS_TO references and store
+        // them as well
+        if (target is VariableDeclaration) {
+            target.nextDFG.forEach {
+                if (it is DeclaredReferenceExpression && it.refersTo == target) {
+                    map[it] = obj
+                }
+            }
         }
     }
 }

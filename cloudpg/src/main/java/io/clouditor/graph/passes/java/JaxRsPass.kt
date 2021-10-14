@@ -57,6 +57,8 @@ class JaxRsPass : Pass() {
                     handler.httpEndpoints.plusAssign(it)
 
                     app?.functionalities?.plusAssign(handler)
+
+                    result += it
                 }
             }
 
