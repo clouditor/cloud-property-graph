@@ -4,4 +4,5 @@ class Properties {
     var propertyType: String? = null
     var propertyName: String? = null
     var isRootClassNameResource = false
+    var isInterface = false
 }

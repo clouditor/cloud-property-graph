@@ -294,6 +294,9 @@
         <ObjectProperty IRI="http://graph.clouditor.io/classes/bootLog"/>
     </Declaration>
     <Declaration>
+        <ObjectProperty IRI="http://graph.clouditor.io/classes/offersInterface"/>
+    </Declaration>
+    <Declaration>
         <ObjectProperty IRI="http://graph.clouditor.io/classes/output"/>
     </Declaration>
     <Declaration>
@@ -1497,7 +1500,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/classes/offersInterface"/>
             <Class IRI="http://graph.clouditor.io/classes/AtRestEncryption"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -2571,6 +2574,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/mutual</IRI>
         <Literal>mutual</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/offersInterface</IRI>
+        <Literal>offersInterface</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>

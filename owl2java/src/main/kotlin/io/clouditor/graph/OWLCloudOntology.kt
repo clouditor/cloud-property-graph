@@ -21,6 +21,8 @@ import java.util.stream.Collectors
 class OWLCloudOntology(filepath: String) {
     private var ontology: OWLOntology? = null
     private var df: OWLDataFactory? = null
+    val interfaceList: MutableList<String> = ArrayList() // It is assumed, that the classes that are defined as interfaces have a unique name
+
 
     // Read owl file from filesystem
     @Throws(OWLOntologyCreationException::class)
@@ -40,6 +42,7 @@ class OWLCloudOntology(filepath: String) {
     fun getGoStructs(packageName: String?): List<GoStruct> {
         val classes = ontology!!.classesInSignature
         val goList: MutableList<GoStruct> = ArrayList()
+
         for (clazz in classes) {
             // skip owl:Thing
             if (clazz.isOWLThing) continue
@@ -356,10 +359,6 @@ class OWLCloudOntology(filepath: String) {
                 classDataPropertyValue = getClassDataPropertyValue(superClass as OWLDataSomeValuesFromImpl)
                 if (classDataPropertyValue == "string") classDataPropertyValue =
                     StringUtils.capitalize(classDataPropertyValue)
-                if (classRelationshipPropertyName.equals("mixedDuties")) {
-                    System.out.println("TEST")
-                }
-
                 javaClass.addProperty(classDataPropertyValue, classRelationshipPropertyName).field.setProtected()
             } else if (superClass.classExpressionType == ClassExpressionType.DATA_HAS_VALUE) {
                 // little but hacky,
@@ -400,18 +399,10 @@ class OWLCloudOntology(filepath: String) {
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers" -> {
+                    "has", "offers", "runsOn", "proxyTarget", "to" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
-                    /*"runsOn" -> {
-                        property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }
-                    "proxyTarget" -> {
-                        property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }*/
                     "hasMultiple" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
@@ -425,7 +416,7 @@ class OWLCloudOntology(filepath: String) {
                         )
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
-                    /*"collectionOf" -> {
+                    "collectionOf" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
                                 formatString(
@@ -438,11 +429,12 @@ class OWLCloudOntology(filepath: String) {
                         )
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
-                    "to" -> {
-                        // TODO What does 'to' mean?
+                    "offersInterface" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }*/
+                        property.propertyType = "Has" + formatString(getClassName(superClass, ontology))
+                        property.isInterface = true
+                        interfaceList.add(getClassName(superClass, ontology))
+                    }
                     else -> {
                         // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
                         property.propertyType = formatString(getClassName(superClass, ontology))
@@ -472,8 +464,7 @@ class OWLCloudOntology(filepath: String) {
             // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
-                var property: PropertySource<JavaClassSource?>?
-                property = when (classRelationshipPropertyName) {
+                var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
