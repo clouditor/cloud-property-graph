@@ -114,6 +114,14 @@ object SemanticNodeGenerator {
              
              """.trimIndent()
 
+        // Add imports
+        for (elem in goSource.dataProperties){
+            if (getGoType(elem.propertyType.toString()) == "time.Duration") {
+                goSourceCode += "import \"time\"\n\n"
+                break
+            }
+        }
+
         // Add struct
         goSourceCode += """type ${goSource.name} struct {
 """
