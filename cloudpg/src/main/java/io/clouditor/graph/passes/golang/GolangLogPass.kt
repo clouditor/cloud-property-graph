@@ -6,7 +6,6 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
-import io.clouditor.graph.*
 import io.clouditor.graph.passes.LogPass
 
 class GolangLogPass : LogPass() {
@@ -24,9 +23,11 @@ class GolangLogPass : LogPass() {
                                 "log.Warn",
                                 "log.Err",
                             )
-                        // we are looking for calls to Msg, which have a base of one of the logging
+                        // we are looking for calls to Msg or Msgf, which have a base of one of the logging
                         // specifiers above, e.g. log.Info().Msg("Hello")
-                        if (m.name == "Msg" && (m.base as? CallExpression)?.fqn in logMethods) {
+                        if ((m.name == "Msg" || m.name == "Msgf") &&
+                                (m.base as? CallExpression)?.fqn in logMethods
+                        ) {
                             // the base name specifies the log severity, so we use this one as the
                             // "name" of the log operation
                             handleLog(t, m, m.base.name, tu)
