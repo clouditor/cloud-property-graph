@@ -25,6 +25,7 @@ import io.clouditor.graph.passes.js.HttpDispatcherPass
 import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 import org.neo4j.ogm.config.Configuration
@@ -60,6 +61,14 @@ object App : Callable<Int> {
 
     @CommandLine.Option(names = ["--neo4j-password"], description = ["The Neo4j password"])
     var neo4jPassword: String = "password"
+
+    @CommandLine.Option(
+        names = ["--enable-labels"],
+        description =
+            [
+                "Whether or not to enable attaching labels to the graph extracted from annotations or specific passes."]
+    )
+    var labelsEnabled: Boolean = false
 
     @CommandLine.Parameters(index = "0..*") lateinit var paths: List<Path>
 
@@ -103,7 +112,8 @@ object App : Callable<Int> {
     }
 
     fun doTranslate(): TranslationResult {
-        val config =
+
+        val builder =
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
@@ -148,7 +158,18 @@ object App : Callable<Int> {
                 .registerPass(PyMongoPass())
                 .registerPass(Psycopg2Pass())
                 .processAnnotations(true)
-                .build()
+
+        if (labelsEnabled) {
+            val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
+            val labelPass: LabelExtractionPass = LabelExtractionPass()
+            labelPass.edgesCachePass = edgesCache
+            builder
+                .registerPass(DFGExtensionPass())
+                .registerPass(edgesCache)
+                .registerPass(labelPass)
+        }
+
+        val config = builder.build()
 
         val analyzer = TranslationManager.builder().config(config).build()
         val o = analyzer.analyze()
