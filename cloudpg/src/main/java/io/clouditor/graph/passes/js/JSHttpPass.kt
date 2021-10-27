@@ -38,7 +38,7 @@ class JSHttpPass : Pass() {
             tu: TranslationUnitDeclaration,
             v: VariableDeclaration
     ) {
-        if (v.name == "dispatcher" || (v.initializer as CallExpression)?.name == "express") {
+        if (v.name == "dispatcher" || (v.initializer as? CallExpression)?.name == "express") {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
