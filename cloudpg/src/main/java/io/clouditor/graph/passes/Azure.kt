@@ -35,7 +35,7 @@ import io.clouditor.graph.nodes.location
 class AzureClientSDKPass : Pass() {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
-            var app = t.findApplicationByTU(tu)
+            val app = t.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
@@ -67,7 +67,7 @@ class AzureClientSDKPass : Pass() {
 
                 var endpoint: String
                 var containerName: String
-                var url: String = ""
+                var url = ""
                 var client: ValueDeclaration? = null
                 var appendClient: ValueDeclaration
 
@@ -421,7 +421,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             val storage =
                 ObjectStorage(
                     endpoint,
-                    AtRestEncryption("AES-256", true, null),
+                    mutableListOf(AtRestEncryption("AES-256", true)),
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
@@ -439,18 +439,17 @@ class AzurePass : CloudResourceDiscoveryPass() {
         var atRest: AtRestEncryption? = null
 
         if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_PLATFORM_KEY) {
-            atRest = ManagedKeyEncryption("AES-256", true, null)
+            atRest = ManagedKeyEncryption("AES-256", true)
         } else if (e.type() == EncryptionType.ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY) {
             atRest =
                 CustomerKeyEncryption(
                     e.diskEncryptionSetId(),
                     "AES-256",
                     true,
-                    null
                 ) // not the actual key, but close enough
         }
 
-        val block = BlockStorage(atRest, t.locationForRegion(disk.region()), mapOf())
+        val block = BlockStorage(mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
         block.name = disk.name()
 
         return block
@@ -460,7 +459,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
         t: TranslationResult,
         vm: VirtualMachine
     ): io.clouditor.graph.VirtualMachine {
-        val compute = VirtualMachine(null, null, null, t.locationForRegion(vm.region()), mapOf())
+        val compute =
+            VirtualMachine(null, null, null, null, t.locationForRegion(vm.region()), mapOf())
         compute.name = vm.name()
         compute.labels = mapOf<String, String>()
 
