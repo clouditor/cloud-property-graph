@@ -5,6 +5,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
@@ -13,7 +14,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-class HttpDispatcherPass : Pass() {
+class JSHttpPass : Pass() {
 
     override fun cleanup() {}
 
@@ -37,7 +38,7 @@ class HttpDispatcherPass : Pass() {
             tu: TranslationUnitDeclaration,
             v: VariableDeclaration
     ) {
-        if (v.name == "dispatcher" || v.initializer?.code == "express()") {
+        if (v.name == "dispatcher" || (v.initializer as CallExpression)?.name == "express") {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
