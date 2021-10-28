@@ -137,7 +137,7 @@ object SemanticNodeGenerator {
         goSourceCode += getDataPropertiesForGoSource(goSource.dataProperties)
         goSourceCode += "\n}\n\n"
 
-        // Create needed method for interface
+        // Create method for interface
         if (owl3.interfaceList.contains(goSource.parentClass)) {
                 goSourceCode += getInterfaceMethod(goSource)
         }

@@ -62,6 +62,7 @@ class OWLCloudOntology(filepath: String) {
             if (clazz.isOWLThing) {
                 continue
             }
+
             val jcs = getJavaClassSourceFromOWLClass(clazz)
             jcs!!.setPackage(packageName)
             jcsList.add(jcs)
@@ -95,33 +96,18 @@ class OWLCloudOntology(filepath: String) {
     }
 
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
-        // Get Set of OWLClassAxioms
-        val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
-        var superClassName = ""
+        val superClassName = getSuperClassName(clazz)
 
-        // Currently, it is assumed that there is only one 'OWL parent', but there can be several 'OWL relationships'
-        for (classAxiom in tempAx) {
-            val ce = classAxiom as OWLSubClassOfAxiomImpl
-            val superClass = ce.superClass
-
-            // If type is OWL_CLASS it is the 'OWL parent'
-            if (superClass.classExpressionType == ClassExpressionType.OWL_CLASS) {
-                superClassName = getClassName(superClass, ontology)
-            }
-        }
-
-        // Format super class name
-        superClassName = formatString(superClassName)
         if (!superClassName.isEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
         }
+
         return javaClass
     }
 
     private fun addImportsFromSuperclass(jcs: JavaClassSource, jcsList: List<JavaClassSource>): JavaClassSource {
-        // TODO use only necessary imports
         var superXClassImports: MutableList<Import?> = ArrayList()
         superXClassImports = getSuperXClassImports(jcs, jcsList, superXClassImports)
         for (elem in superXClassImports) {
@@ -464,6 +450,8 @@ class OWLCloudOntology(filepath: String) {
             // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
+
+                // Add property
                 var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
