@@ -59,6 +59,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 null,
                                 null,
                                 null,
+                                null,
                                 result.locationForRegion(Region.US_EAST),
                                 mutableMapOf()
                             )
@@ -100,7 +101,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                     doEnv(command.substringAfter("docker push").split(":").first().trim(), step)
                         .trim('"')
 
-                // filter out the translation units belonging to this applications, until cpg#341 is
+                // filter out the translation units belonging to these applications, until cpg#341
+                // is
                 // solved
                 val tus =
                     result.translationUnits.filter {

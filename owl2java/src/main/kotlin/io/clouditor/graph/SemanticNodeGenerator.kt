@@ -2,16 +2,12 @@ package io.clouditor.graph
 
 import kotlin.Throws
 import kotlin.jvm.JvmStatic
-import io.clouditor.graph.SemanticNodeGenerator
-import io.clouditor.graph.OWLCloudOntology
 import org.jboss.forge.roaster.model.source.JavaClassSource
-import io.clouditor.graph.GoStruct
 import org.apache.commons.lang3.StringUtils
 import org.semanticweb.owlapi.model.OWLOntologyCreationException
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.ArrayList
 import java.util.Arrays
 import java.util.Locale
 import java.util.stream.Collectors
@@ -71,16 +67,16 @@ object SemanticNodeGenerator {
 
         // Create Go sources
         val ontologyDescription = owl3.getGoStructs(packageNameGo)
-        writeGoStringsToFolder(ontologyDescription, outputBaseGo)
+        writeGoStringsToFolder(ontologyDescription, outputBaseGo, owl3)
     }
 
     private fun checkPath(outputBase: String): String {
-        var outputBase = outputBase
-        return if (outputBase[outputBase.length - 1] != '/') "/".let { outputBase += it; outputBase } else outputBase
+        var tmpOutputBase = outputBase
+        return if (tmpOutputBase[tmpOutputBase.length - 1] != '/') "/".let { tmpOutputBase += it; tmpOutputBase } else tmpOutputBase
     }
 
     // Create Go source code
-    private fun createGoSourceCodeString(goSource: GoStruct): String {
+    private fun createGoSourceCodeString(goSource: GoStruct, owl3: OWLCloudOntology): String {
         var goSourceCode = ""
 
         // Add copyright
@@ -118,6 +114,14 @@ object SemanticNodeGenerator {
              
              """.trimIndent()
 
+        // Add imports
+        for (elem in goSource.dataProperties){
+            if (getGoType(elem.propertyType.toString()) == "time.Duration") {
+                goSourceCode += "import \"time\"\n\n"
+                break
+            }
+        }
+
         // Add struct
         goSourceCode += """type ${goSource.name} struct {
 """
@@ -133,47 +137,65 @@ object SemanticNodeGenerator {
         goSourceCode += getDataPropertiesForGoSource(goSource.dataProperties)
         goSourceCode += "\n}\n\n"
 
-        // Create NewFunction
+        // Create method for interface
+        if (owl3.interfaceList.contains(goSource.parentClass)) {
+                goSourceCode += getInterfaceMethod(goSource)
+        }
+
+        // TODO: Do we need that anymore?
+        // Create new function
         //goSourceCode += getNewFunctionForObjectProperties(goSource);
         return goSourceCode
     }
 
-    private fun getNewFunctionForObjectProperties(gs: GoStruct): String {
-        var newFunctionString = ""
-        newFunctionString += "func New" + gs.name + "("
-        for (property in gs.dataProperties) {
-            property.propertyType?.let {
-                newFunctionString += property.propertyName + " " + getGoType(it) + ", "
-            }
-        }
+    private fun getInterfaceMethod(gs: GoStruct): String {
 
-        // Delete last `,` if exists and close )
-        if (newFunctionString[newFunctionString.length - 2] == ',') {
-            newFunctionString = newFunctionString.substring(0, newFunctionString.length - 2) + ") "
-        } else {
-            newFunctionString += ") "
-        }
-        newFunctionString += """
-            *${gs.name}{
-            
-            """.trimIndent()
-        newFunctionString += """	return &${gs.name}{
-"""
-        for (property in gs.objectProperties) {
-            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}: TODO get propertyName stuff,
-"""
-        }
-        for (property in gs.dataProperties) {
-            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}:	${
-                StringUtils.uncapitalize(
-                    property.propertyName
-                )
-            },
-"""
-        }
-        newFunctionString += "\t}\n}"
-        return newFunctionString
+        var receiverType = gs.name
+        var receiverChar = receiverType.first().lowercaseChar()
+        var interfaceMethodName = gs.parentClass
+        var interfaceMethodReturnType = gs.parentClass
+
+        return "func ($receiverChar $receiverType) Get$interfaceMethodName() *$interfaceMethodReturnType{ \n\treturn $receiverChar.$interfaceMethodReturnType\n}"
+
     }
+
+    // TODO: Do we need that anymore?
+//    private fun getNewFunctionForObjectProperties(gs: GoStruct): String {
+//        var newFunctionString = ""
+//        newFunctionString += "func New" + gs.name + "("
+//        for (property in gs.dataProperties) {
+//            property.propertyType?.let {
+//                newFunctionString += property.propertyName + " " + getGoType(it) + ", "
+//            }
+//        }
+//
+//        // Delete last `,` if exists and close )
+//        if (newFunctionString[newFunctionString.length - 2] == ',') {
+//            newFunctionString = newFunctionString.substring(0, newFunctionString.length - 2) + ") "
+//        } else {
+//            newFunctionString += ") "
+//        }
+//        newFunctionString += """
+//            *${gs.name}{
+//
+//            """.trimIndent()
+//        newFunctionString += """	return &${gs.name}{
+//"""
+//        for (property in gs.objectProperties) {
+//            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}: TODO get propertyName stuff,
+//"""
+//        }
+//        for (property in gs.dataProperties) {
+//            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}:	${
+//                StringUtils.uncapitalize(
+//                    property.propertyName
+//                )
+//            },
+//"""
+//        }
+//        newFunctionString += "\t}\n}"
+//        return newFunctionString
+//    }
 
     // Change property type to GO type
     private fun getGoType(type: String): String {
@@ -182,6 +204,7 @@ object SemanticNodeGenerator {
             "String" -> "string"
             "float" -> "float32"
             "boolean" -> "bool"
+            "java.time.Duration" -> "time.Duration"
             "java.util.Map<String, String>" -> "map[string]string"
             "java.util.ArrayList<Short>" -> "[]int16"
             "java.util.ArrayList<String>" -> "[]string"
@@ -193,6 +216,7 @@ object SemanticNodeGenerator {
             "de.fraunhofer.aisec.cpg.graph.Node" -> "string"
             "de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression" -> "string"
             "java.util.List<de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration>" -> "[]string"
+            "java.util.List<de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression>" -> "[]string"
             else -> type
         }
         return goType
@@ -207,9 +231,14 @@ object SemanticNodeGenerator {
     private fun getObjectPropertiesForGoSource(properties: List<Properties>): String {
         var propertiesStringSource = ""
         for (property in properties) {
-            propertiesStringSource += if (property.isRootClassNameResource == false) {
+            propertiesStringSource += if (!property.isRootClassNameResource && !property.isInterface) {
                 """
 	${StringUtils.capitalize(property.propertyName)}	*""" + StringUtils.capitalize(
+                    property.propertyType
+                ) + " `json:\"" + property.propertyName + "\"`"
+            } else if (!property.isRootClassNameResource && property.isInterface) {
+                """
+	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(
                     property.propertyType
                 ) + " `json:\"" + property.propertyName + "\"`"
             } else {
@@ -233,10 +262,8 @@ object SemanticNodeGenerator {
     }
 
     // Write Go source code to filesystem
-    private fun writeGoStringsToFolder(goSources: List<GoStruct>, outputBase: String) {
+    private fun writeGoStringsToFolder(goSources: List<GoStruct>, outputBase: String, owl3: OWLCloudOntology) {
         var filepath: String
-        var filename: String
-        val filenameList: List<String> = ArrayList()
         for (goSource in goSources) {
             filepath = getGoFilepath(goSource.name, outputBase)
             val f = File(filepath)
@@ -248,7 +275,7 @@ object SemanticNodeGenerator {
             }
             try {
                 val fileWriter = FileWriter(f)
-                fileWriter.write(createGoSourceCodeString(goSource))
+                fileWriter.write(createGoSourceCodeString(goSource, owl3))
                 fileWriter.close()
                 println("File written to: $filepath")
             } catch (e: IOException) {
@@ -257,14 +284,13 @@ object SemanticNodeGenerator {
         }
     }
 
-    fun getGoFilepath(name: String, outputBase: String): String {
-        var filenameList: List<String?>? = ArrayList()
-        val filename: String
+    private fun getGoFilepath(name: String, outputBase: String): String {
         val filepath: String
-        filenameList = Arrays.stream(name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])").toTypedArray())
-            .map { obj: String -> obj.lowercase(Locale.getDefault()) }
-            .collect(Collectors.toList())
-        filename = java.lang.String.join("_", filenameList)
+        var filenameList: List<String?>? =
+            Arrays.stream(name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])".toRegex()).toTypedArray())
+                .map { obj: String -> obj.lowercase(Locale.getDefault()) }
+                .collect(Collectors.toList())
+        val filename: String = java.lang.String.join("_", filenameList)
 
         // Create filepath
         filepath = "$outputBase$filename.go"
@@ -272,10 +298,9 @@ object SemanticNodeGenerator {
     }
 
     // Write java class files to filesystem
-    fun writeClassesToFolder(jcs: List<JavaClassSource>, outputBase: String) {
+    private fun writeClassesToFolder(jcs: List<JavaClassSource>, outputBase: String) {
         var filename: String
         for (jcsElem in jcs) {
-//           filename = outputBase + "/" + jcsElem.getPackage().replace(".", "/") + "/" + jcsElem.getName() + ".java";
             filename = outputBase + jcsElem.name + ".java"
 
             // write to file

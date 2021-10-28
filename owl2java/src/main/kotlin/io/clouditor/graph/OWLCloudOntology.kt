@@ -1,7 +1,6 @@
 package io.clouditor.graph
 
 import kotlin.Throws
-import io.clouditor.graph.GoStruct
 import org.apache.commons.lang3.StringUtils
 import java.util.LinkedHashMap
 import org.jboss.forge.roaster.Roaster
@@ -22,6 +21,8 @@ import java.util.stream.Collectors
 class OWLCloudOntology(filepath: String) {
     private var ontology: OWLOntology? = null
     private var df: OWLDataFactory? = null
+    val interfaceList: MutableList<String> = ArrayList() // It is assumed, that the classes that are defined as interfaces have a unique name
+
 
     // Read owl file from filesystem
     @Throws(OWLOntologyCreationException::class)
@@ -41,12 +42,13 @@ class OWLCloudOntology(filepath: String) {
     fun getGoStructs(packageName: String?): List<GoStruct> {
         val classes = ontology!!.classesInSignature
         val goList: MutableList<GoStruct> = ArrayList()
+
         for (clazz in classes) {
             // skip owl:Thing
             if (clazz.isOWLThing) continue
             val gs = getGoInformationFromOWLClass(clazz, classes)
             gs.packageName = packageName
-            if (gs != null) goList.add(gs)
+            goList.add(gs)
         }
         return goList
     }
@@ -60,9 +62,10 @@ class OWLCloudOntology(filepath: String) {
             if (clazz.isOWLThing) {
                 continue
             }
+
             val jcs = getJavaClassSourceFromOWLClass(clazz)
             jcs!!.setPackage(packageName)
-            if (jcs != null) jcsList.add(jcs)
+            jcsList.add(jcs)
         }
 
         // Set superclass call, must be done here to have the parameters from the superclass constructor
@@ -93,33 +96,18 @@ class OWLCloudOntology(filepath: String) {
     }
 
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
-        // Get Set of OWLClassAxioms
-        val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
-        var superClassName = ""
+        val superClassName = getSuperClassName(clazz)
 
-        // Currently, it is assumed that there is only one 'OWL parent', but there can be several 'OWL relationships'
-        for (classAxiom in tempAx) {
-            val ce = classAxiom as OWLSubClassOfAxiomImpl
-            val superClass = ce.superClass
-
-            // If type is OWL_CLASS it is the 'OWL parent'
-            if (superClass.classExpressionType == ClassExpressionType.OWL_CLASS) {
-                superClassName = getClassName(superClass, ontology)
-            }
-        }
-
-        // Format super class name
-        superClassName = formatString(superClassName)
         if (!superClassName.isEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
         }
+
         return javaClass
     }
 
     private fun addImportsFromSuperclass(jcs: JavaClassSource, jcsList: List<JavaClassSource>): JavaClassSource {
-        // TODO use only necessary imports
         var superXClassImports: MutableList<Import?> = ArrayList()
         superXClassImports = getSuperXClassImports(jcs, jcsList, superXClassImports)
         for (elem in superXClassImports) {
@@ -397,18 +385,10 @@ class OWLCloudOntology(filepath: String) {
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers" -> {
+                    "has", "offers", "runsOn", "proxyTarget", "to" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
-                    /*"runsOn" -> {
-                        property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }
-                    "proxyTarget" -> {
-                        property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }*/
                     "hasMultiple" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
@@ -422,7 +402,7 @@ class OWLCloudOntology(filepath: String) {
                         )
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
-                    /*"collectionOf" -> {
+                    "collectionOf" -> {
                         property.propertyName = getPlural(
                             decapitalizeString(
                                 formatString(
@@ -435,11 +415,12 @@ class OWLCloudOntology(filepath: String) {
                         )
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
-                    "to" -> {
-                        // TODO What does 'to' mean?
+                    "offersInterface" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = formatString(getClassName(superClass, ontology))
-                    }*/
+                        property.propertyType = "Has" + formatString(getClassName(superClass, ontology))
+                        property.isInterface = true
+                        interfaceList.add(getClassName(superClass, ontology))
+                    }
                     else -> {
                         // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
                         property.propertyType = formatString(getClassName(superClass, ontology))
@@ -469,8 +450,9 @@ class OWLCloudOntology(filepath: String) {
             // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
-                var property: PropertySource<JavaClassSource?>? = null
-                property = when (classRelationshipPropertyName) {
+
+                // Add property
+                var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
@@ -503,7 +485,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
-        var rootClassName = ""
+        var rootClassName: String
         rootClassName = getSuperClassName(clazz)
         if (rootClassName == "CloudResource") {
             return true
@@ -547,11 +529,11 @@ class OWLCloudOntology(filepath: String) {
 
     // Deletes not needed characters from string, e.g. space, '/', '-'
     private fun formatString(unformattedString: String): String {
-        var unformattedString = unformattedString
-        if (unformattedString.contains(" ")) unformattedString = unformattedString.replace(" ", "")
-        if (unformattedString.contains("/")) unformattedString = unformattedString.replace("/", "")
-        if (unformattedString.contains("-")) unformattedString = unformattedString.replace("-", "")
-        return unformattedString
+        var formattedString = unformattedString
+        if (formattedString.contains(" ")) formattedString = formattedString.replace(" ", "")
+        if (formattedString.contains("/")) formattedString = formattedString.replace("/", "")
+        if (formattedString.contains("-")) formattedString = formattedString.replace("-", "")
+        return formattedString
     }
 
     private fun getClassName(clazz: OWLClass): String {
@@ -602,11 +584,7 @@ class OWLCloudOntology(filepath: String) {
     // Get class data property name (realtionship in OWL)
     private fun getClassDataPropertyName(nce: OWLClassExpression): String {
         for (elem in nce.dataPropertiesInSignature) {
-            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
-                if (item != null) {
-                    return item.value.toString().split("\"").toTypedArray()[1]
-                }
-            }
+            return elem.iri.fragment
         }
         return ""
     }
