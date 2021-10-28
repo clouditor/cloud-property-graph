@@ -8,12 +8,33 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpre
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
+import io.clouditor.graph.App
 import io.clouditor.graph.ValueResolver
 import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
+import java.nio.file.Files
 
 class FetchPass : HttpClientPass() {
+    var map = mutableMapOf<String, String>()
+
     override fun accept(t: TranslationResult) {
+        val applications = listOf(App.rootPath)
+
+        for (rootPath in applications) {
+            val envPath = rootPath.resolve("frontend").resolve(".env.production")
+
+            envPath.toFile().walkTopDown().iterator().forEach { file ->
+                Files.newBufferedReader(file.toPath()).use { reader ->
+                    reader.readLines().forEach {
+                        val keyValue = it.split(" = ")
+                        val key = keyValue[0]
+                        val url = keyValue[1].trim('\"')
+                        map["env_$key"] = url
+                    }
+                }
+            }
+        }
+
         for (tu in t.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
@@ -42,9 +63,11 @@ class FetchPass : HttpClientPass() {
         call: CallExpression
     ) {
         val app = t.findApplicationByTU(tu)
+        // add env vars as labels
+        app?.runsOn?.forEach { it.labels = it.labels + map }
 
         // first parameter is the URL
-        val url = ValueResolver().resolve(call.arguments.first())
+        var url = JSValueResolver(app).resolve(call.arguments.first())
 
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
@@ -55,7 +78,7 @@ class FetchPass : HttpClientPass() {
     private fun getMethod(options: InitializerListExpression?): String {
         var method = "GET"
 
-        // for now, assume that options is a object construct. it could also be a reference to
+        // for now, assume that options is an object construct. it could also be a reference to
         // one we could extend the variable resolver to return a hashmap
 
         ValueResolver()
