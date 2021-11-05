@@ -23,7 +23,8 @@ class GolangLogPass : LogPass() {
                                 "log.Warn",
                                 "log.Err",
                             )
-                        // we are looking for calls to Msg or Msgf, which have a base of one of the logging
+                        // we are looking for calls to Msg or Msgf, which have a base of one of the
+                        // logging
                         // specifiers above, e.g. log.Info().Msg("Hello")
                         if ((m.name == "Msg" || m.name == "Msgf") &&
                                 (m.base as? CallExpression)?.fqn in logMethods
