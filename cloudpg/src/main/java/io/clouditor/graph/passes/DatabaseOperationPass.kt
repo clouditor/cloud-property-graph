@@ -13,12 +13,12 @@ abstract class DatabaseOperationPass : Pass() {
     protected fun createDatabaseConnect(
         t: TranslationResult,
         host: String,
-        call: CallExpression,
+        call: CallExpression?,
         app: Application?
     ): DatabaseConnect {
         val db = getDatabaseForHost(t, host)
 
-        val op = DatabaseConnect(listOf(call), null, db)
+        val op = DatabaseConnect(call?.let { listOf(it) } ?: listOf(), null, db)
         op.location = app?.location
 
         return op

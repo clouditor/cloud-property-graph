@@ -22,7 +22,7 @@ class GitHubWorkflowPass : Pass() {
             workflowPath.toFile().walkTopDown().iterator().forEach { file ->
                 if (file.extension == "yml") {
                     val mapper = ObjectMapper(YAMLFactory())
-                    mapper.registerModule(KotlinModule())
+                    mapper.registerModule(KotlinModule.Builder().build())
 
                     Files.newBufferedReader(file.toPath()).use {
                         val workflow = mapper.readValue(it, Workflow::class.java)

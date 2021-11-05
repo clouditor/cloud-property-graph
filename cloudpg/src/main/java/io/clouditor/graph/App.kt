@@ -17,9 +17,11 @@ import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.GinGonicPass
 import io.clouditor.graph.passes.golang.GolangHttpPass
 import io.clouditor.graph.passes.golang.GolangLogPass
+import io.clouditor.graph.passes.golang.GormDatabasePass
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
+import io.clouditor.graph.passes.java.SpringDatabasePass
 import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
@@ -154,6 +156,7 @@ object App : Callable<Int> {
                 .registerPass(PythonLogPass())
                 .registerPass(GolangLogPass())
                 .registerPass(GormDatabasePass())
+                .registerPass(SpringDatabasePass())
                 .registerPass(PyMongoPass())
                 .registerPass(Psycopg2Pass())
                 .processAnnotations(true)

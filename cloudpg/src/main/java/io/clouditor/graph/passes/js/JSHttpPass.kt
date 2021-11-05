@@ -22,21 +22,21 @@ class JSHttpPass : Pass() {
         if (result != null) {
             for (tu in result.translationUnits) {
                 tu.accept(
-                        Strategy::AST_FORWARD,
-                        object : IVisitor<Node?>() {
-                            fun visit(v: VariableDeclaration) {
-                                handleVariableDeclaration(result, tu, v)
-                            }
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(v: VariableDeclaration) {
+                            handleVariableDeclaration(result, tu, v)
                         }
+                    }
                 )
             }
         }
     }
 
     private fun handleVariableDeclaration(
-            result: TranslationResult,
-            tu: TranslationUnitDeclaration,
-            v: VariableDeclaration
+        result: TranslationResult,
+        tu: TranslationUnitDeclaration,
+        v: VariableDeclaration
     ) {
         if (v.name == "dispatcher" || (v.initializer as? CallExpression)?.name == "express") {
             val app = result.findApplicationByTU(tu)
@@ -45,19 +45,19 @@ class JSHttpPass : Pass() {
             requestHandler.name = requestHandler.path
 
             tu.accept(
-                    Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
-                    // level statements
-                    object : IVisitor<Node?>() {
-                        fun visit(mce: MemberCallExpression) {
-                            val endpoint = handleEndpoint(result, tu, mce, v)
+                Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
+                // level statements
+                object : IVisitor<Node?>() {
+                    fun visit(mce: MemberCallExpression) {
+                        val endpoint = handleEndpoint(result, tu, mce, v)
 
-                            endpoint?.let {
-                                requestHandler.httpEndpoints.plusAssign(it)
-                                result += endpoint
-                                app?.functionalities?.plusAssign(endpoint)
-                            }
+                        endpoint?.let {
+                            requestHandler.httpEndpoints.plusAssign(it)
+                            result += endpoint
+                            app?.functionalities?.plusAssign(endpoint)
                         }
                     }
+                }
             )
 
             result += requestHandler
@@ -66,22 +66,22 @@ class JSHttpPass : Pass() {
     }
 
     private fun handleEndpoint(
-            result: TranslationResult,
-            tu: TranslationUnitDeclaration?,
-            mce: MemberCallExpression,
-            v: VariableDeclaration
+        result: TranslationResult,
+        tu: TranslationUnitDeclaration?,
+        mce: MemberCallExpression,
+        v: VariableDeclaration
     ): HttpEndpoint? {
         return if ((mce.name == "onPost" ||
-                        mce.name == "onGet" ||
-                        mce.name == "post" ||
-                        mce.name == "get") && (mce.base as? DeclaredReferenceExpression)?.refersTo == v
+                mce.name == "onGet" ||
+                mce.name == "post" ||
+                mce.name == "get") && (mce.base as? DeclaredReferenceExpression)?.refersTo == v
         ) {
             val path: String =
-                    unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
+                unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
             val func =
-                    (mce.arguments[mce.arguments.size - 1] as? DeclaredReferenceExpression)
-                            ?.refersTo as?
-                            FunctionDeclaration
+                (mce.arguments[mce.arguments.size - 1] as? DeclaredReferenceExpression)
+                    ?.refersTo as?
+                    FunctionDeclaration
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, getMethod(mce), path, null, null)
             endpoint.name = path
