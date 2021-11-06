@@ -16,7 +16,6 @@ class GinGonicPass : Pass() {
 
     private val httpMap: Map<String, String> =
         mapOf(
-            // TODO complete mapping
             // harmonize the http status codes across frameworks; we use the names as used in Spring
             // here
             "http.StatusOK" to "HttpStatus.OK",
@@ -103,31 +102,15 @@ class GinGonicPass : Pass() {
                 clients.containsKey((m.base as DeclaredReferenceExpression).refersTo)
         ) {
             val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
+            val app = result.findApplicationByTU(tu)
 
-            if (m.name == "GET") {
+            if (m.name == "GET" || m.name == "POST") {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
                         (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
                             FunctionDeclaration,
-                        "GET",
-                        getPath(m),
-                        null,
-                        null
-                    )
-                endpoint.name = endpoint.path
-
-                log.debug("Adding GET to {} - resolved to {}", client?.name, endpoint.handler?.name)
-
-                client?.httpEndpoints?.plusAssign(endpoint)
-                result += endpoint
-            } else if (m.name == "POST") {
-                val endpoint =
-                    HttpEndpoint(
-                        NoAuthentication(),
-                        (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
-                            FunctionDeclaration,
-                        "POST",
+                        m.name,
                         getPath(m),
                         null,
                         null
@@ -135,12 +118,14 @@ class GinGonicPass : Pass() {
                 endpoint.name = endpoint.path
 
                 log.debug(
-                    "Adding POST to {} - resolved to {}",
+                    "Adding {} to {} - resolved to {}",
+                    m.name,
                     client?.name,
                     endpoint.handler?.name
                 )
 
                 client?.httpEndpoints?.plusAssign(endpoint)
+                app?.functionalities?.plusAssign(endpoint)
                 result += endpoint
             } else if (m.name == "Group") {
                 // add a new (sub) client

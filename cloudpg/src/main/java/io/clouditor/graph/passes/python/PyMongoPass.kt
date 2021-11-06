@@ -62,9 +62,6 @@ class PyMongoPass : DatabaseOperationPass() {
                 // work
                 object : IVisitor<Node?>() {
                     fun visit(mce: MemberCallExpression) {
-                        println("handlingquery")
-                        println(mce.base)
-                        println(mce.base in collections)
                         collections[mce.base]?.let { handleQuery(t, mce, app, it) }
                     }
                 }
@@ -160,7 +157,6 @@ class PyMongoPass : DatabaseOperationPass() {
 
         if (mce.name == "find") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
-
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
 
