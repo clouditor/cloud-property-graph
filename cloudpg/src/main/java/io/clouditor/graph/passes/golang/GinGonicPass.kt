@@ -104,18 +104,29 @@ class GinGonicPass : Pass() {
             val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
             val app = result.findApplicationByTU(tu)
 
+            val funcDeclaration =
+                (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
             if (m.name == "GET" || m.name == "POST") {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
-                        (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
-                            FunctionDeclaration,
+                        funcDeclaration,
                         m.name,
                         getPath(m),
                         null,
                         null
                     )
                 endpoint.name = endpoint.path
+
+                // get the endpoint's handler and look through its mces
+                funcDeclaration?.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(r: MemberCallExpression) {
+                            handleBindJson(r, endpoint)
+                        }
+                    }
+                )
 
                 log.debug(
                     "Adding {} to {} - resolved to {}",
@@ -147,6 +158,19 @@ class GinGonicPass : Pass() {
 
                     result += requestHandler
                 }
+            }
+        }
+    }
+
+    private fun handleBindJson(m: MemberCallExpression, e: HttpEndpoint) {
+        // TODO restrict this to the actual parameter that is the input for the function, e.g.
+        // c.bindJSON
+        if (m.name == "BindJSON") {
+            var obj = (m.arguments.firstOrNull() as UnaryOperator).input
+            if (obj is DeclaredReferenceExpression) {
+                obj.refersTo?.let { e.addNextDFG(it) }
+            } else {
+                e.addNextDFG(obj)
             }
         }
     }

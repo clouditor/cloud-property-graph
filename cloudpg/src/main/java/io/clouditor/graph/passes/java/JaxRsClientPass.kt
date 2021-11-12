@@ -154,7 +154,7 @@ class JaxRsClientPass : HttpClientPass() {
         getCall: MemberCallExpression,
         app: Application?
     ) {
-        val httpRequest = createHttpRequest(t, url, getCall, "GET", app)
+        val httpRequest = createHttpRequest(t, url, getCall, "GET", Expression(), app)
 
         val i = httpRequest.to.firstOrNull()
         val f = i?.handler
