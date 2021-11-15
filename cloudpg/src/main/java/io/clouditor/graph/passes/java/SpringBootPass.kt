@@ -114,7 +114,6 @@ class SpringBootPass : Pass() {
             if (ret is ReturnStatement) {
                 ret.name = "HttpStatus.OK"
             }
-            // TODO add the response to the handler too?
 
             return endpoint
         }
