@@ -47,6 +47,6 @@ class RequestsPass : HttpClientPass() {
 
         val url = PythonValueResolver(app).resolve(r.arguments.first())
 
-        createHttpRequest(t, url as String, r, method, app)
+        createHttpRequest(t, url as String, r, method, Expression(), app)
     }
 }
