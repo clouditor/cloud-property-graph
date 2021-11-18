@@ -21,7 +21,7 @@ import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
 import io.clouditor.graph.passes.js.FetchPass
-import io.clouditor.graph.passes.js.HttpDispatcherPass
+import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
 import java.nio.file.Path
@@ -143,7 +143,7 @@ object App : Callable<Int> {
                 .registerPass(GolangHttpPass())
                 .registerPass(GinGonicPass())
                 .registerPass(WebBrickPass())
-                .registerPass(HttpDispatcherPass())
+                .registerPass(JSHttpPass())
                 .registerPass(FlaskPass())
                 .registerPass(AzurePass())
                 .registerPass(AzureClientSDKPass())
