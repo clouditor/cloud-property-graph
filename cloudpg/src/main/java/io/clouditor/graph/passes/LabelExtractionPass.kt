@@ -6,6 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
@@ -39,10 +40,16 @@ class LabelExtractionPass : Pass() {
             { node -> handleAnnotations(t, node) }
         )
 
+        // Register default extractor that gets Label from annotation like comment content
+        predicatesToHandle.put(
+            { node -> node.comment != null && node.comment!!.isNotEmpty() },
+            { node -> handleComment(t, node) }
+        )
+
         nodes.forEach { node: Node ->
             predicatesToHandle.forEach { predicate, handler ->
-                when (predicate.test(node)) {
-                    true -> handler.accept(node)
+                if (predicate.test(node)) {
+                    handler.accept(node)
                 }
             }
         }
@@ -62,8 +69,61 @@ class LabelExtractionPass : Pass() {
                 "Identifier" -> label = handleIdentifierAnnotation(annotationParent, it)
                 "PseudoIdentifier" -> label = handlePseudoIdentifierAnnotation(annotationParent, it)
             }
-            label?.let { t += it }
+            label?.let { t += it } // Adding Labels to the supplementary nodes of a translation unit
         }
+    }
+
+    /**
+     * Extracts labels from Annotations of name "PrivacyLabel" including the attribute of a privacy
+     * level. Edges are attached to the DFG-Border nodes. Nodes that are in the Sub-AST of the
+     * annotated node, and have an outgoing DFG-edge to another node not in the annotated nodes
+     * Sub-AST
+     */
+    private fun handleComment(t: TranslationResult, nodeWComment: Node) {
+        var regexes =
+            mutableMapOf(
+                Regex("@Identifier($|\\s)") to this::handleIdentifierComments,
+                Regex("@PrivacyLabel\\(level=([0-9]+)\\)($|\\s)") to
+                    this::handlePrivacyLabelComments,
+                Regex("@PseudoIdentifier(\$|\\s)") to this::handlePseudoIdentifierComments,
+            )
+
+        regexes.entries.forEach {
+            val matches = it.key.findAll(nodeWComment.comment!!)
+            if (matches.toList().isNotEmpty()) {
+                var labels = it.value(nodeWComment, matches)
+                labels.forEach {
+                    t += it // Adding Labels to the supplementary nodes of a translation unit
+                }
+            }
+        }
+    }
+
+    private fun handleIdentifierComments(node: Node, matches: Sequence<MatchResult>): List<Label> {
+        return listOf(labelCreationDispatcher<Identifier>(node))
+    }
+
+    private fun handlePseudoIdentifierComments(
+        node: Node,
+        matches: Sequence<MatchResult>
+    ): List<Label> {
+        return listOf(labelCreationDispatcher<PseudoIdentifier>(node))
+    }
+
+    private fun handlePrivacyLabelComments(
+        node: Node,
+        matches: Sequence<MatchResult>
+    ): List<Label> {
+        var labels: MutableList<Label> = mutableListOf()
+        matches.forEach {
+            val thisLevel: Int? = it.destructured.toList().first().toIntOrNull()
+            thisLevel?.let {
+                val label = labelCreationDispatcher<PrivacyLabel>(node)
+                label.protectionlevel = it
+                labels.add(label)
+            }
+        }
+        return labels
     }
 
     private fun handlePrivacyLabelAnnotation(
@@ -121,13 +181,16 @@ class LabelExtractionPass : Pass() {
         when (node) {
             is FunctionDeclaration -> {
                 addLabelToDFGBorderEdges(node, label)
-                // Todo or only add to returns addLabelToReturnedExpressions(node,label)
+                // addLabelToReturnedExpressions(node,label)
                 // Todo or to everything that is not a subcall to catch returns and writes to pass
                 // by reference objects
             }
             is RecordDeclaration -> {
                 addLabelToDFGBorderEdges(node, label)
                 addLabelToInstantiations(node, label)
+            }
+            is DeclarationStatement -> {
+                addLabelToDFGBorderEdges(node, label)
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)
