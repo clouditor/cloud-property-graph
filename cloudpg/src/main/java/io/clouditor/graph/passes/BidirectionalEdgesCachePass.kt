@@ -65,11 +65,11 @@ class BidirectionalEdgesCachePass : Pass() {
     }
 
     fun getEdgeTargetOf(source: Node, edgeLabel: EdgeLabel): List<Node>? {
-        return outgoingEdgesCache.get(Node)?.get(edgeLabel)
+        return incomingEdgesCache.get(source)?.get(edgeLabel)
     }
 
     fun getEdgeSourceOf(target: Node, edgeLabel: EdgeLabel): List<Node>? {
-        return outgoingEdgesCache.get(Node)?.get(edgeLabel)
+        return outgoingEdgesCache.get(target)?.get(edgeLabel)
     }
 
     override fun cleanup() {}
