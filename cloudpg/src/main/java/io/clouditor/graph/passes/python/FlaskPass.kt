@@ -7,9 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -92,10 +90,28 @@ class FlaskPass : Pass() {
                 )
             endpoint.name = endpoint.path
 
+            // get the endpoint's handler and look through its mces
+            func?.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(v: VariableDeclaration) {
+                        handleRequestUnpacking(v, endpoint)
+                    }
+                }
+            )
+
             return endpoint
         }
 
         return null
+    }
+
+    private fun handleRequestUnpacking(v: VariableDeclaration, e: HttpEndpoint) {
+        if (v.initializer?.name == "json" &&
+                (v.initializer as MemberExpression).base.name == "request"
+        ) {
+            e.addNextDFG(v)
+        }
     }
 
     private fun getMethod(mapping: Annotation): String {
