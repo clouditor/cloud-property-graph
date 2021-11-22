@@ -90,7 +90,7 @@ class FlaskPass : Pass() {
                 )
             endpoint.name = endpoint.path
 
-            // get the endpoint's handler and look through its mces
+            // get the endpoint's handler and look through its variabledeclarations
             func?.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
