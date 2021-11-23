@@ -90,12 +90,12 @@ class FlaskPass : Pass() {
                 )
             endpoint.name = endpoint.path
 
-            // get the endpoint's handler and look through its variabledeclarations
-            func?.accept(
+            // get the endpoint's handler and look for assignments of the request's JSON body
+            func.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
-                    fun visit(v: VariableDeclaration) {
-                        handleRequestUnpacking(v, endpoint)
+                    fun visit(mce: MemberCallExpression) {
+                        handleRequestUnpacking(mce, endpoint)
                     }
                 }
             )
@@ -106,18 +106,19 @@ class FlaskPass : Pass() {
         return null
     }
 
-    private fun handleRequestUnpacking(v: VariableDeclaration, e: HttpEndpoint) {
-        if (v.initializer?.name == "json" &&
-                (v.initializer as MemberExpression).base.name == "request"
-        ) {
-            e.addNextDFG(v)
+    private fun handleRequestUnpacking(mce: MemberCallExpression, e: HttpEndpoint) {
+        if (mce.name == "json" && mce.base.name == "request") {
+            // set the DFG target of this call to the DFG target of our http endpoints
+            mce.nextDFG.forEach { e.addNextDFG(it) }
+
+            // TODO(oxisto): Once we update the ontology, we should also set this as the
+            // "request_body" property of the http endpoint
         }
     }
 
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
-        (mapping.members.firstOrNull() { it.name == "methods" }?.value as?
-                InitializerListExpression)
+        (mapping.members.firstOrNull { it.name == "methods" }?.value as? InitializerListExpression)
             ?.initializers?.firstOrNull()
             .let { (it as? Literal<*>)?.let { method = it.value.toString() } }
 
