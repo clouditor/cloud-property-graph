@@ -123,6 +123,8 @@ class Psycopg2Pass : DatabaseOperationPass() {
             val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app)
             op.name = call.name
 
+            app?.functionalities?.plusAssign(op)
+
             // in the select case, the arguments are just arguments to the query itself and flow
             // towards the op
             call.arguments.forEach { it.addNextDFG(op) }
