@@ -1,7 +1,7 @@
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.4.30" apply false
-    kotlin("plugin.serialization") version "1.4.30" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.6.0" apply false
+    kotlin("plugin.serialization") version "1.6.0" apply false
     id("com.diffplug.spotless") version "5.12.1"
 }
 
