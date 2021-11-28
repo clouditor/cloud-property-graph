@@ -21,6 +21,7 @@ abstract class HttpClientPass : Pass() {
         request.location = call.location
 
         endpoints.forEach { request.addNextDFG(it) }
+        body?.addNextDFG(request)
 
         // call.invokes = listOf(request)
         call.addPrevDFG(request)
