@@ -98,8 +98,6 @@ class JSHttpPass : Pass() {
     }
 
     private fun handleRequestUnpacking(fd: FunctionDeclaration, me: MemberExpression, e: HttpEndpoint) {
-        // TODO: this is specific to the naming we use in the PCE example; we should check if "req"
-        // is actually an argument of the POST expression
         if (me.name == "body" && fd.parameters.first() == me.base) {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
