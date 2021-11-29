@@ -3,12 +3,10 @@ package io.clouditor.graph.passes.js
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -78,17 +76,34 @@ class JSHttpPass : Pass() {
         ) {
             val path: String =
                 unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
-            val func =
-                (mce.arguments[mce.arguments.size - 1] as? DeclaredReferenceExpression)
-                    ?.refersTo as?
-                    FunctionDeclaration
+            val func = (mce.arguments[mce.arguments.size - 1] as? LambdaExpression)?.function
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, getMethod(mce), path, null, null)
             endpoint.name = path
 
+            // get the endpoint's handler and look for assignments of the request's JSON body
+            func?.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(me: MemberExpression) {
+                        handleRequestUnpacking(func, me, endpoint)
+                    }
+                }
+            )
+
             endpoint
         } else {
             null
+        }
+    }
+
+    private fun handleRequestUnpacking(fd: FunctionDeclaration, me: MemberExpression, e: HttpEndpoint) {
+        if (me.name == "body" && fd.parameters.first() == me.base) {
+            // set the DFG target of this call to the DFG target of our http endpoints
+            me.nextDFG.forEach { e.addNextDFG(it) }
+
+            // TODO(oxisto): Once we update the ontology, we should also set this as the
+            // "request_body" property of the http endpoint
         }
     }
 
