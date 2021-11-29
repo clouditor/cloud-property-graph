@@ -3,7 +3,6 @@ package io.clouditor.graph.passes.js
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
@@ -97,8 +96,14 @@ class JSHttpPass : Pass() {
         }
     }
 
-    private fun handleRequestUnpacking(fd: FunctionDeclaration, me: MemberExpression, e: HttpEndpoint) {
-        if (me.name == "body" && fd.parameters.first() == me.base) {
+    private fun handleRequestUnpacking(
+        fd: FunctionDeclaration,
+        me: MemberExpression,
+        e: HttpEndpoint
+    ) {
+        if (me.name == "body" &&
+                fd.parameters.first() == (me.base as? DeclaredReferenceExpression)?.refersTo
+        ) {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
 

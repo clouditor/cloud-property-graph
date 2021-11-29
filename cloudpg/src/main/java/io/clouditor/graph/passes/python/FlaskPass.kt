@@ -46,7 +46,7 @@ class FlaskPass : Pass() {
 
         if ((v.initializer as? CallExpression)?.name == "Flask") {
             // handle it as a request handler
-            val handler = HttpRequestHandler(app, mutableListOf(), "")
+            val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
 
             app?.functionalities?.plusAssign(handler)
@@ -94,8 +94,8 @@ class FlaskPass : Pass() {
             func.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
-                    fun visit(mce: MemberCallExpression) {
-                        handleRequestUnpacking(mce, endpoint)
+                    fun visit(me: MemberExpression) {
+                        handleRequestUnpacking(me, endpoint)
                     }
                 }
             )
@@ -106,10 +106,10 @@ class FlaskPass : Pass() {
         return null
     }
 
-    private fun handleRequestUnpacking(mce: MemberCallExpression, e: HttpEndpoint) {
-        if (mce.name == "json" && mce.base.name == "request") {
+    private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
+        if (me.name == "json" && me.base.name == "request") {
             // set the DFG target of this call to the DFG target of our http endpoints
-            mce.nextDFG.forEach { e.addNextDFG(it) }
+            me.nextDFG.forEach { e.addNextDFG(it) }
 
             // TODO(oxisto): Once we update the ontology, we should also set this as the
             // "request_body" property of the http endpoint
