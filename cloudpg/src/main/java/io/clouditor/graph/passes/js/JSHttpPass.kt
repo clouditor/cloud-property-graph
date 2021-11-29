@@ -102,7 +102,7 @@ class JSHttpPass : Pass() {
         e: HttpEndpoint
     ) {
         if (me.name == "body" &&
-                fd.parameters.first() == (me.base as DeclaredReferenceExpression).refersTo
+                fd.parameters.first() == (me.base as? DeclaredReferenceExpression)?.refersTo
         ) {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
