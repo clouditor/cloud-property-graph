@@ -2,6 +2,8 @@ package io.clouditor.graph.passes.js
 
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
+import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
@@ -84,7 +86,7 @@ class JSHttpPass : Pass() {
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
                     fun visit(me: MemberExpression) {
-                        handleRequestUnpacking(me, endpoint)
+                        handleRequestUnpacking(func, me, endpoint)
                     }
                 }
             )
@@ -95,10 +97,10 @@ class JSHttpPass : Pass() {
         }
     }
 
-    private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
+    private fun handleRequestUnpacking(fd: FunctionDeclaration, me: MemberExpression, e: HttpEndpoint) {
         // TODO: this is specific to the naming we use in the PCE example; we should check if "req"
         // is actually an argument of the POST expression
-        if (me.name == "body" && me.base.name == "req") {
+        if (me.name == "body" && fd.parameters.first() == me.base) {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
 
