@@ -46,7 +46,7 @@ class FlaskPass : Pass() {
 
         if ((v.initializer as? CallExpression)?.name == "Flask") {
             // handle it as a request handler
-            val handler = HttpRequestHandler(app, mutableListOf(), "")
+            val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
 
             app?.functionalities?.plusAssign(handler)
