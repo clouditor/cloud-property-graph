@@ -2,7 +2,6 @@ package io.clouditor.graph.passes.js
 
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
@@ -75,22 +74,19 @@ class JSHttpPass : Pass() {
         ) {
             val path: String =
                 unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
-            val func =
-                (mce.arguments[mce.arguments.size - 1] as? DeclaredReferenceExpression)
-                    ?.refersTo as?
-                    FunctionDeclaration
+            val func = (mce.arguments[mce.arguments.size - 1] as? LambdaExpression)?.function
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, getMethod(mce), path, null, null)
             endpoint.name = path
 
             // get the endpoint's handler and look for assignments of the request's JSON body
             func?.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(me: MemberExpression) {
-                            handleRequestUnpacking(me, endpoint)
-                        }
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(me: MemberExpression) {
+                        handleRequestUnpacking(me, endpoint)
                     }
+                }
             )
 
             endpoint
@@ -99,16 +95,17 @@ class JSHttpPass : Pass() {
         }
     }
 
-private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
-    // TODO: this is specific to the naming we use in the PCE example; we should check if "req" is actually an argument of the POST expression
-    if (me.name == "body" && me.base.name == "req") {
-        // set the DFG target of this call to the DFG target of our http endpoints
-        me.nextDFG.forEach { e.addNextDFG(it) }
+    private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
+        // TODO: this is specific to the naming we use in the PCE example; we should check if "req"
+        // is actually an argument of the POST expression
+        if (me.name == "body" && me.base.name == "req") {
+            // set the DFG target of this call to the DFG target of our http endpoints
+            me.nextDFG.forEach { e.addNextDFG(it) }
 
-        // TODO(oxisto): Once we update the ontology, we should also set this as the
-        // "request_body" property of the http endpoint
+            // TODO(oxisto): Once we update the ontology, we should also set this as the
+            // "request_body" property of the http endpoint
+        }
     }
-}
 
     private fun unRegex(`in`: String): String {
         // very hacky way to get rid of the regex
