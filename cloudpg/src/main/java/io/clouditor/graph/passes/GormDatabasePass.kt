@@ -64,10 +64,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                 var port = map?.get("port")?.toShortOrNull() ?: 5432
 
                 if (host != null) {
-                    val op = createDatabaseConnect(result, host, call, app)
-
-                    result += op
-                    app?.functionalities?.plusAssign(op)
+                    createDatabaseConnect(result, host, call, app)
                 }
             }
         }
@@ -136,8 +133,6 @@ class GormDatabasePass : DatabaseOperationPass() {
 
             if (op != null) {
                 op.location = call.location
-                result += op
-                app.functionalities?.plusAssign(op)
             }
         }
     }

@@ -3,9 +3,7 @@ package io.clouditor.graph.passes.js
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.App
@@ -65,14 +63,12 @@ class FetchPass : HttpClientPass() {
         val app = t.findApplicationByTU(tu)
         // add env vars as labels
         app?.runsOn?.forEach { it.labels = it.labels + map }
-
         // first parameter is the URL
-        var url = JSValueResolver(app).resolve(call.arguments.first())
-
+        val url = JSValueResolver(app).resolve(call.arguments.first())
         // second parameter contains (optional) options
         val method = getMethod(call.arguments.getOrNull(1) as? InitializerListExpression)
-
-        createHttpRequest(t, url as String, call, method, app)
+        val body = getBody(call.arguments.getOrNull(1) as InitializerListExpression)
+        createHttpRequest(t, url as String, call, method, body, app)
     }
 
     private fun getMethod(options: InitializerListExpression?): String {
@@ -90,6 +86,17 @@ class FetchPass : HttpClientPass() {
             ?.let { method = it as String }
 
         return method
+    }
+
+    private fun getBody(options: InitializerListExpression?): Expression? {
+        var body =
+            (options?.initializers?.firstOrNull() {
+                    it is KeyValueExpression && it.key?.name == "body"
+                } as
+                    KeyValueExpression)
+                .value
+
+        return body
     }
 
     override fun cleanup() {

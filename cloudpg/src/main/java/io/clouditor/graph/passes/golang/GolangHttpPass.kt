@@ -5,10 +5,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -21,6 +18,7 @@ class GolangHttpPass : Pass() {
 
     override fun accept(result: TranslationResult?) {
         if (result != null) {
+
             // first, look for clients
             for (tu in result.translationUnits) {
                 tu.accept(
@@ -34,7 +32,6 @@ class GolangHttpPass : Pass() {
             }
 
             // then for the member calls
-            // first, look for clients
             for (tu in result.translationUnits) {
                 tu.accept(
                     Strategy::AST_FORWARD,

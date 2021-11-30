@@ -47,7 +47,15 @@ class PyMongoPass : DatabaseOperationPass() {
                         clients[memberExpression.base]?.let {
                             handleDBObjectCreate(t, memberExpression, app, it)
                         }
+                    }
+                }
+            )
 
+            tu.accept(
+                Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
+                // work
+                object : IVisitor<Node?>() {
+                    fun visit(memberExpression: MemberExpression) {
                         // The process is then repeated for a database object, to create a
                         // collections object.
                         dbs[memberExpression.base]?.let {
@@ -55,6 +63,11 @@ class PyMongoPass : DatabaseOperationPass() {
                         }
                     }
                 }
+            )
+
+            log.debug(
+                "Trying to find queries to collections. We have {} references to collections",
+                collections.size
             )
 
             tu.accept(
@@ -107,6 +120,8 @@ class PyMongoPass : DatabaseOperationPass() {
 
         // store a pair of the connect operation and possible storage(s)
         storeDeclarationOrReference(dbs, target, Pair(connect, storages))
+
+        log.debug("Storing reference to mongo DB object: {}", memberExpression.name)
     }
 
     private fun handleCollectionsObjectCreate(
@@ -134,6 +149,8 @@ class PyMongoPass : DatabaseOperationPass() {
 
         // store a pair of the connect operation and possible storage(s)
         storeDeclarationOrReference(collections, target, Pair(connect, storages))
+
+        log.debug("Storing reference to mongo collection object: {}", memberExpression.name)
     }
 
     private fun handleQuery(
@@ -154,7 +171,6 @@ class PyMongoPass : DatabaseOperationPass() {
 
         if (mce.name == "find") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
-
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
 
@@ -164,7 +180,6 @@ class PyMongoPass : DatabaseOperationPass() {
 
         if (op != null) {
             op.name = mce.name
-            t += op
         }
     }
 
