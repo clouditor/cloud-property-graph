@@ -150,9 +150,6 @@ class PyMongoPass : DatabaseOperationPass() {
 
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
-
-            app?.functionalities?.plusAssign(op)
-            t += op
         }
 
         if (mce.name == "find") {
@@ -162,14 +159,10 @@ class PyMongoPass : DatabaseOperationPass() {
 
             // and towards the DFG target(s) of the call
             mce.nextDFG.forEach { op.addNextDFG(it) }
-
-            app?.functionalities?.plusAssign(op)
-            t += op
         }
 
         if (op != null) {
             op.name = mce.name
-            t += op
         }
     }
 
