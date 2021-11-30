@@ -13,7 +13,7 @@ import io.clouditor.graph.passes.DatabaseOperationPass
 class Psycopg2Pass : DatabaseOperationPass() {
 
     val clients: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
-    val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
+    private val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
 
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
@@ -56,7 +56,17 @@ class Psycopg2Pass : DatabaseOperationPass() {
                             if (call.name == "execute") {
                                 handleExecute(t, call, app, it)
                             }
+                        }
+                    }
+                }
+            )
 
+            t.accept(
+                Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
+                // work
+                object : IVisitor<Node?>() {
+                    fun visit(call: MemberCallExpression) {
+                        clients[call.base]?.let {
                             if (call.name == "fetchall") {
                                 handleFetchAll(t, call, app, it)
                             }
