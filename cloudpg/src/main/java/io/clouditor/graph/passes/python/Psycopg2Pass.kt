@@ -31,6 +31,8 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 }
             )
 
+            // in order to avoid ordering problems, we need to do this one step at a time, so first
+            // looking for a cursor.
             t.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
@@ -40,7 +42,17 @@ class Psycopg2Pass : DatabaseOperationPass() {
                             if (call.name == "cursor") {
                                 handleCursor(call, it)
                             }
+                        }
+                    }
+                }
+            )
 
+            t.accept(
+                Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
+                // work
+                object : IVisitor<Node?>() {
+                    fun visit(call: MemberCallExpression) {
+                        clients[call.base]?.let {
                             if (call.name == "execute") {
                                 handleExecute(t, call, app, it)
                             }
