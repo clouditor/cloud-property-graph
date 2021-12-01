@@ -58,7 +58,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.Fraunhofer-AISEC:cpg:master-SNAPSHOT")
+    implementation("com.github.Fraunhofer-AISEC:cpg:0b3c9c9b")
 
     api("org.neo4j", "neo4j-ogm-core", "3.2.21")
     api("org.neo4j", "neo4j-ogm", "3.2.21")
