@@ -12,4 +12,12 @@ open class Label constructor(labeledNode: Node) : Node() {
      */
     @field:Relationship(value = "LABELEDNODE", direction = "OUTGOING")
     var labeledNodes: MutableList<Node> = mutableListOf(labeledNode)
+
+    open fun areMergeable(l: Label): Boolean {
+        return true
+    }
+
+    open fun mergeWith(l: Label) {
+        labeledNodes.addAll(l.labeledNodes)
+    }
 }
