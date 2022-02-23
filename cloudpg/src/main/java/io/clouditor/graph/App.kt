@@ -24,8 +24,8 @@ import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
+import io.clouditor.graph.testing.LocalTestingPass
 import java.nio.file.Path
-import java.util.*
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 import org.neo4j.ogm.config.Configuration
@@ -69,6 +69,14 @@ object App : Callable<Int> {
                 "Whether or not to enable attaching labels to the graph extracted from annotations or specific passes."]
     )
     var labelsEnabled: Boolean = false
+
+    @CommandLine.Option(
+        names = ["--local-mode"],
+        description =
+            [
+                "Whether or not Kubernetes and GitHub workflow files should be parsed to check the deployed containers the application is running on."]
+    )
+    var localMode: Boolean = false
 
     @CommandLine.Parameters(index = "0..*") lateinit var paths: List<Path>
 
@@ -149,6 +157,11 @@ object App : Callable<Int> {
                 .registerPass(AzureClientSDKPass())
                 .registerPass(KubernetesPass())
                 .registerPass(IngressInvocationPass())
+                .apply {
+                    if (localMode) {
+                        registerPass(LocalTestingPass())
+                    }
+                }
                 .registerPass(JaxRsClientPass())
                 .registerPass(FetchPass())
                 .registerPass(RequestsPass())
