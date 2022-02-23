@@ -153,13 +153,14 @@ object App : Callable<Int> {
                 .registerPass(WebBrickPass())
                 .registerPass(JSHttpPass())
                 .registerPass(FlaskPass())
-                .registerPass(AzurePass())
-                .registerPass(AzureClientSDKPass())
-                .registerPass(KubernetesPass())
-                .registerPass(IngressInvocationPass())
                 .apply {
                     if (localMode) {
                         registerPass(LocalTestingPass())
+                    } else {
+                        registerPass(AzurePass())
+                        registerPass(AzureClientSDKPass())
+                        registerPass(KubernetesPass())
+                        registerPass(IngressInvocationPass())
                     }
                 }
                 .registerPass(JaxRsClientPass())

@@ -35,31 +35,59 @@ class LocalTestingPass : Pass() {
 
     private fun handleConf(conf: TestConfig, t: TranslationResult) {
         val controllers =
-            t.additionalNodes
-                .filter {
-                    it is HttpRequestHandler
-                    // TODO
-                    // && it.application?.runsOn?.contains(backend.compute) == true
-                }
-                .map { it as HttpRequestHandler }
-        for (controller in controllers) {
-            for (endpoint in controller.httpEndpoints) {
-                var url = conf.host?.appendPath(controller.path)
-                url = url?.appendPath(endpoint.path)
+            t.additionalNodes.filter { it is HttpRequestHandler }.map { it as HttpRequestHandler }
 
-                val proxy =
-                    ProxiedEndpoint(
-                        listOf(endpoint),
-                        NoAuthentication(),
-                        endpoint.handler,
-                        endpoint.method,
-                        endpoint.path,
-                        // use the TE of the ingress's TE
+        // TODO map / foreach
+        for (service in conf.services) {
+            if (service.type == "server") {
+                for (controller in controllers) {
+                    for (endpoint in controller.httpEndpoints) {
+                        var url = service.host?.appendPath(controller.path)
+                        url = url?.appendPath(endpoint.path)
+
+                        val proxy =
+                            ProxiedEndpoint(
+                                listOf(endpoint),
+                                NoAuthentication(),
+                                endpoint.handler,
+                                endpoint.method,
+                                endpoint.path,
+                                null,
+                                url
+                            )
+                        proxy.addNextDFG(endpoint)
+                        t += proxy
+                    }
+                }
+            }
+        }
+
+        for (service in conf.services) {
+            if (service.name == "postgres") {
+                val db =
+                    RelationalDatabaseService(
+                        mutableListOf<DatabaseStorage>(),
                         null,
-                        url
+                        null,
+                        null,
+                        null,
+                        mapOf()
                     )
-                proxy.addNextDFG(endpoint)
-                t += proxy
+                db.name = service.name
+                t += db
+            }
+            if (service.name == "mongo") {
+                val db =
+                    DocumentDatabaseService(
+                        mutableListOf<DatabaseStorage>(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        mapOf()
+                    )
+                db.name = service.name
+                t += db
             }
         }
     }
