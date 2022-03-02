@@ -42,6 +42,10 @@ Some implementation details need to be considered when writing passes:
 - Newly created nodes need to be added to the `translationResult` (`t += n`)
 - Add a DFG edge via `node1.addNextDFG(node2)`
 
+## Testing
+The CloudPG includes a testing library that provides test cases for certain threats. At the moment, these threats include primarily privacy threats. 
+To use this testing library, a dedicated testing mode is available which can be enabled via the flag ```--local-mode```. For example, adapt the command above with the flags ```--local-mode --root=. ppg-testing-library/```. 
+
 ## Further reading
 
 [1] Christian Banse, Immanuel Kunz, Angelika Schneider and Konrad Weiss. Cloud Property Graph: Connecting Cloud Security Assessments with Static Code Analysis. IEEE CLOUD 2021. https://doi.org/10.1109/CLOUD53861.2021.00014

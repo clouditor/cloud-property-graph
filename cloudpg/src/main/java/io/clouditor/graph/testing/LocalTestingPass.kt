@@ -15,8 +15,7 @@ class LocalTestingPass : Pass() {
         val applications = listOf(App.rootPath)
 
         for (rootPath in applications) {
-            // TODO find solution for python/go folder structure
-            val workflowPath = rootPath.resolve("config")
+            val workflowPath = rootPath.resolve("ppg-testing-library").resolve("config")
             workflowPath.toFile().walkTopDown().iterator().forEach { file ->
                 if (file.extension == "yml") {
                     val mapper = ObjectMapper(YAMLFactory())
@@ -25,8 +24,6 @@ class LocalTestingPass : Pass() {
                     Files.newBufferedReader(file.toPath()).use {
                         val config = mapper.readValue(it, TestConfig::class.java)
                         handleConf(config, t)
-                        // val handler = WorkflowHandler(t, rootPath)
-                        // handler.handleWorkflow(workflow)
                     }
                 }
             }
