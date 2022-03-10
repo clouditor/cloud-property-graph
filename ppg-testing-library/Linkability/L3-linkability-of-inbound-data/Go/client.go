@@ -9,6 +9,7 @@ import (
 func main() {
 	var err error
 
+	// @PseudoIdentifier
 	data := url.Values{
 		"name": {"firstname lastname"},
 	}
