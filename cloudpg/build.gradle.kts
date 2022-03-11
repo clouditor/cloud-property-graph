@@ -62,7 +62,7 @@ repositories {
 }
 
 dependencies {
-    val version = "4.3.4"
+    val version = "4.3.5"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
