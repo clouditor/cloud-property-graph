@@ -46,6 +46,10 @@ repositories {
 
     maven { setUrl("https://jitpack.io") }
 
+    maven {
+        setUrl("https://oss.sonatype.org/content/groups/public/")
+    }
+
     ivy {
         setUrl("https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.2/plugins")
         metadataSources {
@@ -58,7 +62,12 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.Fraunhofer-AISEC:cpg:0b3c9c9b")
+    val version = "4.3.4"
+
+    implementation("de.fraunhofer.aisec:cpg-core:$version")
+    implementation("de.fraunhofer.aisec:cpg-analysis:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-go:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-python:$version")
 
     api("org.neo4j", "neo4j-ogm-core", "3.2.21")
     api("org.neo4j", "neo4j-ogm", "3.2.21")
