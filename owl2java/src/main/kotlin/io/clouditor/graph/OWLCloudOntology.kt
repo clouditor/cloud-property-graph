@@ -385,7 +385,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers", "runsOn", "proxyTarget", "to" -> {
+                    "has", "offers", "runsOn", "to" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
