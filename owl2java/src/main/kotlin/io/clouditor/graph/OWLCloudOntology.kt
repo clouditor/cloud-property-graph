@@ -18,7 +18,7 @@ import java.util.ArrayList
 import java.util.Comparator
 import java.util.stream.Collectors
 
-class OWLCloudOntology(filepath: String) {
+class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: String) {
     private var ontology: OWLOntology? = null
     private var df: OWLDataFactory? = null
     val interfaceList: MutableList<String> = ArrayList() // It is assumed, that the classes that are defined as interfaces have a unique name
@@ -98,7 +98,7 @@ class OWLCloudOntology(filepath: String) {
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
         val superClassName = getSuperClassName(clazz)
 
-        if (!superClassName.isEmpty()) {
+        if (superClassName.isNotEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
@@ -210,7 +210,7 @@ class OWLCloudOntology(filepath: String) {
         for ((key) in superClassParameters) {
             if (superClassParametersAsCommaSeparatedString != "") superClassParametersAsCommaSeparatedString =
                 "$superClassParametersAsCommaSeparatedString,"
-            superClassParametersAsCommaSeparatedString = superClassParametersAsCommaSeparatedString + key
+            superClassParametersAsCommaSeparatedString += key
         }
         return superClassParametersAsCommaSeparatedString
     }
@@ -227,7 +227,7 @@ class OWLCloudOntology(filepath: String) {
                 Class [$clazz]  	${getClassName(clazz, ontology)}
                 """.trimIndent()
         )
-        if (getClassName(clazz, ontology) == "CloudResource") println("")
+        if (getClassName(clazz, ontology) == resourceNameFromOwlFile) println("")
 
         // Set super class name
         javaClass = setSuperClassName(javaClass, clazz)
@@ -452,7 +452,7 @@ class OWLCloudOntology(filepath: String) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
 
                 // Add property
-                var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
+                val property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
@@ -487,7 +487,7 @@ class OWLCloudOntology(filepath: String) {
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
         var rootClassName: String
         rootClassName = getSuperClassName(clazz)
-        if (rootClassName == "CloudResource") {
+        if (rootClassName == resourceNameFromOwlFile) {
             return true
         } else if (clazz.isOWLThing) {
             return false
@@ -497,7 +497,7 @@ class OWLCloudOntology(filepath: String) {
         for (claz in classes) {
             if (getClassName(claz) == rootClassName) {
                 rootClassName = getSuperClassName(claz)
-                if (isRootClassNameResource(claz, classes) == true) {
+                if (isRootClassNameResource(claz, classes)) {
                     return true
                 }
             }
