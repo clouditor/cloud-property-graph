@@ -44,6 +44,4 @@ Some implementation details need to be considered when writing passes:
 
 ## Further reading
 
-We will share more details soon.
-
-[1] Christian Banse, Immanuel Kunz, Angelika Schneider and Konrad Weiss. Cloud Property Graph: Connecting Cloud Security Assessments with Static Code Analysis. To appear in: IEEE CLOUD 2021 https://conferences.computer.org/cloud/2021/program/
+[1] Christian Banse, Immanuel Kunz, Angelika Schneider and Konrad Weiss. Cloud Property Graph: Connecting Cloud Security Assessments with Static Code Analysis. IEEE CLOUD 2021. https://doi.org/10.1109/CLOUD53861.2021.00014

@@ -64,7 +64,7 @@ class IngressInvocationPass : Pass() {
                         transportEncryption,
                         url
                     )
-
+                proxy.addNextDFG(endpoint)
                 t += proxy
             }
         }

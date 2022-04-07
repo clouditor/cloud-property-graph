@@ -42,6 +42,7 @@ open class ValueResolver(
     /** Tries to resolve this expression. Anything can happen. */
     fun resolve(expr: Expression?): Any? {
         when (expr) {
+            is KeyValueExpression -> return resolve(expr.value)
             is Literal<*> -> return expr.value?.toString() ?: ""
             is DeclaredReferenceExpression -> return resolveDeclaration(expr.refersTo)
             is BinaryOperator -> {
