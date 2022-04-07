@@ -60,6 +60,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 null,
                                 null,
                                 null,
+                                // TODO(all): NetworkInterface missing
+                                null,
                                 result.locationForRegion(Region.US_EAST),
                                 mutableMapOf()
                             )
@@ -82,6 +84,8 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                             compute,
                                             ArrayList(listOf(host)),
                                             ArrayList(listOf(port)),
+                                            // TODO(all): TransportEncryption missing
+                                            null,
                                             compute.geoLocation,
                                             mutableMapOf()
                                         )
