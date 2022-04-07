@@ -10,6 +10,10 @@ import io.clouditor.graph.*
 
 abstract class DatabaseOperationPass : Pass() {
 
+    /**
+     * Creates a new [DatabaseConnect]. This also takes care of adding the query to the
+     * application's functionalities as well as adding it to the translation result.
+     */
     protected fun createDatabaseConnect(
         t: TranslationResult,
         host: String,
@@ -21,9 +25,16 @@ abstract class DatabaseOperationPass : Pass() {
         val op = DatabaseConnect(listOf(call), null, db)
         op.location = app?.location
 
+        app?.functionalities?.plusAssign(op)
+        t += op
+
         return op
     }
 
+    /**
+     * Creates a new [DatabaseQuery]. This also takes care of adding the query to the application's
+     * functionalities as well as adding it to the translation result.
+     */
     protected fun createDatabaseQuery(
         t: TranslationResult,
         modify: Boolean,
@@ -42,6 +53,9 @@ abstract class DatabaseOperationPass : Pass() {
                 op.addPrevDFG(it)
             }
         }
+
+        app?.functionalities?.plusAssign(op)
+        t += op
 
         return op
     }

@@ -7,9 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.InitializerListExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -48,7 +46,7 @@ class FlaskPass : Pass() {
 
         if ((v.initializer as? CallExpression)?.name == "Flask") {
             // handle it as a request handler
-            val handler = HttpRequestHandler(app, mutableListOf(), "")
+            val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
 
             app?.functionalities?.plusAssign(handler)
@@ -92,15 +90,34 @@ class FlaskPass : Pass() {
                 )
             endpoint.name = endpoint.path
 
+            // get the endpoint's handler and look for assignments of the request's JSON body
+            func.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(me: MemberExpression) {
+                        handleRequestUnpacking(me, endpoint)
+                    }
+                }
+            )
+
             return endpoint
         }
 
         return null
     }
 
+    private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
+        if (me.name == "json" && me.base.name == "request") {
+            // set the DFG target of this call to the DFG target of our http endpoints
+            me.nextDFG.forEach { e.addNextDFG(it) }
+
+            // TODO(oxisto): Once we update the ontology, we should also set this as the
+            // "request_body" property of the http endpoint
+        }
+    }
+
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
-
         (mapping.members.firstOrNull { it.name == "methods" }?.value as? InitializerListExpression)
             ?.initializers?.firstOrNull()
             .let { (it as? Literal<*>)?.let { method = it.value.toString() } }
