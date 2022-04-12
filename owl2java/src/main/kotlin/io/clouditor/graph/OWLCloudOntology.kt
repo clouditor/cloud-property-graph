@@ -245,6 +245,10 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         // be known
         javaClass = setClassConstructor(javaClass)
 
+        // Set description
+        // TODO(garuppel)
+        //javaClass = setOWLClassObjectDescription(javaClass)
+
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
             System.err.println("SyntaxError: " + javaClass.syntaxErrors)

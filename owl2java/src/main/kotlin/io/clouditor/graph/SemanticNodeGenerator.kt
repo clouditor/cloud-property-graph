@@ -129,6 +129,11 @@ object SemanticNodeGenerator {
             }
         }
 
+        // Add description
+        for (elem in goSource.objectProperties) {
+            goSourceCode += "// ${elem.description}\n\n"
+        }
+
         // Add struct
         goSourceCode += """type ${goSource.name} struct {
 """
