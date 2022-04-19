@@ -7,12 +7,13 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
+import io.clouditor.graph.HttpRequest
 import io.clouditor.graph.*
-import io.clouditor.graph.passes.HttpClientPass
 
-class GolangHttpPass : HttpClientPass() {
+class GolangHttpPass : Pass() {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     override fun cleanup() {}
@@ -39,6 +40,18 @@ class GolangHttpPass : HttpClientPass() {
                     object : IVisitor<Node?>() {
                         fun visit(m: MemberCallExpression) {
                             handleMemberCall(result, tu, m)
+                        }
+                    }
+                )
+            }
+
+            // look for http call expressions in the client code
+            for (tu in result.translationUnits) {
+                tu.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(m: CallExpression) {
+                            handleCallExpression(result, tu, m)
                         }
                     }
                 )
@@ -103,6 +116,26 @@ class GolangHttpPass : HttpClientPass() {
             clients[r] = requestHandler
 
             result += requestHandler
+        }
+    }
+
+    private fun handleCallExpression(
+        result: TranslationResult,
+        tu: TranslationUnitDeclaration,
+        c: CallExpression
+    ) {
+        val app = result.findApplicationByTU(tu)
+        var requestFunction = c.invokes as FunctionDeclaration
+        // should also have c.base.name == "http" but this is not parsed correctly atm
+        if (c.name == "PostForm") {
+            var request = createHttpRequest(
+                    result,
+                    requestFunction.parameters.first() as String,
+                    c,
+                    "POST",
+                    requestFunction.parameters[1],
+                    app
+            )
         }
     }
 }

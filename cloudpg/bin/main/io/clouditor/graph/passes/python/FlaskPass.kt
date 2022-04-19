@@ -113,7 +113,6 @@ class FlaskPass : Pass() {
 
             // TODO(oxisto): Once we update the ontology, we should also set this as the
             // "request_body" property of the http endpoint
-
         }
     }
 

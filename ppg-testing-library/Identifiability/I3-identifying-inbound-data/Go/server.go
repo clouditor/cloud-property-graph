@@ -17,6 +17,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(logger.SetLogger())
 
+    // non-repudiation threat results from receiving the tainted personal data
 	r.POST("/data", parse_data)
 
 	return r
@@ -28,6 +29,4 @@ func parse_data(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// non-repudiation threat results from logging the tainted personal data
-	log.Info().Msg(data)
 }

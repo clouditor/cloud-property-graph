@@ -16,7 +16,6 @@ import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.GinGonicPass
 import io.clouditor.graph.passes.golang.GolangHttpPass
-import io.clouditor.graph.passes.golang.GolangHttpRequestPass
 import io.clouditor.graph.passes.golang.GolangLogPass
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
@@ -156,10 +155,7 @@ object App : Callable<Int> {
                 .registerPass(FlaskPass())
                 .apply {
                     if (localMode) {
-                        // register the localTestingPass after the HTTP Passes since it needs HTTP
-                        // request handlers
                         registerPass(LocalTestingPass())
-                        registerPass(GolangHttpRequestPass())
                     } else {
                         registerPass(AzurePass())
                         registerPass(AzureClientSDKPass())

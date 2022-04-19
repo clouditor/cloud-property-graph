@@ -190,6 +190,8 @@ class GinGonicPass : Pass() {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
+        // check initializers for http.NewServeMux()
+        // actually check for return types - but that does not work (yet) with the standard library
         if (r.initializer is CallExpression &&
                 (r.initializer as CallExpression).fqn == "gin.Default" ||
                 (r.initializer as CallExpression).fqn == "gin.New"

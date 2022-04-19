@@ -72,6 +72,10 @@ dependencies {
     implementation("de.fraunhofer.aisec:cpg-language-go:$version")
     implementation("de.fraunhofer.aisec:cpg-language-python:$version")
 
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
+    implementation ("org.xmlunit:xmlunit-core:2.9.0")
+    implementation("org.xmlunit:xmlunit-matchers:2.9.0")
+
     api("org.neo4j", "neo4j-ogm-core", "3.2.31")
     api("org.neo4j", "neo4j-ogm", "3.2.21")
     api("org.neo4j", "neo4j-ogm-bolt-driver", "3.2.21")
