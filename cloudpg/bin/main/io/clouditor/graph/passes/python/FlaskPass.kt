@@ -107,7 +107,8 @@ class FlaskPass : Pass() {
     }
 
     private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
-        if (me.name == "json" && me.base.name == "request") {
+        // TODO add further request MemberExpressions, like args, files, values
+        if ((me.name == "json" || me.name == "form") && me.base.name == "request") {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
 

@@ -12,9 +12,12 @@ app = Flask(__name__)
 
 @app.route("/data", methods=['POST'])
 def collect_data():
-    content = request.json
-    # Threat results from data being collected and stored, but not retrieved
-    phr_db_collection.insert_one(content)
+    # Threat results from personal data being collected, but not processed
+    # TODO: which other cases present a NON-processing?
+    # TODO e.g. a simple assignment
+    # content = request.json
+    # phr = content
+    # TODO Konrad?
     return "OK", 200
 
 if __name__ == '__main__':

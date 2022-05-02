@@ -72,10 +72,16 @@ abstract class DatabaseOperationPass : Pass() {
         // store it in our clients/connection map
         map[target] = obj
 
-        // if this is variable declaration, follow the DFG to its REFERS_TO references and store
+        // if this is a variable declaration, follow the DFG to its REFERS_TO references and store
         // them as well
         if (target is VariableDeclaration) {
             target.nextDFG.forEach {
+                if (it is DeclaredReferenceExpression && it.refersTo == target) {
+                    map[it] = obj
+                }
+            }
+            // sometimes there is only an EOG edge but not a DFG
+            target.nextEOG.forEach {
                 if (it is DeclaredReferenceExpression && it.refersTo == target) {
                     map[it] = obj
                 }

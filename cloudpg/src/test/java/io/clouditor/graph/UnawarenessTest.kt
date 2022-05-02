@@ -5,20 +5,23 @@ import kotlin.test.assertEquals
 import org.junit.Test
 import org.neo4j.driver.internal.InternalPath
 
-class IdentifiabilityTest {
+class UnawarenessTest {
 
-    // fun TestID1(){}
-    // fun TestID2(){}
+    // fun TestU1(){} out of scope
+    // fun TestU2(){} out of scope
 
+    // TODO
     @Test
-    fun TestID3() {
+    fun TestU3() {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Identifiability/I3-identifying-inbound-data/Python"
+                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Unawareness/U3-no-access-or-portability"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(b) WITH *, relationships(p) AS b RETURN p, a, b"
+                "MATCH (:PseudoIdentifier)--()-[:DFG*]->(o:DatabaseOperation)-->(d:DatabaseStorage), (a:Application), (p:DatabaseOperation)\n" +
+                    "WHERE NOT EXISTS (()-[:CALLS]-(p)<--(d:DatabaseStorage))\n" +
+                    "AND ((o)--(a)) AND ((p)--(a)) RETURN a, d"
             )
         // compare expected number of paths
         println("Found ${result.count()} results")
@@ -32,18 +35,14 @@ class IdentifiabilityTest {
             println("result has ${path.size} sub-paths")
             // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            println(firstNode)
-            assert(firstNode.labels().contains("Identifier"))
             // the last node should be the LogOutput
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            println(lastNode)
-            assert(lastNode.labels().contains("LogOutput"))
         }
     }
 
-    // fun TestID4(){}
-    // fun TestID5(){}
-    // fun TestID6(){}
-    // fun TestID7(){}
+    @Test fun TestU4() {}
+    // TODO fun TestU4.2 with user role check --> mock auth server?
+
+    // fun TestU5(){} out of scope
 
 }

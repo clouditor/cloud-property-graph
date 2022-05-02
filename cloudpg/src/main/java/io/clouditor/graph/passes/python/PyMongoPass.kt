@@ -160,7 +160,6 @@ class PyMongoPass : DatabaseOperationPass() {
         pair: Pair<DatabaseConnect, List<DatabaseStorage>>
     ) {
         var (connect, storage) = pair
-
         var op: DatabaseQuery? = null
         if (mce.name == "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
