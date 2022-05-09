@@ -13,8 +13,8 @@ func main() {
 	identifier := url.Values{
 		"name": {"firstname lastname"},
 	}
-
-	resp, err := http.PostForm("http://test.com/data", identifier)
+    url := "http://test.com/data"
+	resp, err := http.PostForm(url, identifier)
 	if err != nil {
 		log.Fatal(err)
 	}

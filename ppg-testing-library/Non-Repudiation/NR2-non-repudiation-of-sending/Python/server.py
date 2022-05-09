@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route("/data", methods=['POST'])
 def collect_data():
     # content has tainted data
-    content = request.form
+    content = request.json
     return "OK", 200
 
 if __name__ == '__main__':
