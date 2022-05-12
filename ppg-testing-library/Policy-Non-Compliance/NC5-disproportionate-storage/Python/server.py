@@ -17,5 +17,14 @@ def collect_data():
     phr_db_collection.insert_one(content)
     return "OK", 200
 
+@app.route("/data2", methods=['POST'])
+def collect_data2():
+    content = request.json
+    name = content['name']
+    joke = content['joke']
+    # only the tainted data is stored, the tool should only identify one threat for the tainted datum name but not for joke
+    phr_db_collection.insert_one(name)
+    return "OK", 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)

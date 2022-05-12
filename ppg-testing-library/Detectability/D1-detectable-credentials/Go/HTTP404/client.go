@@ -14,7 +14,7 @@ func main() {
 		"name": {"firstname lastname"},
 	}
 
-	resp, err := http.PostForm("http://test.com/data", identifier)
+	resp, err := http.PostForm("http://test.com/login", identifier)
 	if err != nil {
 		log.Fatal(err)
 	}

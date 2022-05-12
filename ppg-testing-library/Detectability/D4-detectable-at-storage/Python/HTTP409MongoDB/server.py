@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
 
 from flask import Flask, request
-import json
-import requests
-import logging
-import os, sys
-from pymongo import MongoClient, database 
+from pymongo import MongoClient, database
 
-# phr_db client (MongoDB)
-mongo_host = "mongo"
 user_db_client = MongoClient("mongodb://mongo:27017/")
 user_db = user_db_client.userdata
 user_db_collection = user_db.records
 
 app = Flask(__name__)
 
-@app.route("/data", methods=['POST'])
-def collect_data():
+@app.route("/account", methods=['POST'])
+def account():
     content = request.json
     if user_db_collection.find( { "name": content['name'] } ).count() > 0:
-        return "Conflict", 409    
+        return "Conflict", 409
     else:
         user_db_collection.insert_one({"name": content['name']})
-    return "OK", 201
+        return "Created", 201
 
 if __name__ == '__main__':
-    logging.info("start at port 8080")
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)

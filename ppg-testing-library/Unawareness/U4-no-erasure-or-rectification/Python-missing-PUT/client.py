@@ -5,9 +5,9 @@ import requests
 def query():
     url = 'test.com/data'
 
-    # TODO label doesn't work: @PseudoIdentifier
+    #@PseudoIdentifier
     personal_data = {'name': 'firstname lastname'}
-    response = requests.post(url, data = personal_data)
+    requests.post(url, json = personal_data)
 
 if __name__ == '__main__':
     query()

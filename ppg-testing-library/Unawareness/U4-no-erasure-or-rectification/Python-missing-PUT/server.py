@@ -10,7 +10,7 @@ phr_db_collection = phr_db.records
 
 app = Flask(__name__)
 
-# TODO Personal data can be submitted and read, but it cannot be updated, i.e. no PUT method is available?
+# Personal data can be submitted (POST) and read (GET), but it cannot be updated (PUT)
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json

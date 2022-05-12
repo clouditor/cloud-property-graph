@@ -43,7 +43,7 @@ class GolangHttpRequestPass : HttpClientPass() {
                 result,
                 // TODO the parameter has the name "string0" rather than test.com
                 // requestFunction.parameters.first().name,
-                "test.com/data",
+                "test.com/login",
                 c,
                 "POST",
                 // TODO request body: the default value is not correctly set, so we use the
