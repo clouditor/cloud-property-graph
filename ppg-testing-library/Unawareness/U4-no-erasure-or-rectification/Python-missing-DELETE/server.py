@@ -10,7 +10,7 @@ phr_db_collection = phr_db.records
 
 app = Flask(__name__)
 
-# Personal data can be submitted (POST) and read (GET), but it cannot be updated (PUT)
+# Personal data can be submitted (POST), read (GET) and updated (PUT), but it cannot be deleted (DELETE)
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json
@@ -23,10 +23,10 @@ def collect_data():
     phr_db_collection.find_one(content["user_id"])
     return "OK", 200
 
-@app.route("/data", methods=['DELETE'])
+@app.route("/data", methods=['PUT'])
 def collect_data():
     content = request.json
-    phr_db_collection.delete_one(content["user_id"])
+    phr_db_collection.update_one(content["user_id"])
     return "OK", 200
 
 if __name__ == '__main__':

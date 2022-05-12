@@ -14,12 +14,16 @@ app = Flask(__name__)
 @app.route("/data", methods=['POST'])
 def collect_data():
     # Threat results from personal data being collected, but not processed
+    content = request.json
+    process(content)
+    logging.info('A funny joke has been submitted: %s', content)
     return "OK", 200
 
 # another test case is to simply assign the data to a variable but not use it, i.e. the data is still not processed
 @app.route("/data2", methods=['POST'])
 def collect_data2():
     content = request.json
+    logging.info('A funny joke has been submitted: %s', content)
     return "OK", 200
 
 # another test case is to send a larger message containing tainted and non-tainted data (see client.py query2)
@@ -31,6 +35,9 @@ def collect_data3():
     # joke is processed, but name is not which is a disproportionate collection threat
     logging.info('A funny joke has been submitted: %s', joke)
     return "Haha funny", 200
+
+def process(content):
+    print(content)
 
 # @Konrad: any other ideas?
 

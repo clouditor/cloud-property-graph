@@ -5,5 +5,3 @@
     2. The data flow of the tainted datum to the server (TODO) is detected
     3. The storage of the tainted datum is detected
     4. No retrieval query is detected at server-side
-  
-  

@@ -10,7 +10,6 @@ phr_db_collection = phr_db.records
 
 app = Flask(__name__)
 
-
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json

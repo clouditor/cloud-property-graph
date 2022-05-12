@@ -10,7 +10,7 @@ phr_db_collection = phr_db.records
 
 app = Flask(__name__)
 
-# Personal data can be submitted (POST) and read (GET), but it cannot be updated (PUT)
+# No Unawareness threat should be detected here, since GET, POST, PUT and DELETE requests for the data are implemented
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json
@@ -21,6 +21,12 @@ def collect_data():
 def collect_data():
     content = request.json
     phr_db_collection.find_one(content["user_id"])
+    return "OK", 200
+
+@app.route("/data", methods=['PUT'])
+def collect_data():
+    content = request.json
+    phr_db_collection.update_one(content["user_id"])
     return "OK", 200
 
 @app.route("/data", methods=['DELETE'])
