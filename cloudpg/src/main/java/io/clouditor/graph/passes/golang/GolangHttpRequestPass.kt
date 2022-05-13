@@ -41,14 +41,43 @@ class GolangHttpRequestPass : HttpClientPass() {
         if (c.name == "PostForm") {
             createHttpRequest(
                 result,
-                // TODO the parameter has the name "string0" rather than test.com
-                // requestFunction.parameters.first().name,
-                "test.com/login",
+                // TODO this should be resolved if it targets a variable
+                (c.arguments[0] as Literal<String>).value,
                 c,
                 "POST",
                 // TODO request body: the default value is not correctly set, so we use the
                 // value that has a dfg edge to the request parameter
                 requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
+                app
+            )
+            // should also have c.base.name == "http" but this is not parsed correctly atm
+        } else if (c.name == "PutForm") {
+            createHttpRequest(
+                result,
+                (c.arguments[0] as Literal<String>).value,
+                c,
+                "PUT",
+                requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
+                app
+            )
+        } else if (c.fqn == "http.Get") {
+            createHttpRequest(
+                result,
+                (c.arguments[0] as Literal<String>).value,
+                c,
+                "GET",
+                null,
+                app
+            )
+        } else if (c.name == "NewRequest" && c.arguments.first().code == "\"POST\"") {
+            createHttpRequest(
+                result,
+                (c.arguments[1] as Literal<String>).value,
+                c,
+                "POST",
+                // TODO request body: the default value is not correctly set, so we use the
+                // value that has a dfg edge to the request parameter
+                requestFunction.parameters[2].prevDFG.first() as Expression,
                 app
             )
         }

@@ -37,7 +37,6 @@ class LocalTestingPass : Pass() {
         val controllers =
             t.additionalNodes.filter { it is HttpRequestHandler }.map { it as HttpRequestHandler }
 
-        // TODO map / foreach
         for (service in conf.services) {
             if (service.type == "server") {
                 for (controller in controllers) {
@@ -59,6 +58,17 @@ class LocalTestingPass : Pass() {
                         t += proxy
                     }
                 }
+
+                val application =
+                    Application(
+                        mutableListOf(),
+                        // TODO how to get the programming language?
+                        "",
+                        mutableListOf(),
+                        t.translationUnits,
+                    )
+                application.name = service.type
+                t += application
             }
         }
 

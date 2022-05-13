@@ -68,6 +68,10 @@ abstract class HttpClientPass : Pass() {
         endpointUrl = endpointUrl?.replace("[{<].*[}>]".toRegex(), "{}")
         matchUrl = matchUrl.replace("[{<].*[}>]".toRegex(), "{}")
 
+        if (matchUrl.contains("?")) {
+            matchUrl = matchUrl.substringBefore("?")
+        }
+
         // normalize urls with trailing slashes
         if (!matchUrl.endsWith("/")) {
             matchUrl += "/"
