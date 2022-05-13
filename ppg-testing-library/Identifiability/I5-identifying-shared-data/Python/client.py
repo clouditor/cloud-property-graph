@@ -3,15 +3,15 @@
 import json
 import requests
 
-def login():
-    url = 'http://test.com/login'
+def transfer_data():
+    url = 'http://test.com/data'
     # @Identifier
-    credentials_form = {'email': 'firstname.lastname@test.com', 'password': '123456', 'first_name': 'firstname', 'last_name': 'lastname'}
-    response = requests.post(url, data = credentials_form)
+    user_data = {'email': 'firstname.lastname@test.com', 'password': '123456', 'first_name': 'firstname', 'last_name': 'lastname'}
+    response = requests.post(url, data = user_data)
     if response.status_code == 200:
-        print("Login successful!")
+        print("Data transfer successful!")
     else:
-        print ("Login failed!")
+        print("Data transfer failed!")
 
 if __name__ == '__main__':
-    login()
+    transfer_data()
