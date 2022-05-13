@@ -44,14 +44,8 @@ func NewRouter() *gin.Engine {
 }
 
 func post_data(c *gin.Context) {
-
 	c.Request.ParseForm()
 	name := c.Request.Form.Get("name")
-
-	db.Create(&Data{
-		Name: name,
-	})
-	// if err != nil {
-	// 	fmt.Println("error", err)
-	// }
+    data := &Data{Name: name}
+	db.Create(data)
 }

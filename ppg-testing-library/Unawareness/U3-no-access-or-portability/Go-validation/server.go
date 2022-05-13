@@ -29,9 +29,15 @@ func NewRouter() *gin.Engine {
 }
 
 func post_data(c *gin.Context) {
-	// TODO
+	c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    data := &Data{Name: name}
+    db.Create(data)
 }
 
 func get_data(c *gin.Context) {
-	// TODO
+    var message Message
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    db.Get().Where("name = ?", name).First(&message).Error
 }

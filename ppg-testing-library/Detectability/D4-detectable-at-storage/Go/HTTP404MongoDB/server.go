@@ -24,7 +24,6 @@ func NewRouter() *gin.Engine {
 }
 
 func login(c *gin.Context) {
-    // TODO struct
 	var (
 	    data string
 	)

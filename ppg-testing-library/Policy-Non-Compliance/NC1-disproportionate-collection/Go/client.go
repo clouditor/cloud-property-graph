@@ -15,23 +15,15 @@ type Message struct {
 }
 
 func query1() {
-	var err error
-
-    url := "http://test.com/data"
     //@Identifier
-	name := "firstname lastname"
-    joke = "My grandpa always used to say 'as one door closes, another one opens.' A lovely man. A terrible cabinet maker."
+    name := "firstname lastname"
+    joke := "My grandpa always used to say 'as one door closes, another one opens.' A lovely man. A terrible cabinet maker."
 
-	message := &Message{
-	    Name: name,
-	    Joke: joke,
-	}
-
-	reqBody, _ := json.Marshal(message)
-	reqBodyBytes := bytes.NewBuffer(reqBody)
-	req, _ := http.NewRequest("POST", url, reqBodyBytes)
-	client := new(http.Client)
-	client.Do(req)
+	message := url.Values{
+        "Name": {name},
+        "Joke": {joke}
+    }
+    http.PostForm("http://test.com/data", message)
 }
 
 func query2() {
