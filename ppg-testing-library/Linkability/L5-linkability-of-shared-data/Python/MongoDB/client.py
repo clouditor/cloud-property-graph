@@ -5,8 +5,8 @@ import requests
 
 def transfer_data():
     url = 'http://test.com/data'
-    # @Identifier
-    user_data = {'email': 'firstname.lastname@test.com', 'password': '123456', 'first_name': 'firstname', 'last_name': 'lastname'}
+    # @Pseudoidentifier
+    user_data = {'user_email': 'firstname.lastname@test.com', 'request_geo_location': 'munich'}
     response = requests.post(url, data = user_data)
     if response.status_code == 200:
         print("Data transfer successful!")

@@ -16,6 +16,7 @@ app = Flask(__name__)
 @app.route("/data", methods=['POST'])
 def get_data_of_server():
     user_data_from_server = request.json
+    user_db_collection.insert_one(user_data_from_server)
     return "OK", 200
 
 if __name__ == '__main__':
