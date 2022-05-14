@@ -9,6 +9,7 @@ import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
+import io.clouditor.graph.nodes.Signature
 
 class GoCryptoPass : Pass() {
 

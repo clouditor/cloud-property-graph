@@ -75,8 +75,6 @@ class GolangHttpRequestPass : HttpClientPass() {
                 (c.arguments[1] as Literal<String>).value,
                 c,
                 "POST",
-                // TODO request body: the default value is not correctly set, so we use the
-                // value that has a dfg edge to the request parameter
                 requestFunction.parameters[2].prevDFG.first() as Expression,
                 app
             )
