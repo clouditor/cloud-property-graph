@@ -5,7 +5,7 @@ import requests
 
 def query():
     # Disclosure threat results from sending personal data to an http address
-    url = 'http://test.com/data'
+    url = 'https://test.com/data'
     # @Pseudoidentifier
     personal_data = {'name': 'firstname lastname'}
     requests.post(url, json = personal_data)
