@@ -12,7 +12,8 @@ class NonRepudiationTest {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Python"
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c)-[d:ARGUMENTS]-(e)-[f:CALL]-(g:LogOutput) WITH *, relationships(p) AS b RETURN p, a, b, c, d, e, f, g"
@@ -53,7 +54,8 @@ class NonRepudiationTest {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go"
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c)-[d:ARGUMENTS]-(e)-[f:CALL]-(g:LogOutput) WITH *, relationships(p) AS b RETURN p, a, b, c, d, e, f, g"
@@ -79,9 +81,9 @@ class NonRepudiationTest {
     fun TestNR2_Python() {
         val result =
             executePPG(
-                // TODO rewrite paths as relative paths
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python"
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c) WITH *, relationships(p) AS b RETURN p, a, b, c, d, e, f, g"

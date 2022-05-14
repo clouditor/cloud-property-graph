@@ -1,9 +1,9 @@
 package io.clouditor.graph
 
 import kotlin.io.path.Path
+import kotlin.test.assertEquals
 import org.junit.Test
 import org.neo4j.driver.internal.InternalPath
-import kotlin.test.assertEquals
 
 class PolicyNonComplianceTest {
 
@@ -12,7 +12,8 @@ class PolicyNonComplianceTest {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
@@ -41,13 +42,14 @@ class PolicyNonComplianceTest {
     @Test
     fun TestNC1_Go() {
         val result =
-                executePPG(
-                        Path(
-                                "/Users/kunz/cloud-property-graph/ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
-                        ),
-                        listOf(Path(".")),
-                        "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
-                )
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                            "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
         // compare expected number of paths
         println("Found ${result.count()} results")
         assertEquals(1, result.count())
@@ -78,7 +80,8 @@ class PolicyNonComplianceTest {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Policy-Non-Compliance/NC3-disproportionate-storage/Go"
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
@@ -110,13 +113,14 @@ class PolicyNonComplianceTest {
     @Test
     fun TestNC5_Python() {
         val result =
-                executePPG(
-                        Path(
-                                "/Users/kunz/cloud-property-graph/ppg-testing-library/Policy-Non-Compliance/NC3-disproportionate-storage/Python"
-                        ),
-                        listOf(Path(".")),
-                        "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-                )
+            executePPG(
+                Path(
+                System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+            )
         // compare expected number of paths
         println("Found ${result.count()} results")
         // assertEquals(1, result.count())
