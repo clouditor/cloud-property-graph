@@ -18,18 +18,11 @@ func NewRouter() *gin.Engine {
 	r.Use(logger.SetLogger())
 
     // non-repudiation threat results from receiving the tainted personal data
-	r.POST("/login", login)
+	r.POST("/data", post_data)
 
 	return r
 }
 
-func login(c *gin.Context) {
-	var (
-	    data string
-	)
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-	// TODO database request
-	c.JSON(http.StatusNotFound)
+func post_data(c *gin.Context) {
+	// nothing to do
 }
