@@ -31,7 +31,7 @@ object SemanticNodeGenerator {
                 """
     Please use the following parameters:  
     
-    1st parameter: Java constructor must be emtpy (true/false)
+    1st parameter: Additional Java default constructor (true/false)
     2st parameter: Ontology Input File (Only OWL/XML and RDF/XML are supported)
     3nd parameter: Java package name
     4nd parameter: Output path for generated Java files (optional, but the order must be respected)

@@ -235,6 +235,14 @@ class OWLCloudOntology(filepath: String) {
         // Add constructor shell, need to be here, so that it is the first method
         javaClass = addConstructorShell(javaClass)
 
+        // Add default constructor if needed
+        if (emptyJavaConstructor) {
+            javaClass.addMethod()
+                .setConstructor(true)
+                .setBody("")
+                .setPublic()
+        }
+
         // Set variables by 'OWL object properties'
         javaClass = setOWLClassObjectProperties(javaClass, clazz)
 
@@ -243,9 +251,9 @@ class OWLCloudOntology(filepath: String) {
 
         // Set constructor if needed, superclass constructor is set later, because all class and superclass parameters must
         // be known
-        if (!emptyJavaConstructor) {
-         javaClass = setClassConstructor(javaClass)
-        }
+        
+        // Add constructor with parameters
+        javaClass = setClassConstructor(javaClass)
         
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
