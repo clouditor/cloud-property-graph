@@ -14,10 +14,7 @@ import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
-import io.clouditor.graph.passes.golang.GinGonicPass
-import io.clouditor.graph.passes.golang.GolangHttpPass
-import io.clouditor.graph.passes.golang.GolangHttpRequestPass
-import io.clouditor.graph.passes.golang.GolangLogPass
+import io.clouditor.graph.passes.golang.*
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
@@ -167,6 +164,8 @@ object App : Callable<Int> {
                         registerPass(IngressInvocationPass())
                     }
                 }
+                .registerPass(CryptographyPass())
+                .registerPass(GoCryptoPass())
                 .registerPass(JaxRsClientPass())
                 .registerPass(FetchPass())
                 .registerPass(RequestsPass())

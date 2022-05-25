@@ -29,26 +29,25 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-	var message Message
-
-	if err := c.ShouldBindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	// TODO process message somehow
+    c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	joke := c.Request.Form.Get("joke")
+    message := &Message{
+        Name: name,
+        Joke: joke
+    }
 }
 
+// TODO split this up into a separate test case and align with Python
 func parse_data1(c *gin.Context) {
-	var message Message
+    c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	joke := c.Request.Form.Get("joke")
+    message := &Message{
+        Name: name,
+        Joke: joke
+    }
+	process(joke)}
 
-	if err := c.ShouldBindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	// here, message is not further processed
-}
-
-func process(){
+func process(any: data){
 }

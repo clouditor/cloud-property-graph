@@ -8,14 +8,11 @@ import (
 
 // working query: MATCH p=(:Identifier)--()-[:DFG*]-(:HttpEndpoint) RETURN p
 func main() {
-	var err error
-
 	//@Identifier
 	identifier := url.Values{
-		"Name": {"firstname lastname"},
+		"name": {"firstnamelastname"},
 	}
-	_, err = http.PostForm("http://test.com/data", identifier)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.PostForm("http://test.com/data", identifier)
+	http.PutForm("http://test.com/data", identifier)
+	http.Get("http://test.com/data?name=firstnamelastname")
 }

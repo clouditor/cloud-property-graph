@@ -19,7 +19,7 @@ def collect_data():
     logging.info('A funny joke has been submitted: %s', content)
     return "OK", 200
 
-# another test case is to simply assign the data to a variable but not use it, i.e. the data is still not processed
+# Here, the personal data is simply assigned to a variable but not used, i.e. the data is still not processed
 @app.route("/data2", methods=['POST'])
 def collect_data2():
     content = request.json
