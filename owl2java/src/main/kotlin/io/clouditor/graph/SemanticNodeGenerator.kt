@@ -22,6 +22,7 @@ object SemanticNodeGenerator {
         var packageNameGo = "voc"
         var outputBaseJava = "../cloudpg/generated/main/java/io/clouditor/graph/"
         var packageNameJava = "io.clouditor.graph"
+        var emptyJavaConstructor = false
 
         // IMPORTANT: Only OWL/XML and RDF/XML are supported
         var owlInputPath = "resources/urn_webprotege_ontology_e4316a28-d966-4499-bd93-6be721055117.owx"
@@ -30,44 +31,63 @@ object SemanticNodeGenerator {
                 """
     Please use the following parameters:  
     
-    1st parameter: Ontology Input File (Only OWL/XML and RDF/XML are supported)2st parameter: Java package name
-    3nd parameter: Output path for generated Java files (optional, but the order must be respected)
-    4th parameter: Go package name
-    5th parameter: Output path for generated Go Files (optional, but the order must be respected)
+    1st parameter: Java constructor must be emtpy (true/false)
+    2st parameter: Ontology Input File (Only OWL/XML and RDF/XML are supported)
+    3nd parameter: Java package name
+    4nd parameter: Output path for generated Java files (optional, but the order must be respected)
+    5th parameter: Go package name
+    6th parameter: Output path for generated Go Files (optional, but the order must be respected)
     
     """.trimIndent()
             )
         }
-        if (args.size == 5) {
-            owlInputPath = args[0]
-            packageNameJava = args[1]
-            outputBaseJava = checkPath(args[2])
-            packageNameGo = args[3]
-            outputBaseGo = checkPath(args[4])
+        if (args.size == 6) {
+            owlInputPath = args[1]
+            packageNameJava = args[2]
+            outputBaseJava = checkPath(args[3])
+            packageNameGo = args[4]
+            outputBaseGo = checkPath(args[5])
+            emptyJavaConstructor = getBoolFromArgs(args[0])
+        } else if (args.size == 5) {
+            owlInputPath = args[1]
+            packageNameJava = args[2]
+            outputBaseJava = checkPath(args[3])
+            packageNameGo = args[4]
+            emptyJavaConstructor = getBoolFromArgs(args[0])
         } else if (args.size == 4) {
-            owlInputPath = args[0]
-            packageNameJava = args[1]
-            outputBaseJava = checkPath(args[2])
-            packageNameGo = args[3]
+            owlInputPath = args[1]
+            packageNameJava = args[2]
+            outputBaseJava = checkPath(args[3])
+            emptyJavaConstructor = getBoolFromArgs(args[0])
         } else if (args.size == 3) {
-            owlInputPath = args[0]
-            packageNameJava = args[1]
-            outputBaseJava = checkPath(args[2])
+            owlInputPath = args[1]
+            packageNameJava = args[2]
+            emptyJavaConstructor = getBoolFromArgs(args[0])
         } else if (args.size == 2) {
-            owlInputPath = args[0]
-            packageNameJava = args[1]
-        } else if (args.size == 1) {
-            owlInputPath = args[0]
+            owlInputPath = args[1]
+            emptyJavaConstructor = getBoolFromArgs(args[0])        
         }
         val owl3 = OWLCloudOntology(owlInputPath)
 
         // Create java class sources
-        val jcs = owl3.getJavaClassSources(packageNameJava)
+        val jcs = owl3.getJavaClassSources(packageNameJava, emptyJavaConstructor)
         writeClassesToFolder(jcs, outputBaseJava)
 
         // Create Go sources
         val ontologyDescription = owl3.getGoStructs(packageNameGo)
         writeGoStringsToFolder(ontologyDescription, outputBaseGo, owl3)
+    }
+
+    private fun getBoolFromArgs(value: String): Boolean {
+        println("arg: " + value)
+        if (value == "true") {
+            return true
+        } else if (value == "false") {
+            return false
+        } else  { 
+            println("No correct input for the first parameter. Set 'Java constructor' to default (true).")
+            return true
+        }
     }
 
     private fun checkPath(outputBase: String): String {

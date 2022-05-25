@@ -54,7 +54,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Get all java classes from OWL file
-    fun getJavaClassSources(packageName: String?): List<JavaClassSource> {
+    fun getJavaClassSources(packageName: String?, emptyJavaConstructor: Boolean): List<JavaClassSource> {
         val classes = ontology!!.classesInSignature
         var jcsList: MutableList<JavaClassSource> = ArrayList()
         for (clazz in classes) {
@@ -63,7 +63,7 @@ class OWLCloudOntology(filepath: String) {
                 continue
             }
 
-            val jcs = getJavaClassSourceFromOWLClass(clazz)
+            val jcs = getJavaClassSourceFromOWLClass(clazz, emptyJavaConstructor)
             jcs!!.setPackage(packageName)
             jcsList.add(jcs)
         }
@@ -216,7 +216,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Set OWl class data properties as java class variable
-    fun getJavaClassSourceFromOWLClass(clazz: OWLClass): JavaClassSource? {
+    fun getJavaClassSourceFromOWLClass(clazz: OWLClass, emptyJavaConstructor: Boolean): JavaClassSource? {
         var javaClass = Roaster.create(JavaClassSource::class.java)
 
         // Set class name
@@ -241,10 +241,12 @@ class OWLCloudOntology(filepath: String) {
         // Set variables by 'OWL data properties'
         javaClass = setOWLClassDataProperties(javaClass, clazz)
 
-        // Set constructor, superclass constructor is set later, because all class and superclass parameters must
+        // Set constructor if needed, superclass constructor is set later, because all class and superclass parameters must
         // be known
-        javaClass = setClassConstructor(javaClass)
-
+        if (!emptyJavaConstructor) {
+         javaClass = setClassConstructor(javaClass)
+        }
+        
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
             System.err.println("SyntaxError: " + javaClass.syntaxErrors)
