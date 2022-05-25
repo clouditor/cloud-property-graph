@@ -247,7 +247,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
         // Set description
         // TODO(garuppel)
-        //javaClass = setOWLClassObjectDescription(javaClass)
+        javaClass = setOWLClassObjectDescription(javaClass)
 
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
@@ -275,6 +275,10 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                     ";"
         }
         return javaClass
+    }
+
+    private fun setOWLClassObjectDescription (javaClass: JavaClassSource): JavaClassSource {
+        javaClass.
     }
 
     private fun addConstructorShell(javaClass: JavaClassSource): JavaClassSource {
@@ -568,6 +572,21 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                 if (item != null) {
                     if (item.property.iri.remainder.get() == "label") {
                         return if (item.value.toString().contains("\"")) item.value.toString().split("\"")
+                            .toTypedArray()[1] else (item.value as OWLLiteralImplString).literal
+                    }
+                }
+            }
+        }
+        return ""
+    }
+
+    // Get description from OWLClassExpression
+    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+        for (elem in nce.classesInSignature) {
+            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
+                if (item != null) {
+                    if (item.property.iri.remainder.get() == "description") {
+                        return item.property.iri.remainer.get()//if (item.value.toString().contains("\"")) item.value.toString().split("\"")
                             .toTypedArray()[1] else (item.value as OWLLiteralImplString).literal
                     }
                 }
