@@ -28,16 +28,11 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-	var message Message
-
-	if err := c.BindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	process(message)
-}
-
-func process(Message message){
-
+    c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	joke := c.Request.Form.Get("joke")
+    message := &Message{
+        Name: name,
+        Joke: joke
+    }
 }

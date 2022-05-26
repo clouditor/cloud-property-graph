@@ -62,22 +62,8 @@ func NewRouter() *gin.Engine {
 	r.Use(logger.SetLogger())
 
 	r.POST("/data", parse_data)
-	r.POST("/data", parse_data1)
 
 	return r
-}
-
-func parse_data(c *gin.Context) {
-	var message Message
-	var err error
-
-	if err = c.ShouldBindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	// Create the message in the database
-	db.Create(message)
 }
 
 func parse_data(c *gin.Context) {

@@ -6,11 +6,7 @@ import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.SessionFactory
 
 val configuration =
-    Configuration.Builder()
-        .uri("bolt://localhost")
-        .autoIndex("none")
-        .credentials("neo4j", App.neo4jPassword)
-        .build()
+    Configuration.Builder().uri("bolt://localhost").credentials("neo4j", App.neo4jPassword).build()
 
 val sessionFactory =
     SessionFactory(configuration, "de.fraunhofer.aisec.cpg.graph", "io.clouditor.graph")
@@ -20,7 +16,6 @@ fun executePPG(rootPath: Path, subPaths: List<Path>, query: String): Result {
     session.purgeDatabase()
     App.let {
         it.rootPath = rootPath
-
         it.paths = subPaths
         it.labelsEnabled = true
         it.localMode = true

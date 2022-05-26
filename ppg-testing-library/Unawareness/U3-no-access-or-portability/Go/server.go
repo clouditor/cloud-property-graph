@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
     "gorm.io/gorm"
 )
 
@@ -22,13 +22,15 @@ func main() {
 }
 
 func Init() (err error) {
-	if db, err = gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{}); err != nil {
-		return fmt.Errorf("db sqlite connect: %w", err)
-	}
-	err = db.AutoMigrate(&Data{})
-	if err != nil {
-		return err
-	}
+    dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable",
+        "postgres",
+        "postgres",
+        "postgres",
+        "postgres",
+    )
+
+    db = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db.AutoMigrate(&Message{})
 	return
 }
 

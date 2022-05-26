@@ -11,13 +11,6 @@ phr_db_collection = phr_db.records
 app = Flask(__name__)
 
 @app.route("/data", methods=['POST'])
-def collect_data():
-    content = request.json
-    # Threat results from data being collected and stored, but not retrieved
-    phr_db_collection.insert_one(content)
-    return "OK", 200
-
-@app.route("/data2", methods=['POST'])
 def collect_data2():
     content = request.json
     name = content['name']

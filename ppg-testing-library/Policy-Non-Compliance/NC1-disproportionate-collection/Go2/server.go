@@ -23,23 +23,11 @@ func NewRouter() *gin.Engine {
 	r.Use(logger.SetLogger())
 
 	r.POST("/data", parse_data)
-	r.POST("/data1", parse_data1)
 
 	return r
 }
 
 func parse_data(c *gin.Context) {
-    c.Request.ParseForm()
-	name := c.Request.Form.Get("name")
-	joke := c.Request.Form.Get("joke")
-    message := &Message{
-        Name: name,
-        Joke: joke
-    }
-}
-
-// TODO split this up into a separate test case and align with Python
-func parse_data1(c *gin.Context) {
     c.Request.ParseForm()
 	name := c.Request.Form.Get("name")
 	joke := c.Request.Form.Get("joke")
