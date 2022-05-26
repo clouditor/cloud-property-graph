@@ -13,12 +13,8 @@ import (
 var db *gorm.DB
 
 type Message struct {
-    Name: name,
-    Joke: joke,
-}
-
-type UserMessage struct {
-    Name: name,
+    name string
+    joke string
 }
 
 func main() {
@@ -27,7 +23,7 @@ func main() {
 }
 
 func Init() (err error) {
-	host := "localhost"
+	host := "postgres"
 	user := "postgres"
 	password := "postgres"
 	dbname := "userdata"
@@ -49,10 +45,6 @@ func Init() (err error) {
 		return err
 	}
 
-    err = db.AutoMigrate(&UserMessage{})
-    if err != nil {
-        return err
-    }
 	return
 }
 
@@ -67,17 +59,13 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-	var message Message
-	var err error
-
-	if err = c.ShouldBindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	userMessage := &UserMessage{
-	    Name: message.Name
+    c.Request.ParseForm()
+	name := c.Request.Form.Get("Name")
+	joke := c.Request.Form.Get("Joke")
+	message := &Message{
+	    Name: name,
+	    Joke: joke,
 	}
 	// Create the message in the database
-	db.Create(userMessage)
+	db.Create(message)
 }

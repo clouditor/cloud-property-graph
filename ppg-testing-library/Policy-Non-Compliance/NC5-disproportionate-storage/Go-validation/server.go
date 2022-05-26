@@ -17,17 +17,13 @@ type Message struct {
     joke string
 }
 
-type UserMessage struct {
-    name string
-}
-
 func main() {
 	Init()
 	http.ListenAndServe(":8080", NewRouter())
 }
 
 func Init() (err error) {
-	host := "localhost"
+	host := "postgres"
 	user := "postgres"
 	password := "postgres"
 	dbname := "userdata"
@@ -49,10 +45,6 @@ func Init() (err error) {
 		return err
 	}
 
-    err = db.AutoMigrate(&UserMessage{})
-    if err != nil {
-        return err
-    }
 	return
 }
 
@@ -62,19 +54,26 @@ func NewRouter() *gin.Engine {
 	r.Use(logger.SetLogger())
 
 	r.POST("/data", parse_data)
+	r.GET("/data", get_data)
 
 	return r
 }
 
 func parse_data(c *gin.Context) {
-	var message Message
-	var err error
-
-	if err = c.ShouldBindJSON(&message); err != nil {
-		fmt.Println("error")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+    c.Request.ParseForm()
+	name := c.Request.Form.Get("Name")
+	joke := c.Request.Form.Get("Joke")
+	message := &Message{
+	    Name: name,
+	    Joke: joke,
 	}
 	// Create the message in the database
 	db.Create(message)
+}
+
+func get_data(c *gin.Context) {
+    var message Message
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    db.Get().Where("name = ?", name).First(&message).Error
 }

@@ -4,9 +4,8 @@ import requests
 
 def query():
     url = 'test.com/data'
-
-    personal_data = {'name': 'firstname lastname'}
-    response = requests.post(url, data = personal_data)
+    requests.get(url)
 
 if __name__ == '__main__':
     query()
+

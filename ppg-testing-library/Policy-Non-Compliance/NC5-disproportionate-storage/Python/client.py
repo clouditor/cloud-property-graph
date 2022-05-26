@@ -6,7 +6,7 @@ def query():
     url = 'test.com/data'
     #@PseudoIdentifier
     personal_data = {
-        "name": "John",
+        "name": "personalname",
     }
     requests.post(url, json = personal_data)
 

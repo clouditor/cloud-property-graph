@@ -11,12 +11,15 @@ phr_db_collection = phr_db.records
 app = Flask(__name__)
 
 @app.route("/data", methods=['POST'])
-def collect_data2():
+def collect_data():
     content = request.json
-    name = content['name']
-    joke = content['joke']
-    # only the tainted data is stored, the tool should only identify one threat for the tainted datum name but not for joke
-    phr_db_collection.insert_one(name)
+    phr_db_collection.insert_one(content)
+    return "OK", 200
+
+@app.route("/data", methods=['GET'])
+def get_data():
+    content = request.json
+    phr_db_collection.find_one(content["user_id"])
     return "OK", 200
 
 if __name__ == '__main__':

@@ -138,20 +138,19 @@ class PolicyNonComplianceTest {
     // NC3() out of scope
     // NC4() out of scope
 
+    // Due to missing field sensitivity, this test passes for the tainted datum but also generates a
+    // false positive for the untainted one
     @Test
-    fun TestNC5_Go1() {
+    fun TestNC5_Go() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go1"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-                // TODO test query: MATCH
-                // p=()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage),
-                // (a:Application) WHERE NOT EXISTS (()<-[:DFG]-(ds:DatabaseStorage)) RETURN p
-                )
+            )
         assertEquals(1, result.count())
 
         result.first().apply {
@@ -161,92 +160,46 @@ class PolicyNonComplianceTest {
             assert(firstNode.labels().contains("PseudoIdentifier"))
             // the last node should be the LogOutput
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
     @Test
-    fun TestNC5_Go2() {
+    fun TestNC5_Go_Validation() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go2"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go-validation"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-                // TODO test query: MATCH
-                // p=()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage),
-                // (a:Application) WHERE NOT EXISTS (()<-[:DFG]-(ds:DatabaseStorage)) RETURN p
-                )
-        assertEquals(1, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            // the first node should be the label
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("LogOutput"))
-        }
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
-    fun TestNC5_Python1() {
+    fun TestNC5_Python() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python1"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-                // TODO test query: MATCH
-                // p=()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage),
-                // (a:Application) WHERE NOT EXISTS (()<-[:DFG]-(ds:DatabaseStorage)) RETURN p
-                )
+            )
         assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
-            // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
-    @Test
-    fun TestNC5_Python2() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python2"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-                // TODO test query: MATCH
-                // p=()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage),
-                // (a:Application) WHERE NOT EXISTS (()<-[:DFG]-(ds:DatabaseStorage)) RETURN p
-                )
-        assertEquals(1, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            // the first node should be the label
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("LogOutput"))
-        }
-    }
-
-    // TODO implement code
     @Test
     fun TestNC5_Python_Validation() {
         val result =
