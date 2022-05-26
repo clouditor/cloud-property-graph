@@ -8,7 +8,12 @@ app = Flask(__name__)
 def collect_data():
     # Threat results from personal data being collected, but not processed
     content = request.json
+    data = content['data']
+    process(data)
     return "OK", 200
+
+def process(data):
+    print(data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)

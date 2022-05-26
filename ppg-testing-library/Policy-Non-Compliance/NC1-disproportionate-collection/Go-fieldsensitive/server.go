@@ -29,10 +29,11 @@ func NewRouter() *gin.Engine {
 
 func parse_data(c *gin.Context) {
     c.Request.ParseForm()
-	name := c.Request.Form.Get("name")
-	joke := c.Request.Form.Get("joke")
-    message := &Message{
-        Name: name,
-        Joke: joke
-    }
+	name := c.Request.Form.Get("Name")
+	joke := c.Request.Form.Get("Joke")
+	process(joke)
+}
+
+func process(data string){
+    fmt.Println(data)
 }

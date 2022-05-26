@@ -18,80 +18,104 @@ class PolicyNonComplianceTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
-        // assertEquals(1, result.count())
-
-        // compare expected nodes
-        result.first().apply {
-            // get the path; the path contains multiple sub-paths, each one connecting two nodes via
-            // an edge
-            var path = this.get("p") as Array<*>
-            println("result has ${path.size} sub-paths")
-            // the first node should be the label
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            println(firstNode)
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            println(lastNode)
-            // assert(lastNode.labels().contains("LogOutput"))
-        }
-    }
-
-    @Test
-    fun TestNC1_Go1() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go1"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
-            )
         assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            println(firstNode)
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            println(lastNode)
-            // assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("HttpEndpoint"))
         }
     }
 
+    // The PPG currently does not pass this test, since it cannot differentiate different fields
+    // sent in the same HttpRequest
     @Test
-    fun TestNC1_Go2() {
+    fun TestNC1_Python_fieldsensitive() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go2"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python-fieldsensitive"
+                ),
+                listOf(Path(".")),
+                "MATCH p=({name:'name'})--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        // in this case, 2 paths are expected because there are two HttpEndpoints that the
+        // Identifier crosses: A proxied endpoint and the actual one
+        assertEquals(2, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("HttpEndpoint"))
+        }
+    }
+
+    @Test
+    fun TestNC1_Python_validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=({name:'name'})--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
+    fun TestNC1_Go() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
-        assertEquals(1, result.count())
+        // in this case, 2 paths are expected because there are two HttpEndpoints that the
+        // Identifier crosses: A proxied endpoint and the actual one
+        assertEquals(2, result.count())
 
-        // compare expected nodes
         result.first().apply {
-            // get the path; the path contains multiple sub-paths, each one connecting two nodes via
-            // an edge
             var path = this.get("p") as Array<*>
-            println("result has ${path.size} sub-paths")
-            // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            println(firstNode)
             assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            println(lastNode)
-            // assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("HttpEndpoint"))
+        }
+    }
+
+    // The PPG currently does not pass this test, since it cannot differentiate different fields
+    // sent in the same HttpRequest
+    @Test
+    fun TestNC1_Go_fieldsensitive() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go-fieldsensitive"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        // in this case, 2 paths are expected because there are two HttpEndpoints that the
+        // Identifier crosses: A proxied endpoint and the actual one
+        assertEquals(2, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("HttpEndpoint"))
         }
     }
 

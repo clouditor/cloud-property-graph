@@ -191,7 +191,7 @@ class GinGonicPass : Pass() {
                 // otherwise, go to the next base
                 memberCall = memberCall.base as? MemberExpression
             }
-            e.addNextDFG(m.nextDFG.first())
+            e.addNextDFG(m)
         }
     }
 

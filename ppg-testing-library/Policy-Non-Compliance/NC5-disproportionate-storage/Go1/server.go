@@ -13,12 +13,12 @@ import (
 var db *gorm.DB
 
 type Message struct {
-    Name: name,
-    Joke: joke,
+    name string
+    joke string
 }
 
 type UserMessage struct {
-    Name: name,
+    name string
 }
 
 func main() {
