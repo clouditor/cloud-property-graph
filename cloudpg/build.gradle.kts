@@ -44,6 +44,7 @@ publishing {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 
     maven { setUrl("https://jitpack.io") }
@@ -65,7 +66,7 @@ repositories {
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    val version = "4.3.5"
+    val version = "0.0.0-SNAPSHOT"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
