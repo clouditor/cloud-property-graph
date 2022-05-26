@@ -15,8 +15,8 @@ class UnawarenessTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
-                    "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go"
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(o:DatabaseOperation)-->(d:DatabaseStorage), (a:Application), (p:DatabaseOperation) WHERE NOT EXISTS((p)<--(d:DatabaseStorage)) AND ((o)--(a)) AND ((p)--(a)) RETURN p,a,d"
@@ -43,8 +43,8 @@ class UnawarenessTest {
         val result =
             executePPG(
                 Path(
-                        System.getProperty("user.dir") +
-                                "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go-validation"
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go-validation"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(do1:DatabaseOperation)-->(ds:DatabaseStorage), (a:Application), (do2:DatabaseOperation) WHERE NOT EXISTS (()-[:CALLS]-(do2)<--(ds:DatabaseStorage)) AND ((do1)--(a)) AND ((do2)--(a)) RETURN p, a, ds"
@@ -59,7 +59,7 @@ class UnawarenessTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Python"
                 ),
                 listOf(Path(".")),
@@ -88,7 +88,7 @@ class UnawarenessTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Python-validation"
                 ),
                 listOf(Path(".")),
@@ -122,8 +122,8 @@ class UnawarenessTest {
         val result =
             executePPG(
                 Path(
-                        System.getProperty("user.dir") +
-                                "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Python-validation"
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Python-validation"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application) WHERE NOT EXISTS (()<-[:DFG]-(ds:DatabaseStorage)) RETURN p"

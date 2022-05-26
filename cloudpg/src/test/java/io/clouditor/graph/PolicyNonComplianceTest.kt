@@ -12,7 +12,7 @@ class PolicyNonComplianceTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
                 ),
                 listOf(Path(".")),
@@ -45,7 +45,7 @@ class PolicyNonComplianceTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                            "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
@@ -80,7 +80,7 @@ class PolicyNonComplianceTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go"
                 ),
                 listOf(Path(".")),
@@ -115,7 +115,7 @@ class PolicyNonComplianceTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python"
                 ),
                 listOf(Path(".")),

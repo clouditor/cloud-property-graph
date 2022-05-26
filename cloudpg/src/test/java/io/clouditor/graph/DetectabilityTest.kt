@@ -119,7 +119,7 @@ class DetectabilityTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                            "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation/HTTP404"
+                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation/HTTP404"
                 ),
                 listOf(Path(".")),
                 // TODO: this should include a storage operation

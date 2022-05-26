@@ -12,7 +12,7 @@ class NonRepudiationTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Python"
                 ),
                 listOf(Path(".")),
@@ -54,7 +54,7 @@ class NonRepudiationTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go"
                 ),
                 listOf(Path(".")),
@@ -82,7 +82,7 @@ class NonRepudiationTest {
         val result =
             executePPG(
                 Path(
-                System.getProperty("user.dir") +
+                    System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python"
                 ),
                 listOf(Path(".")),
