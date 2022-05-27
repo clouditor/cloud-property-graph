@@ -60,6 +60,7 @@ object SemanticNodeGenerator {
         } else if (args.size == 1) {
             owlInputPath = args[0]
         }
+
         val owl3 = OWLCloudOntology(owlInputPath)
 
         // Create java class sources
