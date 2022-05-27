@@ -273,7 +273,7 @@ class OWLCloudOntology(filepath: String) {
                     ";"
         }
 
-        // Add default constructor if no properties are available and call super() if a super class is available
+        // Add default constructor if no properties are available and add a default constructor with 'super();' if a constructor with parameters is already available
         if (!javaClassPropertiesList.isEmpty()) {
             if (!javaClass.superType.isEmpty()) {
                 addConstructorShell(javaClass, true, "super();")
