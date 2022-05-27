@@ -1,3 +1,4 @@
-# Test Case Description: L3 Linkability of Inbound Data -- Go
-- Threat description: TODO
-- Expected test outcome: TODO
+# Test Case Description: Linkability Of Inbound Data -- Go
+- Threat description: Personal identifieable data such as pseudoidentifiers are sent to a server which can be linked with other data sets to derive the identity of the data subject.
+- Expected test outcome: 
+  1. The data flow from the client to the server is detected
