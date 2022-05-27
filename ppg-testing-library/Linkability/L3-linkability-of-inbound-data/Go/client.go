@@ -7,15 +7,9 @@ import (
 )
 
 func main() {
-	var err error
-
-	// @PseudoIdentifier
-	data := url.Values{
-		"name": {"firstname lastname"},
+	//@Identifier
+	identifier := url.Values{
+		"Name": {"firstname lastname"},
 	}
-
-	resp, err := http.PostForm("http://server.aks.clouditor.io/data", data)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.PostForm("http://test.com/data", identifier)
 }

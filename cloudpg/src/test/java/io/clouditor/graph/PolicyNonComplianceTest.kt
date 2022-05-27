@@ -18,7 +18,9 @@ class PolicyNonComplianceTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
-        assertEquals(1, result.count())
+        // in this case, 2 paths are expected because there are two HttpEndpoints that the
+        // Identifier crosses: A proxied endpoint and the actual one
+        assertEquals(2, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

@@ -3,12 +3,12 @@ services:
     directory: server
     name: server
     host: test.com
-  - type: db
-    directory: server
-    name: postgres
-    storages:
-      - userdata
-      - otherdata
+  - type: client
+    directory: client
+    name: client
+  - type: client
+    directory: client2
+    name: client2
   - type: db
     directory: server
     name: mongo

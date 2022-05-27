@@ -2,33 +2,33 @@ package main
 
 import (
 	"net/http"
-	"os"
-	"time"
 
-	"github.com/rs/zerolog"
+	"github.com/gin-contrib/logger"
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
-func main() {
-	var err error
-
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-
-	// human friendly output
-	log.Logger = log.Output(
-		zerolog.ConsoleWriter{
-			TimeFormat: time.RFC822,
-			Out:        os.Stderr,
-			NoColor:    false,
-		},
-	)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/data", parse_data)
-
-	err := http.ListenAndServe(":8080", mux)
-	log.Fatal(err)
+type Data struct {
+	Name string
 }
 
-func parse_data(w http.ResponseWriter, r *http.Request) {
+func main() {
+	http.ListenAndServe(":8080", NewRouter())
+}
+
+func NewRouter() *gin.Engine {
+	r := gin.New()
+	r.Use(gin.Recovery())
+	r.Use(logger.SetLogger())
+
+	r.POST("/data", parse_data)
+
+	return r
+}
+
+func parse_data(c *gin.Context) {
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    data := &Data{Name: name}
+	log.Info().Msg(data)
 }

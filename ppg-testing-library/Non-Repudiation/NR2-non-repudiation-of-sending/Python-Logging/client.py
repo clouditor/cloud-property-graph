@@ -5,7 +5,7 @@ import requests
 
 def query():
     url = 'http://test.com/data'
-    # @Identifier
+    #@Identifier
     personal_data = {'name': 'firstname lastname'}
     requests.post(url, json = personal_data)
 

@@ -69,6 +69,17 @@ class LocalTestingPass : Pass() {
                     )
                 application.name = service.type
                 t += application
+            } else if (service.type == "client") {
+                val application =
+                    Application(
+                        mutableListOf(),
+                        // TODO how to get the programming language?
+                        "",
+                        mutableListOf(),
+                        t.translationUnits,
+                    )
+                application.name = service.name
+                t += application
             }
         }
 

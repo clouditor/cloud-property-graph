@@ -7,21 +7,19 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 # Non-Repudiation threat results from signing a personal datum with the private key, and sending it to the server
-#@Identifier
 def query():
+    url = 'http://test.com/data'
     #@Identifier
-    plain_text = 'personal data'
-    # url = 'http://test.com/data'
-    url = 'http://localhost:8080/data'
+    plain_text = 'personal data'.encode('utf-8')
 
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=4096,
         backend=default_backend()
     )
-    public_key = private_key.public_key()
+
     signature = private_key.sign(
-        data=plain_text.encode('utf-8'),
+        data=plain_text,
         padding=padding.PSS(
             mgf=padding.MGF1(hashes.SHA256()),
             salt_length=padding.PSS.MAX_LENGTH
@@ -29,8 +27,8 @@ def query():
         algorithm=hashes.SHA256()
     )
 
-    message = {'name': 'firstname lastname', 'signature': signature}
-    requests.post(url, data = message)
+    message = {'data': plain_text, 'signature': signature}
+    requests.post(url, json = message)
 
 if __name__ == '__main__':
     query()

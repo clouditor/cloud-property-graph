@@ -4,7 +4,7 @@ import requests
 
 def query():
     url = 'test.com/data'
-    #@Pseudoidentifier
+    #@PseudoIdentifier
     name = 'firstname lastname'
     data = 'helloworld'
     message = {

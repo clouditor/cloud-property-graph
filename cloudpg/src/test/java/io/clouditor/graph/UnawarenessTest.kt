@@ -60,15 +60,14 @@ class UnawarenessTest {
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Python"
                 ),
                 listOf(Path(".")),
-                // TODO add (:PseudoIdentifier)--
-                "MATCH p=()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(d:DatabaseStorage), (a:Application), (do2:DatabaseOperation) WHERE NOT EXISTS ((do2)<--(d:DatabaseStorage)) AND ((do1)--(a)--(do2)) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(do1:DatabaseOperation)-[:DFG]->(d:DatabaseStorage), (a:Application), (do2:DatabaseOperation) WHERE NOT EXISTS ((do2)<--(d:DatabaseStorage)) AND ((do1)--(a)--(do2)) RETURN p"
             )
         assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // TODO assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
@@ -85,7 +84,6 @@ class UnawarenessTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(do1:DatabaseOperation)-->(ds:DatabaseStorage), (a:Application), (do2:DatabaseOperation) WHERE NOT EXISTS (()-[:CALLS]-(do2)<--(ds:DatabaseStorage)) AND ((do1)--(a)) AND ((do2)--(a)) RETURN p, a, ds"
             )
-        println("Found ${result.count()} results")
         assertEquals(0, result.count())
     }
 
@@ -124,8 +122,10 @@ class UnawarenessTest {
         assertEquals(0, result.count())
     }
 
+    // TODO
     @Test fun TestU4_Python_missing_DELETE() {}
 
+    // TODO
     @Test fun TestU4_Python_missing_PUT() {}
 
     @Test

@@ -7,15 +7,9 @@ import (
 )
 
 func main() {
-	var err error
-
-    //@Identifier
+	//@Identifier
 	identifier := url.Values{
-		"name": {"firstname lastname"},
+		"Name": {"firstname lastname"},
 	}
-    url1 := "http://test.com/data"
-	resp, err := http.PostForm(url1, identifier)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.PostForm("http://test.com/data", identifier)
 }

@@ -8,6 +8,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type Data struct {
+	Name string
+}
+
 func main() {
 	http.ListenAndServe(":8080", NewRouter())
 }
@@ -23,11 +27,9 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-	var data string
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    data := &Data{Name: name}
 	// non-repudiation threat results from logging the tainted personal data
 	log.Info().Msg(data)
 }

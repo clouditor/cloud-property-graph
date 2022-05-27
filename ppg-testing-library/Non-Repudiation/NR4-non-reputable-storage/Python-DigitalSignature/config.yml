@@ -5,12 +5,6 @@ services:
     host: test.com
   - type: db
     directory: server
-    name: postgres
-    storages:
-      - userdata
-      - otherdata
-  - type: db
-    directory: server
     name: mongo
     storages:
       - userdata

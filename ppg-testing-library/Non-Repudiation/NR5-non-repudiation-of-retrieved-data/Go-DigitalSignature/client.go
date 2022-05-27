@@ -11,7 +11,7 @@ import (
 
 type SignedMessage struct {
 	Personal_datum      string
-	Signature string
+	Signature           string
 }
 
 func main() {
@@ -34,5 +34,4 @@ func main() {
 	}
 
 	http.PostForm("http://test.com/data", data)
-
 }

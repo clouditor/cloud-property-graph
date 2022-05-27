@@ -11,7 +11,7 @@ import (
 
 type SignedMessage struct {
 	Personal_datum      string
-	Signature string
+	Signature           string
 }
 
 func main() {
@@ -34,5 +34,6 @@ func main() {
 	}
 
 	http.PostForm("http://test.com/data", data)
-
+	// The data is also retrieved by the same client so no NR5 threat should be detected here
+    http.Get("http://test.com/data?name=firstnamelastname")
 }

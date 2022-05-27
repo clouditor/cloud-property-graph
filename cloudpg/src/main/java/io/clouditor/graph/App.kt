@@ -125,6 +125,7 @@ object App : Callable<Int> {
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
                 .defaultLanguages()
+                .matchCommentsToNodes(true)
                 .registerLanguage(
                     RubyLanguageFrontend::class.java,
                     RubyLanguageFrontend.RUBY_EXTENSIONS
