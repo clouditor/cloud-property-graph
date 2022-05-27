@@ -54,7 +54,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Get all java classes from OWL file
-    fun getJavaClassSources(packageName: String?, emptyJavaConstructor: Boolean): List<JavaClassSource> {
+    fun getJavaClassSources(packageName: String?): List<JavaClassSource> {
         val classes = ontology!!.classesInSignature
         var jcsList: MutableList<JavaClassSource> = ArrayList()
         for (clazz in classes) {
@@ -63,7 +63,7 @@ class OWLCloudOntology(filepath: String) {
                 continue
             }
 
-            val jcs = getJavaClassSourceFromOWLClass(clazz, emptyJavaConstructor)
+            val jcs = getJavaClassSourceFromOWLClass(clazz)
             jcs!!.setPackage(packageName)
             jcsList.add(jcs)
         }
@@ -183,7 +183,7 @@ class OWLCloudOntology(filepath: String) {
         if (superClass!!.name == "Node") {
             setEmptySuperclassCall(jcs)
             return jcs
-        }
+        } 
 
         // Get all parameters of superClasses
         var superXClassParameters: MutableMap<String, String> = LinkedHashMap()
@@ -216,7 +216,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Set OWl class data properties as java class variable
-    fun getJavaClassSourceFromOWLClass(clazz: OWLClass, emptyJavaConstructor: Boolean): JavaClassSource? {
+    fun getJavaClassSourceFromOWLClass(clazz: OWLClass): JavaClassSource? {
         var javaClass = Roaster.create(JavaClassSource::class.java)
 
         // Set class name
@@ -233,22 +233,14 @@ class OWLCloudOntology(filepath: String) {
         javaClass = setSuperClassName(javaClass, clazz)
 
         // Add constructor shell, need to be here, so that it is the first method
-        javaClass = addConstructorShell(javaClass)
-
-        // Add default constructor if needed
-        if (emptyJavaConstructor) {
-            javaClass.addMethod()
-                .setConstructor(true)
-                .setBody("")
-                .setPublic()
-        }
+        javaClass = addConstructorShell(javaClass, false, "")
 
         // Set variables by 'OWL object properties'
         javaClass = setOWLClassObjectProperties(javaClass, clazz)
 
         // Set variables by 'OWL data properties'
         javaClass = setOWLClassDataProperties(javaClass, clazz)
-
+        
         // Set constructor if needed, superclass constructor is set later, because all class and superclass parameters must
         // be known
         
@@ -280,15 +272,26 @@ class OWLCloudOntology(filepath: String) {
             javaClassConstructor.body = javaClassConstructor.body + elem.mutator.name + "(" + elem.name + ")" +
                     ";"
         }
+
+        // Add default constructor if no properties are available and call super() if a super class is available
+        if (!javaClassPropertiesList.isEmpty()) {
+            if (!javaClass.superType.isEmpty()) {
+                addConstructorShell(javaClass, true, "super();")
+            }
+        }
+
         return javaClass
     }
 
-    private fun addConstructorShell(javaClass: JavaClassSource): JavaClassSource {
+    private fun addConstructorShell(javaClass: JavaClassSource, default: Boolean, body: String): JavaClassSource {
+        
         javaClass.addMethod()
-            .setConstructor(true)
-            .setBody("")
-            .setPublic()
-        return javaClass
+        .setConstructor(true)
+        .setDefault(default)
+        .setBody(body)
+        .setPublic()
+       
+       return javaClass
     }
 
     // Set OWl class data properties
