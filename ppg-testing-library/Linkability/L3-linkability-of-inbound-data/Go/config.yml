@@ -3,3 +3,6 @@ services:
     directory: server
     name: server
     host: test.com
+  - type: client
+    directory: client
+    name: client

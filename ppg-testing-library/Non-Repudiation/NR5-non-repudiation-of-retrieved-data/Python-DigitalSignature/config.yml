@@ -7,7 +7,6 @@ services:
     directory: client
     name: client
   - type: client
-    directory: client2
     name: client2
   - type: db
     directory: server

@@ -102,15 +102,12 @@ class DetectabilityTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go/HTTP404"
+                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go"
                 ),
                 listOf(Path(".")),
-                // TODO: this should include a storage operation
-                "MATCH p = (i:PseudoIdentifier)--()-[:DFG*]->()-[:EOG*]->(h) WHERE h.name = \"HttpStatus.NOT_FOUND\" RETURN p, i, h"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
     }
 
     @Test
@@ -119,31 +116,96 @@ class DetectabilityTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation/HTTP404"
+                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation"
                 ),
                 listOf(Path(".")),
-                // TODO: this should include a storage operation
-                "MATCH p = (i:PseudoIdentifier)--()-[:DFG*]->()-[:EOG*]->(h) WHERE h.name = \"HttpStatus.NOT_FOUND\" RETURN p, i, h"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
+        assertEquals(0, result.count())
+    }
+
+    @Test
+    fun TestD4_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
+            )
+        assertEquals(2, result.count())
+    }
+
+    @Test
+    fun TestD4_Python_validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
+            )
         assertEquals(0, result.count())
     }
 
     // D5 detectable at retrieval
     @Test
-    fun TestD5() {
+    fun TestD5_Go() {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python"
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Go"
                 ),
                 listOf(Path(".")),
-                // TODO first check for storage of identifier in the DB
-                "MATCH p = (i:PseudoIdentifier)−−()−[:DFG*]−>()−[:EOG*]−>(h) WHERE h.name = \"HttpStatus.CONFLICT\" RETURN p, i, h"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
+    }
+
+    @Test
+    fun TestD5_Go_validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
+    fun TestD5_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
+            )
+        assertEquals(2, result.count())
+    }
+
+    @Test
+    fun TestD5_Python_validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 }

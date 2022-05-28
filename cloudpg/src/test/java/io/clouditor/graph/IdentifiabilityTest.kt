@@ -7,43 +7,184 @@ import org.neo4j.driver.internal.InternalPath
 
 class IdentifiabilityTest {
 
-    // fun TestID1(){}
-    // fun TestID2(){}
+    // fun TestI1(){}
+    // fun TestI2(){}
 
     @Test
-    fun TestID3() {
+    fun TestI3_Go() {
         val result =
             executePPG(
                 Path(
-                    "/Users/kunz/cloud-property-graph/ppg-testing-library/Identifiability/I3-identifying-inbound-data/Python"
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(b) WITH *, relationships(p) AS b RETURN p, a, b"
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
 
-        // compare expected nodes
         result.first().apply {
-            // get the path; the path contains multiple sub-paths, each one connecting two nodes via
-            // an edge
             var path = this.get("p") as Array<*>
-            println("result has ${path.size} sub-paths")
-            // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            println(firstNode)
             assert(firstNode.labels().contains("Identifier"))
-            // the last node should be the LogOutput
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            println(lastNode)
-            assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("HttpEndpoint"))
         }
     }
 
-    // fun TestID4(){}
-    // fun TestID5(){}
-    // fun TestID6(){}
-    // fun TestID7(){}
+    @Test
+    fun TestI3_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
+            )
+        assertEquals(2, result.count())
 
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("HttpEndpoint"))
+        }
+    }
+
+    // I4 Identifying Context out of scope
+
+    @Test
+    fun TestI5_Go() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Go"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("HttpRequest"))
+        }
+    }
+
+    @Test
+    fun TestI5_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("HttpRequest"))
+        }
+    }
+
+    @Test
+    fun TestI6_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    @Test
+    fun TestI6_Go() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Go"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    @Test
+    fun TestI7_Python() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    @Test
+    fun TestI7_Go() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Go"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("Identifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
 }

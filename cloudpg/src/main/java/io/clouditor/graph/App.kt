@@ -125,7 +125,6 @@ object App : Callable<Int> {
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
                 .defaultLanguages()
-                .matchCommentsToNodes(true)
                 .registerLanguage(
                     RubyLanguageFrontend::class.java,
                     RubyLanguageFrontend.RUBY_EXTENSIONS
@@ -185,6 +184,7 @@ object App : Callable<Int> {
                 .registerPass(DFGExtensionPass())
                 .registerPass(edgesCache)
                 .registerPass(labelPass)
+                .matchCommentsToNodes(true)
         }
 
         val config = builder.build()

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.golang.appendPath
@@ -15,10 +16,12 @@ class LocalTestingPass : Pass() {
         val applications = listOf(App.rootPath)
 
         for (rootPath in applications) {
-            // val workflowPath = rootPath.resolve("ppg-testing-library").resolve("config")
-            // here, the config.yml will be analyzed, assuming that in the test case, we have
+            // val workflowPath =
+            // rootPath.resolve("ppg-testing-library").resolve("config")
+            // here, the config.yml will be analyzed, assuming that in the test
+            // case, we have
             // specified the exact test case location, e.g.
-            // "/Users/kunz/cloud-property-graph/ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go/zerolog"
+            // ".../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go"
             rootPath.toFile().walkTopDown().iterator().forEach { file ->
                 if (file.extension == "yml") {
                     val mapper = ObjectMapper(YAMLFactory())
@@ -38,7 +41,7 @@ class LocalTestingPass : Pass() {
             t.additionalNodes.filter { it is HttpRequestHandler }.map { it as HttpRequestHandler }
 
         for (service in conf.services) {
-            if (service.type == "server") {
+            if (service.type == "server" || service.type == "third-party") {
                 for (controller in controllers) {
                     for (endpoint in controller.httpEndpoints) {
                         var url = service.host?.appendPath(controller.path)
@@ -59,24 +62,50 @@ class LocalTestingPass : Pass() {
                     }
                 }
 
+                var tud =
+                    t.components.let {
+                        var tud: TranslationUnitDeclaration? = null
+                        for (component in it) {
+                            for (tu in component.translationUnits) {
+                                if (tu.name.contains(service.type)) {
+                                    tud = tu
+                                }
+                            }
+                        }
+                        tud
+                    }
+
                 val application =
                     Application(
                         mutableListOf(),
                         // TODO how to get the programming language?
                         "",
                         mutableListOf(),
-                        t.translationUnits,
+                        // mutableListOf(if (tud != null) tud else null)
+                        mutableListOf(tud)
                     )
-                application.name = service.type
+                application.name = service.name
                 t += application
-            } else if (service.type == "client") {
+            } else if (service.type.contains("client")) {
+                var tud =
+                    t.components.let {
+                        var tud: TranslationUnitDeclaration? = null
+                        for (component in it) {
+                            for (tu in component.translationUnits) {
+                                if (tu.name.contains(service.name)) {
+                                    tud = tu
+                                }
+                            }
+                        }
+                        tud
+                    }
                 val application =
                     Application(
                         mutableListOf(),
                         // TODO how to get the programming language?
                         "",
                         mutableListOf(),
-                        t.translationUnits,
+                        mutableListOf(tud)
                     )
                 application.name = service.name
                 t += application

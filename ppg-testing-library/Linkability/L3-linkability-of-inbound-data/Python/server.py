@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
 from flask import Flask, request
-import logging
 
 app = Flask(__name__)
-logging.basicConfig(level=logging.INFO)
 
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json
-    logging.info("Received datum %s", content)
     return "OK", 200
 
 if __name__ == '__main__':
