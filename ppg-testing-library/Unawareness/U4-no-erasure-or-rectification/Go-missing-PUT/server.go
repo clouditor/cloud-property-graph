@@ -29,14 +29,28 @@ func NewRouter() *gin.Engine {
 	return r
 }
 
-func post_data(c *gin.Context) {
-	// TODO
+func delete_data(c *gin.Context) {
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    data := &Data{
+        Name: name,
+    }
+    db.Delete(message)
 }
 
-func delete_data(c *gin.Context) {
-	// TODO
+func post_data(c *gin.Context) {
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	data := &Data{
+		Name: name,
+	}
+	db.Create(message)
 }
 
 func get_data(c *gin.Context) {
-	// TODO
+    var data Data
+
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    db.Get().Where("name = ?", name).First(&data).Error
 }

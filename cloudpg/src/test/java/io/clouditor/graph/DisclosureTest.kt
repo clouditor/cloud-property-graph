@@ -63,11 +63,8 @@ class DisclosureTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
         assertEquals(1, result.count())
 
-        // compare expected nodes
         result.first().apply {
             var path = this.get("p") as Array<*>
             println("result has ${path.size} sub-paths")

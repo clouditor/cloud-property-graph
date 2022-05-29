@@ -3,10 +3,15 @@
 import requests
 
 def query():
-    url = 'http://test.com/data'
+    url = 'test.com/data'
     #@PseudoIdentifier
-    personal_data = {'name': 'firstname lastname'}
+    name = "name"
+    personal_data = {
+        "Name": name,
+        "Message": "hello world"
+    }
     requests.post(url, json = personal_data)
+
 
 if __name__ == '__main__':
     query()

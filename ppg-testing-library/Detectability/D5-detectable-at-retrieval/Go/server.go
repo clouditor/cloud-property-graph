@@ -13,6 +13,11 @@ import (
 
 var db *gorm.DB
 
+type Data struct {
+    Name string
+    Message string
+}
+
 func main() {
     Init()
 	http.ListenAndServe(":8080", NewRouter())
@@ -44,18 +49,20 @@ func NewRouter() *gin.Engine {
 
 func post_data(c *gin.Context) {
 	c.Request.ParseForm()
-	name := c.Request.Form.Get("name")
-	message := &Message{
-		Name: name,
-	}
-	db.Create(message)
+	name := c.Request.Form.Get("Name")
+	message := c.Request.Form.Get("Message")
+    data := &Data{
+        Name: name,
+        Message: message,
+    }
+	db.Create(data)
 }
 
 func get_data(c *gin.Context) {
-    var message Message
+    var data Data
 
     c.Request.ParseForm()
-    name := c.Request.Form.Get("name")
-    db.Get().Where("name = ?", name).First(&message).Error
+    name := c.Request.Form.Get("Name")
+    db.Get().Where("Name = ?", name).First(&data).Error
     c.JSON(http.StatusNotFound, gin.H{"msg":"Not Found"})
 }

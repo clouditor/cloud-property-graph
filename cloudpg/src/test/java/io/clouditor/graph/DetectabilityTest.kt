@@ -7,9 +7,8 @@ import org.neo4j.driver.internal.InternalPath
 
 class DetectabilityTest {
 
-    // D1 dectectable credentials out of scope
+    // D1 Dectectable Credentials out of scope
 
-    // D2 detectable communication
     @Test
     fun TestD2_Python() {
         val result =
@@ -93,9 +92,8 @@ class DetectabilityTest {
         assertEquals(0, result.count())
     }
 
-    // D3 detectable outliers out of scope
+    // D3 Detectable Outliers out of scope
 
-    // D4 detectable at storage
     @Test
     fun TestD4_Go() {
         val result =
@@ -152,7 +150,6 @@ class DetectabilityTest {
         assertEquals(0, result.count())
     }
 
-    // D5 detectable at retrieval
     @Test
     fun TestD5_Go() {
         val result =

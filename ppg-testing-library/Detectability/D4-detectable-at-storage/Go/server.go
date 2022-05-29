@@ -12,8 +12,9 @@ import (
 
 var db *gorm.DB
 
-type Message struct{
+type Data struct{
     Name string
+    Message string
 }
 
 func main() {
@@ -30,7 +31,7 @@ func Init() (err error) {
     )
 
     db = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	db.AutoMigrate(&Message{})
+	db.AutoMigrate(&Data{})
 	return
 }
 
@@ -39,18 +40,20 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(logger.SetLogger())
 
-	r.POST("/registration", registration)
+	r.POST("/data", post_data)
 
 	return r
 }
 
-func registration(c *gin.Context) {
+func post_data(c *gin.Context) {
 	c.Request.ParseForm()
-	name := c.Request.Form.Get("name")
-	message := &Message{
-		Name: name,
-	}
-	err := db.Create(message).error
+	name := c.Request.Form.Get("Name")
+	message := c.Request.Form.Get("Message")
+    data := &Data{
+        Name: name,
+        Message: message,
+    }
+	err := db.Create(data).error
 	// TODO test with sqlite
 	if err.Code.Name() == "unique_violation" {
         c.JSON(http.StatusConflict, gin.H{"error": err.Error()})

@@ -13,8 +13,9 @@ import (
 
 var db *gorm.DB
 
-type Message struct {
+type Data struct {
     Name string
+    Message string
 }
 
 func main() {
@@ -40,7 +41,7 @@ func Init() (err error) {
 		return err
 	}
 
-	err = db.AutoMigrate(&Message{})
+	err = db.AutoMigrate(&Data{})
 	if err != nil {
 		return err
 	}
@@ -59,11 +60,13 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-    c.Request.ParseForm()
-    name := c.Request.Form.Get("Name")
-    message := &Message{
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("Name")
+	message := c.Request.Form.Get("Message")
+    data := &Data{
         Name: name,
+        Message: message,
     }
     // Create the message in the database
-    db.Create(message)
+    db.Create(data)
 }

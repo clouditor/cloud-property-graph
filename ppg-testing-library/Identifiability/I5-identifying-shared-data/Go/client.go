@@ -6,9 +6,12 @@ import (
 )
 
 func main() {
-	//@Identifier
-	identifier := url.Values{
-		"name": {"firstname lastname"},
+    //@Identifier
+    name := "firstname lastname"
+	data := url.Values{
+		"Name": {name},
+		"Message": {"helloworld"},
 	}
-	http.PostForm("http://test.com/data", identifier)
+
+	http.PostForm("http://test.com/data", data)
 }

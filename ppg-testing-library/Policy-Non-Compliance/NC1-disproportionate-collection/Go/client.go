@@ -1,11 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"crypto/ed25519"
-	"crypto/rand"
-	"encoding/json"
-	"log"
 	"net/http"
 )
 

@@ -123,8 +123,18 @@ class GinGonicPass : Pass() {
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
                     object : IVisitor<Node?>() {
-                        fun visit(r: MemberCallExpression) {
-                            handleBind(r, endpoint)
+                        fun visit(mce: MemberCallExpression) {
+                            handleBind(mce, endpoint)
+                        }
+                    }
+                )
+
+                // get the endpoint's handler and look through its mes
+                funcDeclaration?.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(me: MemberExpression) {
+                            handleForm(me, endpoint)
                         }
                     }
                 )
@@ -172,6 +182,32 @@ class GinGonicPass : Pass() {
                 e.addNextDFG(obj)
             }
         } else if (m.name == "Get") {
+            // lets see, whether we have a chain of member calls that go
+            // to the base
+            var memberCall: MemberExpression? = m.base as? MemberExpression
+            val calls = mutableListOf<MemberExpression>()
+            while (memberCall != null) {
+                // add the call to the list of chained calls
+                calls += memberCall
+
+                // check, if its base is already of our gin type
+                if (memberCall.base.type is PointerType &&
+                        memberCall.base.type.name == "gin.Context*"
+                ) {
+                    // we can break immediately
+                    break
+                }
+
+                // otherwise, go to the next base
+                memberCall = memberCall.base as? MemberExpression
+            }
+            e.addNextDFG(m)
+        }
+    }
+
+    // TODO consolidate duplicated code here and above in handleBind
+    private fun handleForm(m: MemberExpression, e: HttpEndpoint) {
+        if (m.name == "Form") {
             // lets see, whether we have a chain of member calls that go
             // to the base
             var memberCall: MemberExpression? = m.base as? MemberExpression

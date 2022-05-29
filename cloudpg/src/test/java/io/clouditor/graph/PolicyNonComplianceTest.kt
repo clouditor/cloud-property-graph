@@ -31,8 +31,7 @@ class PolicyNonComplianceTest {
         }
     }
 
-    // The PPG currently does not pass this test, since it cannot differentiate different fields
-    // sent in the same HttpRequest
+    // Due to missing field-sensitivity in HTTP requests, there no threat is detected here
     @Test
     fun TestNC1_Python_fieldsensitive() {
         val result =
@@ -95,8 +94,7 @@ class PolicyNonComplianceTest {
         }
     }
 
-    // The PPG currently does not pass this test, since it cannot differentiate different fields
-    // sent in the same HttpRequest
+    // Due to missing field-sensitivity in HTTP requests, there no threat is detected here
     @Test
     fun TestNC1_Go_fieldsensitive() {
         val result =
@@ -140,8 +138,6 @@ class PolicyNonComplianceTest {
     // NC3() out of scope
     // NC4() out of scope
 
-    // Due to missing field sensitivity, this test passes for the tainted datum but also generates a
-    // false positive for the untainted one
     @Test
     fun TestNC5_Go() {
         val result =
@@ -157,10 +153,31 @@ class PolicyNonComplianceTest {
 
         result.first().apply {
             var path = this.get("p") as Array<*>
-            // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
-            // the last node should be the LogOutput
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
+    @Test
+    fun TestNC5_Go_fieldsensitive() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go-fieldsensitive"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
@@ -180,6 +197,7 @@ class PolicyNonComplianceTest {
         assertEquals(0, result.count())
     }
 
+    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
     @Test
     fun TestNC5_Python() {
         val result =
@@ -187,6 +205,29 @@ class PolicyNonComplianceTest {
                 Path(
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
+    @Test
+    fun TestNC5_Python_fieldsensitive() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python-fieldsensitive"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"

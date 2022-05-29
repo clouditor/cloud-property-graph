@@ -5,6 +5,14 @@ import io.clouditor.graph.Integrity;
 
 public class Signature extends Integrity {
 
+	protected VariableDeclaration signature;
+	protected VariableDeclaration message;
+
+	public Signature(VariableDeclaration message, VariableDeclaration signature) {
+		setMessage(message);
+		setSignature(signature);
+	}
+
 	public VariableDeclaration getMessage() {
 		return message;
 	}
@@ -13,9 +21,11 @@ public class Signature extends Integrity {
 		this.message = message;
 	}
 
-	protected VariableDeclaration message;
+	public VariableDeclaration getSignature() {
+		return signature;
+	}
 
-	public Signature(VariableDeclaration message) {
-		setMessage(message);
+	public void setSignature(VariableDeclaration signature) {
+		this.signature = signature;
 	}
 }

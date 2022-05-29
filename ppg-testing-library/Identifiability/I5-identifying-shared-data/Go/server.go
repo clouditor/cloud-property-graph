@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
@@ -16,13 +17,12 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(logger.SetLogger())
 
-	r.POST("/data", forward_data)
+	r.POST("/data", parse_data)
 
 	return r
 }
 
-func forward_data(c *gin.Context) {
+func parse_data(c *gin.Context) {
     c.Request.ParseForm()
-    name := c.Request.Form.Get("name")
-    http.PostForm("http://third-party.com/data2", name)
+	http.PostForm("http://third-party.com/externaldata", c.Request.Form)
 }

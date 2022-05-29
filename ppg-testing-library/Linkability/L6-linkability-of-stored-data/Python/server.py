@@ -12,10 +12,14 @@ user_db_collection = user_db.records
 
 app = Flask(__name__)
 
-@app.route("/register", methods=['POST'])
-def performRegistration():
-    new_user_credentials = request.json
-    user_db_collection.insert_one(new_user_credentials)
+@app.route("/data", methods=['POST'])
+def parse_data():
+    req = request.json
+    data = {
+        "Name": req['name'],
+        "Message": req['message']
+    }
+    user_db_collection.insert_one(data)
     return "OK", 200
 
 if __name__ == '__main__':

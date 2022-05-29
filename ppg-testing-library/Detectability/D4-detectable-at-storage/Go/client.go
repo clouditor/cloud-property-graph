@@ -1,15 +1,18 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 )
 
 func main() {
     //@Identifier
-	identifier := url.Values{
-		"name": {"firstname lastname"},
+    name := "firstname lastname"
+	data := url.Values{
+		"Name": {name},
+		"Message": {"helloworld"},
 	}
-	http.PostForm("http://test.com/registration", identifier)
+
+	http.PostForm("http://test.com/data", data)
 }
+

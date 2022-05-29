@@ -15,8 +15,12 @@ app = Flask(__name__)
 
 @app.route("/data", methods=['POST'])
 def performRegistration():
-    user_data = request.json
-    user_db_collection.insert_one(user_data)
+    req = request.json
+    data = {
+        "Name": req['name'],
+        "Message": req['message']
+    }
+    user_db_collection.insert_one(data)
     return "OK", 200
 
 @app.route("/data", methods=['GET'])

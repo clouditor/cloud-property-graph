@@ -19,7 +19,6 @@ def query():
     )
 
     signature = private_key.sign(
-        # TODO here, a second node is created for plain_text
         data=plain_text,
         padding=padding.PSS(
             mgf=padding.MGF1(hashes.SHA256()),

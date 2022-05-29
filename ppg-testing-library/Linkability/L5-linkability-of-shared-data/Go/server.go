@@ -22,7 +22,12 @@ func NewRouter() *gin.Engine {
 }
 
 func forward_data(c *gin.Context) {
-    c.Request.ParseForm()
-    name := c.Request.Form.Get("name")
-    http.PostForm("http://third-party.com/data2", name)
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("Name")
+	message := c.Request.Form.Get("Message")
+	data := url.Values{
+		"Name":    {name},
+		"Message": {message},
+	}
+	http.PostForm("http://third-party.com/externaldata", data)
 }

@@ -79,6 +79,20 @@ class IdentifiabilityTest {
     }
 
     @Test
+    fun TestI5_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestI5_Python() {
         val result =
             executePPG(
@@ -98,6 +112,20 @@ class IdentifiabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("HttpRequest"))
         }
+    }
+
+    @Test
+    fun TestI5_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -123,6 +151,20 @@ class IdentifiabilityTest {
     }
 
     @Test
+    fun TestI6_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestI6_Go() {
         val result =
             executePPG(
@@ -142,6 +184,20 @@ class IdentifiabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
+    }
+
+    @Test
+    fun TestI6_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -167,6 +223,20 @@ class IdentifiabilityTest {
     }
 
     @Test
+    fun TestI7_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestI7_Go() {
         val result =
             executePPG(
@@ -186,5 +256,19 @@ class IdentifiabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
+    }
+
+    @Test
+    fun TestI7_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 }

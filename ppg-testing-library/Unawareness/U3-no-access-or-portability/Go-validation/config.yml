@@ -1,5 +1,8 @@
 services:
   - type: server
-    directory: server
     name: server
     host: test.com
+  - type: client
+    name: client
+  - type: db
+    name: postgres

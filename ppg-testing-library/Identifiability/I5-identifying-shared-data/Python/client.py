@@ -2,11 +2,16 @@
 
 import requests
 
-def transfer_data():
-    url = 'http://test.com/data'
+def query():
+    url = 'test.com/data'
     #@Identifier
-    user_data = {'email': 'firstname.lastname@test.com', 'password': '123456', 'first_name': 'firstname', 'last_name': 'lastname'}
-    requests.post(url, json = user_data)
+    name = "name"
+    personal_data = {
+        "Name": name,
+        "Message": "hello world"
+    }
+    requests.post(url, json = personal_data)
 
 if __name__ == '__main__':
-    transfer_data()
+    query()
+

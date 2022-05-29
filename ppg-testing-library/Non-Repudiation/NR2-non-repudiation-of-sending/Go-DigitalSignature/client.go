@@ -1,38 +1,28 @@
 package main
 
 import (
-	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
-	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 )
-
-type SignedMessage struct {
-	Personal_datum      string
-	Signature string
-}
 
 func main() {
 	var err error
-	//@Identifier
-	pd := "firstname lastname"
 
 	//@Identifier
-	personal_datum := []byte("firstname lastname")
+	name := []byte("firstname lastname")
 
 	// generate signature
 	_, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	signature := ed25519.Sign(priv, personal_datum)
+	signature := ed25519.Sign(priv, name)
 	data := url.Values{
-		Personal_datum:      personal_datum,
-		Signature: signature, // string(signature[:])
+		"Name":      {name},
+		"Signature": {signature},
 	}
-
 	http.PostForm("http://test.com/data", data)
-
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+    "log"
 	"net/http"
 
 	"github.com/gin-contrib/logger"
@@ -9,7 +10,8 @@ import (
 )
 
 type Data struct {
-	Name string
+	Name    string
+	Message string
 }
 
 func main() {
@@ -27,8 +29,12 @@ func NewRouter() *gin.Engine {
 }
 
 func parse_data(c *gin.Context) {
-    c.Request.ParseForm()
-    name := c.Request.Form.Get("name")
-    data := &Data{Name: name}
-	log.Info().Msg(data)
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("Name")
+	message := c.Request.Form.Get("Message")
+	data := &Data{
+		Name:    name,
+		Message: message,
+	}
+	log.Info().Msg(data.Name)
 }

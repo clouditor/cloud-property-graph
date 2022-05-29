@@ -17,7 +17,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(logger.SetLogger())
 
-	r.POST("/data2", post_data)
+	r.POST("/externaldata", post_data)
 
 	return r
 }

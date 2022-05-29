@@ -16,7 +16,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-DigitalSignature"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(:HttpEndpoint) WHERE (n)--(:Signature) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(2, result.count())
 
@@ -27,6 +27,20 @@ class NonRepudiationTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("HttpEndpoint"))
         }
+    }
+
+    @Test
+    fun TestNR2_Python_DigitalSignature_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-DigitalSignature-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -52,6 +66,20 @@ class NonRepudiationTest {
     }
 
     @Test
+    fun TestNR2_Python_Logging_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c)-[d:ARGUMENTS]-(e)-[f:CALL]-(g:LogOutput) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestNR2_Go_DigitalSignature() {
         val result =
             executePPG(
@@ -60,7 +88,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-DigitalSignature"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(:HttpEndpoint) WHERE (n)--(:Signature) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
@@ -73,6 +101,20 @@ class NonRepudiationTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("HttpEndpoint"))
         }
+    }
+
+    @Test
+    fun TestNR2_Go_DigitalSignature_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-DigitalSignature-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -97,9 +139,24 @@ class NonRepudiationTest {
         }
     }
 
+    @Test
+    fun TestNR2_Go_Logging_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-Logging-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOutput) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
     // NR3 Non-repudiation of receipt out of scope
 
-    // Due to missing field-sensitivity, there is an additional false-positive threat detected here
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
     @Test
     fun TestNR4_Go() {
         val result =
@@ -109,7 +166,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Go-DigitalSignature"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(:DatabaseStorage) WHERE (n)--(:Signature) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -123,6 +180,22 @@ class NonRepudiationTest {
     }
 
     @Test
+    fun TestNR4_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Go-DigitalSignature-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
+    @Test
     fun TestNR4_Python() {
         val result =
             executePPG(
@@ -131,7 +204,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Python-DigitalSignature"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(:DatabaseStorage) WHERE (n)--(:Signature) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -144,6 +217,22 @@ class NonRepudiationTest {
         }
     }
 
+    @Test
+    fun TestNR4_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Python-DigitalSignature-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]-(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
     @Test
     fun TestNR5_Python() {
         val result =
@@ -168,7 +257,8 @@ class NonRepudiationTest {
         }
     }
 
-    // Results in one false positive due to missing field-sensitivity
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
     @Test
     fun TestNR5_Go() {
         val result =

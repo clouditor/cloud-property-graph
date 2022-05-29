@@ -31,17 +31,37 @@ func NewRouter() *gin.Engine {
 }
 
 func post_data(c *gin.Context) {
-	// TODO
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	message := &Message{
+		Name: name,
+	}
+	db.Create(message)
 }
 
 func put_data(c *gin.Context) {
-	// TODO
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    // TODO: the type of message is unknown in the graph
+    message := &Message{
+        Name: name,
+    }
+    db.Model(&message).Update("name", name)
 }
 
 func get_data(c *gin.Context) {
-	// TODO
+    var message Message
+
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    db.Get().Where("name = ?", name).First(&message).Error
 }
 
 func delete_data(c *gin.Context) {
-	// TODO
+    c.Request.ParseForm()
+    name := c.Request.Form.Get("name")
+    data := &Data{
+        Name: name,
+    }
+    db.Delete(message)
 }

@@ -39,7 +39,7 @@ class GoCryptoPass : Pass() {
             // the text that is signed is the second argument
             val text_to_be_signedDRE = c.arguments[1] as DeclaredReferenceExpression
             val plain_text = text_to_be_signedDRE.refersTo as VariableDeclaration
-            val signature = Signature(plain_text)
+            val signature = Signature(plain_text, c.nextDFG.first() as VariableDeclaration)
             t += signature
         }
     }

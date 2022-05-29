@@ -2,12 +2,10 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 )
 
 type Message struct {
 	Name      string
-	Joke      string
 }
 
 func query() {
@@ -17,11 +15,9 @@ func query() {
 
 	message := url.Values{
         "Name": {name},
-        "Joke": {joke},
     }
     http.PostForm("http://test.com/data", message)
 }
-
 
 func main() {
     query()

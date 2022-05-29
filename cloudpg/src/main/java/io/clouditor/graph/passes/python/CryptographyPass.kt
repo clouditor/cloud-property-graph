@@ -44,13 +44,12 @@ class CryptographyPass : Pass() {
     private fun handleSignature(
         tu: TranslationUnitDeclaration,
         t: TranslationResult,
-        r: MemberCallExpression
+        mce: MemberCallExpression
     ) {
         // TODO check if it is always the first one
-        val text_to_be_signedDRE = r.arguments.first() as DeclaredReferenceExpression
-        println(text_to_be_signedDRE.refersTo)
-        val plain_text = text_to_be_signedDRE.refersTo as VariableDeclaration
-        val signature = Signature(plain_text)
+        val text_to_be_signed_expression = mce.arguments.first() as DeclaredReferenceExpression
+        val plain_text = text_to_be_signed_expression.refersTo as VariableDeclaration
+        val signature = Signature(plain_text, mce.nextDFG.first() as VariableDeclaration)
         t += signature
     }
 }

@@ -7,8 +7,11 @@ import (
 
 func main() {
 	//@PseudoIdentifier
-	identifier := url.Values{
-		"Name": {"firstname lastname"},
+    name := "firstname lastname"
+	data := url.Values{
+		"Name": {name},
+		"Message": {"hello world"},
 	}
-	http.PostForm("http://test.com/data", identifier)
+
+	http.PostForm("http://test.com/data", data)
 }

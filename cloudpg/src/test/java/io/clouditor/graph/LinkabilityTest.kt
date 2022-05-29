@@ -16,7 +16,7 @@ class LinkabilityTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Identifiability/L3-linkability-of-inbound-data/Go"
+                        "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Go"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
@@ -33,12 +33,26 @@ class LinkabilityTest {
     }
 
     @Test
+    fun TestL3_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestL3_Python() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Identifiability/L3-linkability-of-inbound-data/Python"
+                        "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
@@ -48,10 +62,24 @@ class LinkabilityTest {
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("Identifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("HttpEndpoint"))
         }
+    }
+
+    @Test
+    fun TestL3_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     // L4 Linkability of Context out of scope
@@ -79,6 +107,20 @@ class LinkabilityTest {
     }
 
     @Test
+    fun TestL5_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestL5_Go() {
         val result =
             executePPG(
@@ -98,6 +140,20 @@ class LinkabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("HttpRequest"))
         }
+    }
+
+    @Test
+    fun TestL5_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -123,6 +179,20 @@ class LinkabilityTest {
     }
 
     @Test
+    fun TestL6_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestL6_Go() {
         val result =
             executePPG(
@@ -142,6 +212,20 @@ class LinkabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
+    }
+
+    @Test
+    fun TestL6_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 
     @Test
@@ -167,6 +251,20 @@ class LinkabilityTest {
     }
 
     @Test
+    fun TestL7_Python_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    @Test
     fun TestL7_Go() {
         val result =
             executePPG(
@@ -186,5 +284,19 @@ class LinkabilityTest {
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
             assert(lastNode.labels().contains("DatabaseStorage"))
         }
+    }
+
+    @Test
+    fun TestL7_Go_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
+            )
+        assertEquals(0, result.count())
     }
 }
