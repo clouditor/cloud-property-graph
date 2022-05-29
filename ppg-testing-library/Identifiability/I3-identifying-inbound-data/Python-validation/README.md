@@ -1,3 +1,2 @@
-# Test Case Description: I3 Identifying Inbound Data -- Python Validation
-- Threat description: TODO   
-- Expected test outcome: TODO
+# Test Case Description: I3 Identifying Inbound Data -- Python
+- Expected test outcome: No Identifying Inbound Data threat should be detected here.

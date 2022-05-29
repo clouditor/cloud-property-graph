@@ -1,3 +1,2 @@
-# Test Case Description: Disclosure -- Python Validation
-- Threat description: A POST request with personal data is sent from client to server TODO
-- Expected test outcome: TODO
+# Test Case Description: Disclosure -- Unencrypted Transmission -- Go Validation
+- Expected test outcome: No Unencrypted Transmission threat should be detected here.

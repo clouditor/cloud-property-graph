@@ -1,5 +1,5 @@
-# Test Case Description: ID6 Identifying Stored Data -- Python
-- Threat description: Personal data is stored which can be used to identify a person.
+# Test Case Description: I6 Identifying Stored Data -- Go
+- Threat description: A POST request with personal data is sent from client to server which stored it in a database.
 - Expected test outcome:
-  1. The data flow from the client to the server is detected (l.10 at the client)
-  2. The saving of the identifieable data (identifiers or quasi-identifiers) to a database is detected (l.19 at the server)
+  1. The taint is detected
+  2. The flow of the tainted datum to the server's database is detected

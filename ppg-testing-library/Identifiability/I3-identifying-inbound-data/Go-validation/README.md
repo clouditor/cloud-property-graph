@@ -1,3 +1,2 @@
-# Test Case Description: I3 Identifying Inbound Data -- Go Validation
-- Threat description: TODO
-- Expected test outcome: TODO
+# Test Case Description: I3 Identifying Shared Data -- Go
+- Expected test outcome: No Identifying Shared Data threat should be detected here.

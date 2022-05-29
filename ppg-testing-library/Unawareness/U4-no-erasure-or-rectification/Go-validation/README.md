@@ -1,4 +1,3 @@
-# Test Case Description: U4 No Erasure Or Rectification -- Go -- Missing DELETE
-- Threat description: 
-- Expected test outcome:
+# Test Case Description: U4 No Erasure Or Rectification -- Go Validation
+- Expected test outcome: No No Erasure Or Rectification threat should be detected here.
   

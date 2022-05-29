@@ -1,5 +1,6 @@
-# Test Case Description: Disclosure -- Python
-- Threat description: A POST request with personal data is sent from client to server without encryption its content. Therefore the information being sent can disclosed.
+# Test Case Description: Disclosure -- Unencrypted Transmission -- Python
+- Threat description: A POST request with personal data is sent from client to server without transport encryption.
 - Expected test outcome:
-- 1. The identifieable data which is being sent is detected on the client side
-- 2. Non-enryption sending of the data is detected
+    1. The taint is detected
+    2. The flow of the tainted datum to the HTTP endpoint of the server is detected
+    3. The transport protocol is recognized as unencrypted

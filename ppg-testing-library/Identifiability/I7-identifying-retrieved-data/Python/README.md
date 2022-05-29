@@ -1,4 +1,7 @@
-# Test Case Description: ID7 Identifying Retrieved Data -- Python
-- Threat description: Identifier such as firstname, lastname or email is retrieved from service, which can then be used to identify the person
+# Test Case Description: I7 Identifying Retrieved Data -- Python
+- Threat description: A POST request with personal data is sent from client to server which stores it in a database. Another client accesses the datum from the same database.
 - Expected test outcome:
-  1. The data flow from the database (l.19 server) to the user (l.7 client) is detected
+  1. The taint is detected
+  2. The flow of the tainted datum to the server's database is detected
+  3. The second client's GET request to access the database storage which holds the tainted datum is detected 
+

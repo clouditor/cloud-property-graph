@@ -1,8 +1,8 @@
-# Test Case Description: D5 Detectable at Retrieval -- Python -- HTTP 404 - MongoDB
-- Threat description: A GET request is sent from client to server where the data are retrieved from a MongoDB. The requested data may be personal data (as detected in the test cases I3/L3). If the data do not exist, a HTTP 404 Not Found message is sent back, leaking information about a (non-)existing personal datum in the database.
+# Test Case Description: D5 Detectable at Retrieval -- Python
+- Threat description: The server offers an API to a database which leaks information about (non-)existing data.
 - Expected test outcome:
-  1. The storage of personal data in the MongoDB is detected (see L3/I3)
-  2. The tainted datum in client.py (l.9) is detected
-  3. The GET request to the API function is detected
-  4. The HTTP Not Found message is detected in the API function as a possible response
+  1. The taint is detected
+  2. The flow of the taint from the client to the server's database is detected
+  3. A client request targeted at the same storage that the taint was stored in is detected
+  4. A server response is detected that indicates that a datum was not found
   

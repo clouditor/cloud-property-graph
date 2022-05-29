@@ -1,7 +1,6 @@
-# Test Case Description: D4 Detectable at Storage -- Python -- HTTP 409 - MongoDB
-- Threat description: A POST request with personal data is sent from client to server where the data are stored in a MongoDB. If the data already exist, a HTTP 409 Conflict message is sent back, leaking information about a existing personal datum in the database.  
+# Test Case Description: D4 Detectable at Storage -- Python
+- Threat description: The server offers an API to a database which leaks information about existing data.
 - Expected test outcome:
-  2. The tainted datum in client.py (l.8) is detected
-  3. The POST request to the API function is detected
-  4. The HTTP Conflict message is detected in the API function as a possible response
-  
+  1. The taint is detected
+  2. The flow of the taint from the client to the server's database is detected
+  3. A server response is detected that indicates a conflict because the datum already exists in the database

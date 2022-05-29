@@ -1,4 +1,8 @@
-# Test Case Description: ID7 Identifying Retrieved Data -- Python
-- Threat description: Identifier such as firstname, lastname or email is retrieved from service, which can then be used to identify the person
+# Test Case Description: NR5 Non-Repudiation of Retrieved Data -- Go
+- Threat description: A signed, i.e. non-reputable, message including personal data is sent from client to server where it is stored in a database and is retrieved by another client.
 - Expected test outcome:
-  1. The data flow from the database (l.19 server) to the user (l.7 client) is detected
+  1. The taint is detected
+  2. The usage of the cryptography library's signature method on the tainted datum is detected
+  3. The data flow of the tainted datum together with the signature to the server's database is detected
+  4. The second client's GET request to access the database storage which holds the tainted datum is detected
+  

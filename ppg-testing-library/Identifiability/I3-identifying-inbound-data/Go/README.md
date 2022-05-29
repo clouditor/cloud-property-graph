@@ -1,5 +1,5 @@
-# Test Case Description: ID3 Identifying Inbound Data -- Go
-- Threat description: An identifier is sent from client to server.
+~~# Test Case Description: I3 Identifying Inbound Data -- Go
+- Threat description: A POST request with personal data is sent from client to server.
 - Expected test outcome:
-  1. The tainted datum in client.py (l.17) is detected
-  2. The taint's flow to the server's API in server.py (l.21) is detected
+  1. The taint is detected
+  2. The flow of the tainted datum to the HTTP endpoint of the server is detected~~

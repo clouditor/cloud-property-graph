@@ -1,7 +1,8 @@
-# Test Case Description: D1 Detectable Credentials -- Go -- HTTP 404
-- Threat description: A login request is sent from client to server (which is detected by the function name "login"), which may respond with a HTTP 404 Not Found message. 
+# Test Case Description: D5 Detectable at Retrieval -- Go
+- Threat description: The server offers an API to a database which leaks information about (non-)existing data.
 - Expected test outcome: 
-  1. The tainted datum in client.go (l.9) is detected
-  2. The data flow of the tainted datum to the login function is detected
-  3. The HTTP Not Found message is detected in the login function as a possible response
+  1. The taint is detected
+  2. The flow of the taint from the client to the server's database is detected
+  3. A client request targeted at the same storage that the taint was stored in is detected
+  4. A server response is detected that indicates that a datum was not found
   

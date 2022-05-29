@@ -1,3 +1,2 @@
-# Test Case Description: I6 Identifying Stored Data -- GO
-- Threat description: TODO
-- Expected test outcome: TODO
+# Test Case Description: I5 Identifying Stored Data -- Go Validation
+- Expected test outcome: No Identifying Stored Data threat should be detected here.

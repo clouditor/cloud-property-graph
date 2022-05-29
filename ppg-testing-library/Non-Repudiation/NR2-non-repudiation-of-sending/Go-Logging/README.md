@@ -1,7 +1,6 @@
-# Test Case Description: NR1 Credential Non-Repudiation -- Go -- zerolog
-- Threat description: An identifier (credential) is sent from client to server, where it is used in a logging operation---implying that the identifier is stored in a central logging service.
+# Test Case Description: NR2 Non-Repudiation of Sending -- Go Logging
+- Threat description: A message including personal data is sent from client to server where it is logged.
 - Expected test outcome:
-  1. The tainted datum in client.go (l.12/13) is detected
-  2. The logging operation in server.go (l.35) is detected
-  3. The taint's data flow to the logging operation is detected
-  
+  1. The taint is detected
+  2. The data flow of the tainted datum to the server is detected
+  3. The server's log operation of the tainted datum is detected 
