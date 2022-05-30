@@ -72,18 +72,6 @@ object SemanticNodeGenerator {
         writeGoStringsToFolder(ontologyDescription, outputBaseGo, owl3)
     }
 
-    private fun getBoolFromArgs(value: String): Boolean {
-        println("arg: " + value)
-        if (value == "true") {
-            return true
-        } else if (value == "false") {
-            return false
-        } else  { 
-            println("No correct input for the first parameter. Set 'Java constructor' to default (true).")
-            return true
-        }
-    }
-
     private fun checkPath(outputBase: String): String {
         var tmpOutputBase = outputBase
         return if (tmpOutputBase[tmpOutputBase.length - 1] != '/') "/".let { tmpOutputBase += it; tmpOutputBase } else tmpOutputBase
