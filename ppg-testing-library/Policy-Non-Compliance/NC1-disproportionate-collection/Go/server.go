@@ -8,11 +8,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type Message struct {
-	Name      string
-	Joke      string
-}
-
 func main() {
 	http.ListenAndServe(":8080", NewRouter())
 }
@@ -29,6 +24,4 @@ func NewRouter() *gin.Engine {
 
 func parse_data(c *gin.Context) {
     c.Request.ParseForm()
-	name := c.Request.Form.Get("Name")
-	joke := c.Request.Form.Get("Joke")
 }

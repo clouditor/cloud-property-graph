@@ -16,32 +16,7 @@ class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
-            )
-        // in this case, 2 paths are expected because there are two HttpEndpoints that the
-        // Identifier crosses: A proxied endpoint and the actual one
-        assertEquals(2, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("HttpEndpoint"))
-        }
-    }
-
-    // Due to missing field-sensitivity in HTTP requests, there no threat is detected here
-    @Test
-    fun TestNC1_Python_fieldsensitive() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python-fieldsensitive"
-                ),
-                listOf(Path(".")),
-                "MATCH p=({name:'name'})--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
@@ -65,7 +40,7 @@ class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=({name:'name'})--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }
@@ -79,32 +54,7 @@ class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
-            )
-        // in this case, 2 paths are expected because there are two HttpEndpoints that the
-        // Identifier crosses: A proxied endpoint and the actual one
-        assertEquals(2, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("HttpEndpoint"))
-        }
-    }
-
-    // Due to missing field-sensitivity in HTTP requests, there no threat is detected here
-    @Test
-    fun TestNC1_Go_fieldsensitive() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go-fieldsensitive"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
@@ -128,49 +78,27 @@ class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go-validation"
                 ),
                 listOf(Path(".")),
-                // TODO check if not exists h-*-expression
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }
 
-    // NC2() out of scope
-    // NC3() out of scope
-    // NC4() out of scope
+    // NC2 Unlawful Processing out of scope
+    // NC3 Disproportionate Processing out of scope
+    // NC4 Automated Decision Making out of scope
 
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
     @Test
     fun TestNC5_Go() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-retrieval/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-            )
-        assertEquals(1, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("DatabaseStorage"))
-        }
-    }
-
-    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
-    @Test
-    fun TestNC5_Go_fieldsensitive() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go-fieldsensitive"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -189,45 +117,23 @@ class PolicyNonComplianceTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Go-validation"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-retrieval/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p"
             )
         assertEquals(0, result.count())
     }
 
-    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
     @Test
     fun TestNC5_Python() {
         val result =
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
-            )
-        assertEquals(1, result.count())
-
-        result.first().apply {
-            var path = this.get("p") as Array<*>
-            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            assert(firstNode.labels().contains("PseudoIdentifier"))
-            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("DatabaseStorage"))
-        }
-    }
-
-    // Due to faulty field-sensitivity, there is an additional false-positive threat detected here
-    @Test
-    fun TestNC5_Python_fieldsensitive() {
-        val result =
-            executePPG(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python-fieldsensitive"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-retrieval/Python"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
@@ -249,10 +155,86 @@ class PolicyNonComplianceTest {
             executePPG(
                 Path(
                     System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage/Python-validation"
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-retrieval/Python-validation"
                 ),
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+            )
+        assertEquals(0, result.count())
+    }
+
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
+    @Test
+    fun TestNC5_Go_wo_processing() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Go"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    @Test
+    fun TestNC5_Go_wo_processing_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Go-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        assertEquals(0, result.count())
+    }
+
+    // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
+    // threat detected here
+    @Test
+    fun TestNC5_Python_wo_processing() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Python"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+            )
+        assertEquals(1, result.count())
+
+        result.first().apply {
+            var path = this.get("p") as Array<*>
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            assert(firstNode.labels().contains("PseudoIdentifier"))
+            val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
+            assert(lastNode.labels().contains("DatabaseStorage"))
+        }
+    }
+
+    @Test
+    fun TestNC5_Python_wo_processing_Validation() {
+        val result =
+            executePPG(
+                Path(
+                    System.getProperty("user.dir") +
+                        "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Python-validation"
+                ),
+                listOf(Path(".")),
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }

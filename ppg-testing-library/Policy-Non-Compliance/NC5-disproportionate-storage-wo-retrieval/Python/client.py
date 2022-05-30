@@ -5,8 +5,10 @@ import requests
 def query():
     url = 'test.com/data'
     #@PseudoIdentifier
+    name = "name"
     personal_data = {
-        "name": "personalname",
+        "Name": name,
+        "Message": "hello world"
     }
     requests.post(url, json = personal_data)
 

@@ -52,7 +52,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c)-[d:ARGUMENTS]-(e)-[f:CALL]-(g:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOutput) RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -74,7 +74,7 @@ class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-(a)-[:DFG*]->(c)-[d:ARGUMENTS]-(e)-[f:CALL]-(g:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOutput) RETURN p"
             )
         assertEquals(0, result.count())
     }

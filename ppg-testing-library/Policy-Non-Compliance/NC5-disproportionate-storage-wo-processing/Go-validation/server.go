@@ -13,7 +13,8 @@ import (
 var db *gorm.DB
 
 type Message struct {
-    Name string
+	Name string
+	Joke string
 }
 
 func main() {
@@ -34,9 +35,15 @@ func Init() (err error) {
 		dbname,
 	)
 
-	db, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return err
+	}
 
-	db.AutoMigrate(&Message{})
+	err = db.AutoMigrate(&Message{})
+	if err != nil {
+		return err
+	}
 
 	return
 }
@@ -47,16 +54,31 @@ func NewRouter() *gin.Engine {
 	r.Use(logger.SetLogger())
 
 	r.POST("/data", parse_data)
+	r.GET("/data", get_data)
 
 	return r
 }
 
 func parse_data(c *gin.Context) {
-    c.Request.ParseForm()
+	c.Request.ParseForm()
 	name := c.Request.Form.Get("Name")
+	joke := c.Request.Form.Get("Joke")
 	message := &Message{
-	    Name: name,
+		Name: name,
+		Joke: joke,
 	}
 	// Create the message in the database
 	db.Create(message)
+}
+
+func get_data(c *gin.Context) {
+	var message Message
+	c.Request.ParseForm()
+	name := c.Request.Form.Get("name")
+	db.Get().Where("name = ?", name).First(&message).Error
+	// processing step
+	fmt.Println(message.Name)
+	if message.Name != "" {
+		fmt.Println("message processed!")
+	}
 }

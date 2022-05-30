@@ -13,8 +13,16 @@ app = Flask(__name__)
 @app.route("/data", methods=['POST'])
 def collect_data():
     content = request.json
-    # Threat results from data being collected and stored, but not retrieved
     phr_db_collection.insert_one(content)
+    return "OK", 200
+
+@app.route("/data", methods=['GET'])
+def get_data():
+    content = request.json
+    data = phr_db_collection.find_one(content["user_id"])
+    # processing step
+    if data:
+        print(data)
     return "OK", 200
 
 if __name__ == '__main__':

@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 
 from flask import Flask, request
-import json
-import requests
-from pymongo import MongoClient, database 
+from pymongo import MongoClient, database
 
-# phr_db client (MongoDB)
 mongo_host = "mongo"
 user_db_client = MongoClient("mongodb://mongo:27017/")
-user_db = user_db_client.userdata
+user_db = user_db_client.phr
 user_db_collection = user_db.records
 
 app = Flask(__name__)
 
 @app.route("/data", methods=['POST'])
-def post_data():
-    req = request.json
-    data = {
-        "Name": req['name'],
-        "Message": req['message']
-    }
-    user_db_collection.insert_one(data)
+def collect_data():
+    content = request.json
+    message = {'name': content['name'], 'joke': content['joke']}
+    # Threat results from data being collected and stored, but not retrieved
+    user_db_collection.insert_one(message)
     return "OK", 200
 
 @app.route("/data", methods=['GET'])
