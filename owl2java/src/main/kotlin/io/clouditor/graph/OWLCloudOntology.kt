@@ -183,7 +183,7 @@ class OWLCloudOntology(filepath: String) {
         if (superClass!!.name == "Node") {
             setEmptySuperclassCall(jcs)
             return jcs
-        }
+        } 
 
         // Get all parameters of superClasses
         var superXClassParameters: MutableMap<String, String> = LinkedHashMap()
@@ -233,18 +233,20 @@ class OWLCloudOntology(filepath: String) {
         javaClass = setSuperClassName(javaClass, clazz)
 
         // Add constructor shell, need to be here, so that it is the first method
-        javaClass = addConstructorShell(javaClass)
+        javaClass = addConstructorShell(javaClass, false, "")
 
         // Set variables by 'OWL object properties'
         javaClass = setOWLClassObjectProperties(javaClass, clazz)
 
         // Set variables by 'OWL data properties'
         javaClass = setOWLClassDataProperties(javaClass, clazz)
-
-        // Set constructor, superclass constructor is set later, because all class and superclass parameters must
+        
+        // Set constructor if needed, superclass constructor is set later, because all class and superclass parameters must
         // be known
+        
+        // Add constructor with parameters
         javaClass = setClassConstructor(javaClass)
-
+        
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
             System.err.println("SyntaxError: " + javaClass.syntaxErrors)
@@ -270,15 +272,26 @@ class OWLCloudOntology(filepath: String) {
             javaClassConstructor.body = javaClassConstructor.body + elem.mutator.name + "(" + elem.name + ")" +
                     ";"
         }
+
+        // Add default constructor if no properties are available and add a default constructor with 'super();' if a constructor with parameters is already available
+        if (!javaClassPropertiesList.isEmpty()) {
+            if (!javaClass.superType.isEmpty()) {
+                addConstructorShell(javaClass, true, "super();")
+            }
+        }
+
         return javaClass
     }
 
-    private fun addConstructorShell(javaClass: JavaClassSource): JavaClassSource {
+    private fun addConstructorShell(javaClass: JavaClassSource, default: Boolean, body: String): JavaClassSource {
+        
         javaClass.addMethod()
-            .setConstructor(true)
-            .setBody("")
-            .setPublic()
-        return javaClass
+        .setConstructor(true)
+        .setDefault(default)
+        .setBody(body)
+        .setPublic()
+       
+       return javaClass
     }
 
     // Set OWl class data properties

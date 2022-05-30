@@ -22,7 +22,7 @@ object SemanticNodeGenerator {
         var packageNameGo = "voc"
         var outputBaseJava = "../cloudpg/generated/main/java/io/clouditor/graph/"
         var packageNameJava = "io.clouditor.graph"
-
+        
         // IMPORTANT: Only OWL/XML and RDF/XML are supported
         var owlInputPath = "resources/urn_webprotege_ontology_e4316a28-d966-4499-bd93-6be721055117.owx"
         if (args.size == 0) {
@@ -30,7 +30,8 @@ object SemanticNodeGenerator {
                 """
     Please use the following parameters:  
     
-    1st parameter: Ontology Input File (Only OWL/XML and RDF/XML are supported)2st parameter: Java package name
+    1st parameter: Ontology Input File (Only OWL/XML and RDF/XML are supported)
+    2nd parameter: Java package name
     3nd parameter: Output path for generated Java files (optional, but the order must be respected)
     4th parameter: Go package name
     5th parameter: Output path for generated Go Files (optional, but the order must be respected)
@@ -59,6 +60,7 @@ object SemanticNodeGenerator {
         } else if (args.size == 1) {
             owlInputPath = args[0]
         }
+
         val owl3 = OWLCloudOntology(owlInputPath)
 
         // Create java class sources
