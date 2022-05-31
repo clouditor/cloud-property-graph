@@ -1,5 +1,5 @@
 # Test Case Description: D5 Detectable at Retrieval -- Go
-- Threat description: The server offers an API to a database which leaks information about (non-)existing data.
+- Threat description: The server offers an API to a database which leaks information about personal data it holds: When the client tries to access data, the server may respond by a _not found_ message.
 - Expected test outcome: 
   1. The taint is detected
   2. The flow of the taint from the client to the server's database is detected

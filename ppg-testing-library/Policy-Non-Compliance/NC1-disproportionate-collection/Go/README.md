@@ -1,5 +1,5 @@
 # Test Case Description: NC1 Disproportionate Collection -- Go
-- Threat description: A message including personal data is sent from client to server where it is not further processed in a meaningful way.
+- Threat description: A (pseudo-)identifier is sent from client to server where it is not further processed in a meaningful way.
 - Expected test outcome:
     1. The taint is detected
     2. The data flow of the tainted datum to the server is detected
