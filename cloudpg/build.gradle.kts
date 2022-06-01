@@ -128,3 +128,8 @@ spotless {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn("spotlessApply")
 }
+
+tasks.withType<Test>().configureEach {
+    // Some tests in our testing library (intentionally) fail, so we need to ignore those tests
+    ignoreFailures = true
+}

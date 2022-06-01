@@ -3,14 +3,16 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
+@Tag("TestingLibrary")
 class DetectabilityTest {
 
     // D1 Dectectable Credentials out of scope
 
     @Test
-    fun TestD2_Python() {
+    fun testD2Python() {
         val result =
             executePPG(
                 Path(
@@ -35,7 +37,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD2_Python_validation() {
+    fun testD2PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -50,7 +52,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD2_Go() {
+    fun testD2Go() {
         val result =
             executePPG(
                 Path(
@@ -78,7 +80,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD2_Go_validation() {
+    fun testD2GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -95,7 +97,7 @@ class DetectabilityTest {
     // D3 Detectable Outliers out of scope
 
     @Test
-    fun TestD4_Go() {
+    fun testD4Go() {
         val result =
             executePPG(
                 Path(
@@ -109,7 +111,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD4_Go_validation() {
+    fun testD4Go_validation() {
         val result =
             executePPG(
                 Path(
@@ -123,7 +125,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD4_Python() {
+    fun testD4Python() {
         val result =
             executePPG(
                 Path(
@@ -137,7 +139,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD4_Python_validation() {
+    fun testD4PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -151,7 +153,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD5_Go() {
+    fun testD5Go() {
         val result =
             executePPG(
                 Path(
@@ -165,7 +167,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD5_Go_validation() {
+    fun testD5GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -179,7 +181,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD5_Python() {
+    fun testD5Python() {
         val result =
             executePPG(
                 Path(
@@ -193,7 +195,7 @@ class DetectabilityTest {
     }
 
     @Test
-    fun TestD5_Python_validation() {
+    fun testD5PythonValidation() {
         val result =
             executePPG(
                 Path(

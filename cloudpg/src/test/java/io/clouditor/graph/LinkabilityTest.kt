@@ -3,15 +3,17 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
+@Tag("TestingLibrary")
 class LinkabilityTest {
 
     // L1 out of scope
     // L2 out of scope
 
     @Test
-    fun TestL3_Go() {
+    fun testL3Go() {
         val result =
             executePPG(
                 Path(
@@ -33,7 +35,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL3_Go_Validation() {
+    fun testL3GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -47,7 +49,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL3_Python() {
+    fun testL3Python() {
         val result =
             executePPG(
                 Path(
@@ -60,7 +62,7 @@ class LinkabilityTest {
         assertEquals(2, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this["p"] as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
@@ -69,7 +71,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL3_Python_Validation() {
+    fun testL3PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -85,7 +87,7 @@ class LinkabilityTest {
     // L4 Linkability of Context out of scope
 
     @Test
-    fun TestL5_Python() {
+    fun testL5Python() {
         val result =
             executePPG(
                 Path(
@@ -98,7 +100,7 @@ class LinkabilityTest {
         assertEquals(1, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this["p"] as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
@@ -107,7 +109,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL5_Python_Validation() {
+    fun testL5PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -121,7 +123,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL5_Go() {
+    fun testL5Go() {
         val result =
             executePPG(
                 Path(
@@ -134,7 +136,7 @@ class LinkabilityTest {
         assertEquals(1, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
@@ -143,7 +145,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL5_Go_Validation() {
+    fun testL5GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -157,7 +159,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL6_Python() {
+    fun testL6Python() {
         val result =
             executePPG(
                 Path(
@@ -170,7 +172,7 @@ class LinkabilityTest {
         assertEquals(1, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this["p"] as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
@@ -179,7 +181,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL6_Python_Validation() {
+    fun testL6PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -193,7 +195,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL6_Go() {
+    fun testL6Go() {
         val result =
             executePPG(
                 Path(
@@ -215,7 +217,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL6_Go_Validation() {
+    fun testL6GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -229,7 +231,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL7_Python() {
+    fun testL7Python() {
         val result =
             executePPG(
                 Path(
@@ -251,7 +253,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL7_Python_Validation() {
+    fun testL7PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -265,7 +267,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL7_Go() {
+    fun testL7Go() {
         val result =
             executePPG(
                 Path(
@@ -287,7 +289,7 @@ class LinkabilityTest {
     }
 
     @Test
-    fun TestL7_Go_Validation() {
+    fun testL7GoValidation() {
         val result =
             executePPG(
                 Path(

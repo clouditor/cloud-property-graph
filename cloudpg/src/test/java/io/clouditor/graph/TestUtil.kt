@@ -15,10 +15,10 @@ val session = sessionFactory.openSession()
 fun executePPG(rootPath: Path, subPaths: List<Path>, query: String): Result {
     session.purgeDatabase()
     App.let {
-        it.rootPath = rootPath
-        it.paths = subPaths
-        it.labelsEnabled = true
-        it.localMode = true
+        App.rootPath = rootPath
+        App.paths = subPaths
+        App.labelsEnabled = true
+        App.localMode = true
     }
     App.call()
 

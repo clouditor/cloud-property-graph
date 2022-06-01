@@ -3,12 +3,14 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
+@Tag("TestingLibrary")
 class PolicyNonComplianceTest {
 
     @Test
-    fun TestNC1_Python() {
+    fun testNC1Python() {
         val result =
             executePPG(
                 Path(
@@ -32,7 +34,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC1_Python_validation() {
+    fun testNC1PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -46,7 +48,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC1_Go() {
+    fun testNC1Go() {
         val result =
             executePPG(
                 Path(
@@ -70,7 +72,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC1_Go_Validation() {
+    fun testNC1GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -90,7 +92,7 @@ class PolicyNonComplianceTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNC5_Go() {
+    fun testNC5Go() {
         val result =
             executePPG(
                 Path(
@@ -112,7 +114,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC5_Go_Validation() {
+    fun testNC5GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -128,7 +130,7 @@ class PolicyNonComplianceTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNC5_Python() {
+    fun testNC5Python() {
         val result =
             executePPG(
                 Path(
@@ -150,7 +152,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC5_Python_Validation() {
+    fun testNC5Python_Validation() {
         val result =
             executePPG(
                 Path(
@@ -166,7 +168,7 @@ class PolicyNonComplianceTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNC5_Go_wo_processing() {
+    fun testNC5GWoProcessing() {
         val result =
             executePPG(
                 Path(
@@ -188,7 +190,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC5_Go_wo_processing_Validation() {
+    fun testNC5GoWoProcessingValidation() {
         val result =
             executePPG(
                 Path(
@@ -204,7 +206,7 @@ class PolicyNonComplianceTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNC5_Python_wo_processing() {
+    fun testNC5PythonWoProcessing() {
         val result =
             executePPG(
                 Path(
@@ -226,7 +228,7 @@ class PolicyNonComplianceTest {
     }
 
     @Test
-    fun TestNC5_Python_wo_processing_Validation() {
+    fun testNC5PythonWoProcessingValidation() {
         val result =
             executePPG(
                 Path(
