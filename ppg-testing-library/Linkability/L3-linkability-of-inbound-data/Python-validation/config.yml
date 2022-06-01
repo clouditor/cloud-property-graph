@@ -1,0 +1,4 @@
+services:
+  - type: server
+    name: server
+    host: test.com

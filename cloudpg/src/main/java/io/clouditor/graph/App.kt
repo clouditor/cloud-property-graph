@@ -14,9 +14,7 @@ import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
-import io.clouditor.graph.passes.golang.GinGonicPass
-import io.clouditor.graph.passes.golang.GolangHttpPass
-import io.clouditor.graph.passes.golang.GolangLogPass
+import io.clouditor.graph.passes.golang.*
 import io.clouditor.graph.passes.java.JaxRsClientPass
 import io.clouditor.graph.passes.java.JaxRsPass
 import io.clouditor.graph.passes.java.SpringBootPass
@@ -24,8 +22,8 @@ import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.passes.ruby.WebBrickPass
+import io.clouditor.graph.testing.LocalTestingPass
 import java.nio.file.Path
-import java.util.*
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 import org.neo4j.ogm.config.Configuration
@@ -69,6 +67,14 @@ object App : Callable<Int> {
                 "Whether or not to enable attaching labels to the graph extracted from annotations or specific passes."]
     )
     var labelsEnabled: Boolean = false
+
+    @CommandLine.Option(
+        names = ["--local-mode"],
+        description =
+            [
+                "Whether or not Kubernetes and GitHub workflow files should be parsed to check the deployed containers the application is running on."]
+    )
+    var localMode: Boolean = false
 
     @CommandLine.Parameters(index = "0..*") lateinit var paths: List<Path>
 
@@ -145,10 +151,21 @@ object App : Callable<Int> {
                 .registerPass(WebBrickPass())
                 .registerPass(JSHttpPass())
                 .registerPass(FlaskPass())
-                .registerPass(AzurePass())
-                .registerPass(AzureClientSDKPass())
-                .registerPass(KubernetesPass())
-                .registerPass(IngressInvocationPass())
+                .apply {
+                    if (localMode) {
+                        // register the localTestingPass after the HTTP Passes since it needs HTTP
+                        // request handlers
+                        registerPass(LocalTestingPass())
+                        registerPass(GolangHttpRequestPass())
+                    } else {
+                        registerPass(AzurePass())
+                        registerPass(AzureClientSDKPass())
+                        registerPass(KubernetesPass())
+                        registerPass(IngressInvocationPass())
+                    }
+                }
+                .registerPass(CryptographyPass())
+                .registerPass(GoCryptoPass())
                 .registerPass(JaxRsClientPass())
                 .registerPass(FetchPass())
                 .registerPass(RequestsPass())
@@ -167,6 +184,7 @@ object App : Callable<Int> {
                 .registerPass(DFGExtensionPass())
                 .registerPass(edgesCache)
                 .registerPass(labelPass)
+                .matchCommentsToNodes(true)
         }
 
         val config = builder.build()

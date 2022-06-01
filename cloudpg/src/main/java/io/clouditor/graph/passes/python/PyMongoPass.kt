@@ -160,7 +160,6 @@ class PyMongoPass : DatabaseOperationPass() {
         pair: Pair<DatabaseConnect, List<DatabaseStorage>>
     ) {
         var (connect, storage) = pair
-
         var op: DatabaseQuery? = null
         if (mce.name == "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
@@ -169,7 +168,7 @@ class PyMongoPass : DatabaseOperationPass() {
             mce.arguments.firstOrNull()?.addNextDFG(op)
         }
 
-        if (mce.name == "find") {
+        if (mce.name == "find" || mce.name == "find_one") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)

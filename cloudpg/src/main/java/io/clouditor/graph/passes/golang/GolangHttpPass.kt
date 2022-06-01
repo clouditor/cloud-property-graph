@@ -6,17 +6,18 @@ import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
+import io.clouditor.graph.passes.HttpClientPass
 
-class GolangHttpPass : Pass() {
+class GolangHttpPass : HttpClientPass() {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
+    override fun accept(result: TranslationResult) {
         if (result != null) {
 
             // first, look for clients
@@ -55,20 +56,29 @@ class GolangHttpPass : Pass() {
         ) {
             val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
 
+            val funcDeclaration =
+                (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
             val literal = m.arguments.first() as? Literal<*>
             literal.let {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
-                        (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as?
-                            FunctionDeclaration,
+                        funcDeclaration,
                         "GET",
                         literal?.value as String?,
                         null,
                         null
                     )
                 endpoint.name = endpoint.path
-
+                funcDeclaration?.parameters?.forEach {
+                    if (it.type is PointerType && it.type.name == "http.Request*" ||
+                            it.type is HttpRequest
+                    ) {
+                        // add a dfg from the endpoint to the paramvariabledeclaration the data is
+                        // stored in
+                        endpoint.addNextDFG(it)
+                    }
+                }
                 client?.httpEndpoints?.plusAssign(endpoint)
             }
         }

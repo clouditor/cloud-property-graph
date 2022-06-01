@@ -5,11 +5,12 @@ import de.fraunhofer.aisec.cpg.graph.NodeBuilder
 import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.ProblemExpression
 import org.jruby.ast.BlockNode
 import org.jruby.ast.Node
 
 class StatementHandler(lang: RubyLanguageFrontend) :
-    Handler<Statement, Node, RubyLanguageFrontend>({ Statement() }, lang) {
+    Handler<Statement, Node, RubyLanguageFrontend>({ ProblemExpression() }, lang) {
 
     init {
         map.put(BlockNode::class.java, ::handleBlockNode)

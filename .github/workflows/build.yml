@@ -18,6 +18,9 @@ jobs:
         with:
           java-version: 11
           distribution: zulu    
+      - name: Setup neo4j
+        run: |
+          docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j
       - name: Build
         run: |
           ./build-ontology.sh

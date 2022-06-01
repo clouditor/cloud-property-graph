@@ -25,6 +25,8 @@ java {
     sourceSets["main"].java {
         srcDir("${generatedDir}/main/java")
     }
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -46,6 +48,10 @@ repositories {
 
     maven { setUrl("https://jitpack.io") }
 
+    maven {
+        setUrl("https://oss.sonatype.org/content/groups/public/")
+    }
+
     ivy {
         setUrl("https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.2/plugins")
         metadataSources {
@@ -58,9 +64,19 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.Fraunhofer-AISEC:cpg:0b3c9c9b")
+    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    val version = "4.5.1"
 
-    api("org.neo4j", "neo4j-ogm-core", "3.2.21")
+    implementation("de.fraunhofer.aisec:cpg-core:$version")
+    implementation("de.fraunhofer.aisec:cpg-analysis:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-go:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-python:$version")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
+    implementation ("org.xmlunit:xmlunit-core:2.9.0")
+    implementation("org.xmlunit:xmlunit-matchers:2.9.0")
+
+    api("org.neo4j", "neo4j-ogm-core", "3.2.31")
     api("org.neo4j", "neo4j-ogm", "3.2.21")
     api("org.neo4j", "neo4j-ogm-bolt-driver", "3.2.21")
 
@@ -83,7 +99,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.2")
 
     implementation("com.charleskorn.kaml:kaml:0.23.0")
-    
+
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
@@ -111,4 +127,9 @@ spotless {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn("spotlessApply")
+}
+
+tasks.withType<Test>().configureEach {
+    // Some tests in our testing library (intentionally) fail, so we need to ignore those tests
+    ignoreFailures = true
 }

@@ -1,0 +1,11 @@
+services:
+  - type: server
+    name: server
+    host: test.com
+  - type: client
+    name: client1
+  - type: client
+    name: client2
+  - type: db
+    directory: server
+    name: postgres

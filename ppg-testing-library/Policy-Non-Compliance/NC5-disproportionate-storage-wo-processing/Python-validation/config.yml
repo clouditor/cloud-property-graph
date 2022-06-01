@@ -1,0 +1,6 @@
+services:
+  - type: server
+    name: server
+    host: test.com
+  - type: db
+    name: mongo

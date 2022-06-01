@@ -4,12 +4,13 @@ import de.fraunhofer.aisec.cpg.frontends.Handler
 import de.fraunhofer.aisec.cpg.graph.NodeBuilder
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.ProblemExpression
 import de.fraunhofer.aisec.cpg.graph.types.TypeParser
 import de.fraunhofer.aisec.cpg.graph.types.UnknownType
 import org.jruby.ast.*
 
 class ExpressionHandler(lang: RubyLanguageFrontend) :
-    Handler<Statement, Node, RubyLanguageFrontend>({ Expression() }, lang) {
+    Handler<Statement, Node, RubyLanguageFrontend>({ ProblemExpression() }, lang) {
 
     init {
         map.put(CallNode::class.java, ::handleCallNode)
