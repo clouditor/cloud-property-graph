@@ -42,7 +42,6 @@ func post_data(c *gin.Context) {
 func put_data(c *gin.Context) {
     c.Request.ParseForm()
     name := c.Request.Form.Get("name")
-    // TODO: the type of message is unknown in the graph
     message := &Message{
         Name: name,
     }

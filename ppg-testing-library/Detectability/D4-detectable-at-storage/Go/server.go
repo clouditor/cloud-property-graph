@@ -54,7 +54,6 @@ func post_data(c *gin.Context) {
         Message: message,
     }
 	err := db.Create(data).error
-	// TODO test with sqlite
 	if err.Code.Name() == "unique_violation" {
         c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	}

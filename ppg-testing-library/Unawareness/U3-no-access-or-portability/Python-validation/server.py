@@ -20,7 +20,6 @@ def collect_data():
 @app.route("/data", methods=['GET'])
 def collect_data():
     content = request.json
-    # TODO test
     res = phr_db_collection.find_one(content)
     return res, 200
 
