@@ -130,9 +130,9 @@ object SemanticNodeGenerator {
         }
 
         // Add description
-        for (elem in goSource.objectProperties) {
-            goSourceCode += "// ${elem.description}\n\n"
-        }
+        //for (elem in goSource.objectProperties) {
+        //    goSourceCode += "// ${elem.description}\n\n"
+        //}
 
         // Add struct
         goSourceCode += """type ${goSource.name} struct {
@@ -217,9 +217,9 @@ object SemanticNodeGenerator {
             "boolean" -> "bool"
             "java.time.Duration" -> "time.Duration"
             "java.util.Map<String, String>" -> "map[string]string"
-            "java.util.ArrayList<Short>" -> "[]int16"
+            "java.util.ArrayList<Short>" -> "[]uint16"
             "java.util.ArrayList<String>" -> "[]string"
-            "Short" -> "int16"
+            "Short" -> "uint16"
             "de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration" ->                 // TODO What do we need here?
                 "string"
             "de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression" ->                 // TODO What do we need here?

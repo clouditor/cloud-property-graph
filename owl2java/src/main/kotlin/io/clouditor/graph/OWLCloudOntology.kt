@@ -1,10 +1,11 @@
 package io.clouditor.graph
 
-import kotlin.Throws
 import org.apache.commons.lang3.StringUtils
-import java.util.LinkedHashMap
 import org.jboss.forge.roaster.Roaster
-import org.jboss.forge.roaster.model.source.*
+import org.jboss.forge.roaster.model.source.Import
+import org.jboss.forge.roaster.model.source.JavaClassSource
+import org.jboss.forge.roaster.model.source.MethodSource
+import org.jboss.forge.roaster.model.source.PropertySource
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.*
 import org.semanticweb.owlapi.model.parameters.Imports
@@ -14,9 +15,8 @@ import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl
 import java.io.File
-import java.util.ArrayList
-import java.util.Comparator
 import java.util.stream.Collectors
+
 
 class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: String) {
     private var ontology: OWLOntology? = null
@@ -376,6 +376,8 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     // Set OWl class object properties
     private fun setOWLClassObjectProperties(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
         val propertiesList: MutableList<Properties> = ArrayList()
+
+
 
         // Get sorted List of OWLClassAxioms
         val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED).stream()
