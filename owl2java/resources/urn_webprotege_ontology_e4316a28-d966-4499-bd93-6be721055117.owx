@@ -126,6 +126,9 @@
         <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/Evidence"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
     </Declaration>
     <Declaration>
@@ -154,6 +157,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/HttpServer"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
@@ -210,6 +216,9 @@
         <Class IRI="http://graph.clouditor.io/classes/MessagingHub"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/Metric"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
     </Declaration>
     <Declaration>
@@ -243,6 +252,9 @@
         <Class IRI="http://graph.clouditor.io/classes/PasswordBasedAuthentication"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/PasswordPolicy"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/ProxiedEndpoint"/>
     </Declaration>
     <Declaration>
@@ -250,6 +262,15 @@
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/RelationalDatabaseService"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/RequirementCatalog"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/RiskImpact"/>
@@ -292,6 +313,9 @@
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="http://graph.clouditor.io/classes/bootLog"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="http://graph.clouditor.io/classes/measures"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="http://graph.clouditor.io/classes/offersInterface"/>
@@ -351,7 +375,13 @@
         <DataProperty IRI="http://graph.clouditor.io/classes/daysSinceActive"/>
     </Declaration>
     <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/disablePasswordPolicy"/>
+    </Declaration>
+    <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/interval"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/lastActivity"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/mixedDuties"/>
@@ -361,6 +391,12 @@
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/numberOfThreatsFound"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/overridePasswordPolicy"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/privileged"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/reqBody"/>
@@ -811,6 +847,13 @@
         <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/CertificateBasedAuthentication"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
         <ObjectSomeValuesFrom>
             <ObjectProperty abbreviatedIRI="prop:offers"/>
@@ -868,6 +911,13 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
@@ -964,6 +1014,13 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Evidence"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
@@ -1114,22 +1171,61 @@
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
+        <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <Class IRI="http://graph.clouditor.io/classes/Authorization"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:activated"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
-            <Class IRI="http://graph.clouditor.io/classes/OTPBasedAuthentication"/>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
-            <Class IRI="http://graph.clouditor.io/classes/PasswordBasedAuthentication"/>
-        </ObjectSomeValuesFrom>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/disablePasswordPolicy"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identity"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/lastActivity"/>
+            <Datatype abbreviatedIRI="xsd:dateTimeStamp"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Identity"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/privileged"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
@@ -1165,6 +1261,13 @@
         <Class IRI="http://graph.clouditor.io/classes/Integrity"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Immutability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Integrity"/>
         <Class IRI="http://graph.clouditor.io/classes/SecurityFeature"/>
     </SubClassOf>
@@ -1183,6 +1286,13 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
         <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:activated"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
+        <DataSomeValuesFrom>
             <DataProperty abbreviatedIRI="prop:enforced"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
@@ -1194,6 +1304,13 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
         <Class IRI="http://graph.clouditor.io/classes/AccessRestriction"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
@@ -1347,6 +1464,13 @@
         <Class IRI="http://graph.clouditor.io/classes/IoT"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Metric"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="http://graph.clouditor.io/classes/measures"/>
+            <Class IRI="http://graph.clouditor.io/classes/SecurityFeature"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         <Class IRI="http://graph.clouditor.io/classes/Networking"/>
     </SubClassOf>
@@ -1371,6 +1495,13 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         <Class IRI="http://graph.clouditor.io/classes/Networking"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="http://graph.clouditor.io/classes/offersInterface"/>
+            <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
@@ -1468,6 +1599,10 @@
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/PasswordPolicy"/>
+        <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ProxiedEndpoint"/>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
     </SubClassOf>
@@ -1501,6 +1636,24 @@
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/Metric"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/RequirementCatalog"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
+        <Class IRI="http://graph.clouditor.io/classes/Logging"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/RiskImpact"/>
         <DataSomeValuesFrom>
             <DataProperty abbreviatedIRI="prop:value"/>
@@ -1509,7 +1662,7 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/RoleAssignment"/>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
+        <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/SecurityFeature"/>
@@ -1520,6 +1673,13 @@
         <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/SingleSignOn"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
     </SubClassOf>
@@ -1528,6 +1688,13 @@
         <ObjectSomeValuesFrom>
             <ObjectProperty IRI="http://graph.clouditor.io/classes/offersInterface"/>
             <Class IRI="http://graph.clouditor.io/classes/AtRestEncryption"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Storage"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <Class IRI="http://graph.clouditor.io/classes/Immutability"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
@@ -1593,6 +1760,13 @@
         <ObjectSomeValuesFrom>
             <ObjectProperty abbreviatedIRI="prop:has"/>
             <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <Class IRI="http://graph.clouditor.io/classes/AutomaticUpdates"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
@@ -2075,6 +2249,11 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">AccessRestriction</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>http://graph.clouditor.io/classes/Account</IRI>
+        <Literal>This represents the cloud account as a whole, e.g., an Azure subscription.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Account</IRI>
         <Literal xml:lang="english">Account</Literal>
@@ -2172,7 +2351,7 @@ name = metadata.name</Literal>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/CloudResource</IRI>
-        <Literal xml:lang="english">Resource</Literal>
+        <Literal>Resource</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2266,6 +2445,11 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/Evidence</IRI>
+        <Literal>Evidence</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/FileStorage</IRI>
         <Literal xml:lang="english">FileStorage</Literal>
     </AnnotationAssertion>
@@ -2321,13 +2505,18 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/Identifiable</IRI>
+        <Literal>Identifiable</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Identity</IRI>
         <Literal xml:lang="english">Identity</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/IdentityManagement</IRI>
-        <Literal xml:lang="english">IdentityManagement</Literal>
+        <Literal xml:lang="english">Identifiable</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2357,7 +2546,7 @@ name = metadata.name</Literal>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/JwtBasedAuthentication</IRI>
-        <Literal>JwtBasedAuthentication</Literal>
+        <Literal>TokenBasedAuthentication</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2431,6 +2620,11 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/Metric</IRI>
+        <Literal>Metric</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/NetworkInterface</IRI>
         <Literal xml:lang="english">NetworkInterface</Literal>
     </AnnotationAssertion>
@@ -2490,6 +2684,11 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">Password-Based Authentication</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/PasswordPolicy</IRI>
+        <Literal>PasswordPolicy</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
         <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
         <IRI>http://graph.clouditor.io/classes/ProxiedEndpoint</IRI>
         <Literal>An HTTP endpoint, that is routed through a (reverse) proxy, e.g. a load balancer.</Literal>
@@ -2508,6 +2707,21 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/RelationalDatabaseService</IRI>
         <Literal>RelationalDatabaseService</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/Requirement</IRI>
+        <Literal>Requirement</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/RequirementCatalog</IRI>
+        <Literal>RequirementCatalog</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/ResourceLogging</IRI>
+        <Literal>ResourceLogging</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2610,6 +2824,11 @@ name = metadata.name</Literal>
         <Literal>daysSinceActive</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/disablePasswordPolicy</IRI>
+        <Literal>disablePasswordPolicy</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
         <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
         <IRI>http://graph.clouditor.io/classes/interval</IRI>
         <Literal>The interval refers to the update interval in days.</Literal>
@@ -2618,6 +2837,16 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/interval</IRI>
         <Literal>interval</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/lastActivity</IRI>
+        <Literal>lastActivity</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/measures</IRI>
+        <Literal>measures</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
@@ -2648,6 +2877,16 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/output</IRI>
         <Literal>output</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/overridePasswordPolicy</IRI>
+        <Literal>overridePasswordPolicy</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/privileged</IRI>
+        <Literal>privileged</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>

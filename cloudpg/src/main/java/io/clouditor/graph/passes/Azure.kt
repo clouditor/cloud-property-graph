@@ -333,8 +333,9 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
     private fun handleWorkspace(t: TranslationResult, workspace: Workspace): Logging {
         val loggingServices = mutableListOf<LoggingService>()
-        var logService =
+        val logService =
             LoggingService(
+                null,
                 null,
                 null,
                 null,
@@ -360,7 +361,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
         t: TranslationResult,
         cluster: KubernetesCluster
     ): ContainerOrchestration {
-        var log: Logging? = null
+        var log: ResourceLogging? = null
 
         // check if resource logging is activated
         val profile = cluster.addonProfiles().getValue("omsagent")
@@ -372,7 +373,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 val shortName = workspaceId?.split("/")?.last()
 
                 log =
-                    t.additionalNodes.filterIsInstance(Logging::class.java).firstOrNull {
+                    t.additionalNodes.filterIsInstance(ResourceLogging::class.java).firstOrNull {
                         it.name == shortName
                     }
             }
@@ -383,6 +384,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             ContainerOrchestration(
                 mutableListOf(),
                 "https://${cluster.innerModel().fqdn()}",
+                log,
                 t.locationForRegion(cluster.region()),
                 mapOf()
             )
@@ -417,7 +419,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             if (account.isBlobPublicAccessAllowed) {
                 NoAuthentication() // public access
             } else {
-                SingleSignOn() // this is closest to how auth works in Azure. TokenBased would
+                SingleSignOn(true) // this is closest to how auth works in Azure. TokenBased would
                 // be better
             }
 
@@ -438,6 +440,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 null,
                 null,
                 null,
+                ArrayList(listOf<Short>()),
                 TransportEncryption(
                     "TLS",
                     true,
@@ -460,7 +463,9 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
             val auth =
                 if (blob.publicAccess() == PublicAccess.NONE) {
-                    SingleSignOn() // this is closest to how auth works in Azure. TokenBased would
+                    SingleSignOn(
+                        true
+                    ) // this is closest to how auth works in Azure. TokenBased would
                     // be better
                 } else {
                     NoAuthentication()
@@ -469,6 +474,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             // at rest seems to be default anyway now
             val storage =
                 ObjectStorage(
+                    null,
                     mutableListOf(AtRestEncryption("AES-256", true)),
                     t.locationForRegion(account.region()),
                     mapOf()
@@ -498,7 +504,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 ) // not the actual key, but close enough
         }
 
-        val block = BlockStorage(mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
+        val block =
+            BlockStorage(null, mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
         block.name = disk.name()
 
         return block
@@ -509,7 +516,16 @@ class AzurePass : CloudResourceDiscoveryPass() {
         vm: VirtualMachine
     ): io.clouditor.graph.VirtualMachine {
         val compute =
-            VirtualMachine(null, null, null, null, null, t.locationForRegion(vm.region()), mapOf())
+            VirtualMachine(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                t.locationForRegion(vm.region()),
+                mapOf()
+            )
         compute.name = vm.name()
         compute.labels = mapOf<String, String>()
 

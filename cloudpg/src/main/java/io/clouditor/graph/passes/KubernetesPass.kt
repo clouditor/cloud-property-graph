@@ -155,6 +155,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     mutableListOf<Storage>(),
                     container,
                     service.ips,
+                    listOf(),
                     service.ports,
                     null,
                     service.geoLocation,
@@ -171,6 +172,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     mutableListOf<Storage>(),
                     container,
                     service.ips,
+                    listOf(),
                     service.ports,
                     null,
                     service.geoLocation,
@@ -243,6 +245,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 NetworkService(
                     null,
                     ips as ArrayList<String>?,
+                    listOf(),
                     spec.ports?.map { it.port.toShort() }?.toCollection(ArrayList()) ?: ArrayList(),
                     null,
                     cluster?.geoLocation ?: GeoLocation("Europe"),
@@ -297,6 +300,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         null,
                         ArrayList(),
                         ArrayList(),
+                        null,
                         null,
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         mapOf()

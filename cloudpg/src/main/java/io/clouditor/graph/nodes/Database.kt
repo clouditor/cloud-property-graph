@@ -2,13 +2,12 @@ package io.clouditor.graph.nodes
 
 import io.clouditor.graph.DatabaseService
 import io.clouditor.graph.DatabaseStorage
-import io.clouditor.graph.Storage
 
-fun DatabaseService.getStorageOrCreate(name: String, parentName: String? = null): Storage {
-    var storage = this.storages.firstOrNull() { it.name == name }
+fun DatabaseService.getStorageOrCreate(name: String, parentName: String? = null): DatabaseStorage {
+    var storage = this.storages.filterIsInstance<DatabaseStorage>().firstOrNull { it.name == name }
 
     if (storage == null) {
-        storage = DatabaseStorage(mutableListOf(), null, this.geoLocation, mutableMapOf())
+        storage = DatabaseStorage(mutableListOf(), null, listOf(), this.geoLocation, mutableMapOf())
         storage.name = name
 
         // if the parent name was specified, try to look it up and set the parent(s)
