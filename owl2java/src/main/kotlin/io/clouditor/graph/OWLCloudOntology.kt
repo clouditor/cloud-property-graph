@@ -1,10 +1,11 @@
 package io.clouditor.graph
 
-import kotlin.Throws
 import org.apache.commons.lang3.StringUtils
-import java.util.LinkedHashMap
 import org.jboss.forge.roaster.Roaster
-import org.jboss.forge.roaster.model.source.*
+import org.jboss.forge.roaster.model.source.Import
+import org.jboss.forge.roaster.model.source.JavaClassSource
+import org.jboss.forge.roaster.model.source.MethodSource
+import org.jboss.forge.roaster.model.source.PropertySource
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.*
 import org.semanticweb.owlapi.model.parameters.Imports
@@ -14,11 +15,10 @@ import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl
 import java.io.File
-import java.util.ArrayList
-import java.util.Comparator
 import java.util.stream.Collectors
 
-class OWLCloudOntology(filepath: String) {
+
+class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: String) {
     private var ontology: OWLOntology? = null
     private var df: OWLDataFactory? = null
     val interfaceList: MutableList<String> = ArrayList() // It is assumed, that the classes that are defined as interfaces have a unique name
@@ -98,7 +98,7 @@ class OWLCloudOntology(filepath: String) {
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
         val superClassName = getSuperClassName(clazz)
 
-        if (!superClassName.isEmpty()) {
+        if (superClassName.isNotEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
@@ -210,7 +210,7 @@ class OWLCloudOntology(filepath: String) {
         for ((key) in superClassParameters) {
             if (superClassParametersAsCommaSeparatedString != "") superClassParametersAsCommaSeparatedString =
                 "$superClassParametersAsCommaSeparatedString,"
-            superClassParametersAsCommaSeparatedString = superClassParametersAsCommaSeparatedString + key
+            superClassParametersAsCommaSeparatedString += key
         }
         return superClassParametersAsCommaSeparatedString
     }
@@ -227,7 +227,7 @@ class OWLCloudOntology(filepath: String) {
                 Class [$clazz]  	${getClassName(clazz, ontology)}
                 """.trimIndent()
         )
-        if (getClassName(clazz, ontology) == "CloudResource") println("")
+        if (getClassName(clazz, ontology) == resourceNameFromOwlFile) println("")
 
         // Set super class name
         javaClass = setSuperClassName(javaClass, clazz)
@@ -244,6 +244,10 @@ class OWLCloudOntology(filepath: String) {
         // Set constructor, superclass constructor is set later, because all class and superclass parameters must
         // be known
         javaClass = setClassConstructor(javaClass)
+
+        // Set description
+        // TODO(garuppel)
+        //javaClass = setOWLClassObjectDescription(javaClass)
 
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
@@ -270,8 +274,13 @@ class OWLCloudOntology(filepath: String) {
             javaClassConstructor.body = javaClassConstructor.body + elem.mutator.name + "(" + elem.name + ")" +
                     ";"
         }
+        
         return javaClass
     }
+
+    // private fun setOWLClassObjectDescription (javaClass: JavaClassSource): JavaClassSource {
+    //     javaClass.
+    // }
 
     private fun addConstructorShell(javaClass: JavaClassSource): JavaClassSource {
         javaClass.addMethod()
@@ -368,6 +377,8 @@ class OWLCloudOntology(filepath: String) {
     private fun setOWLClassObjectProperties(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
         val propertiesList: MutableList<Properties> = ArrayList()
 
+
+
         // Get sorted List of OWLClassAxioms
         val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED).stream()
             .sorted(Comparator.comparing { e: OWLClassAxiom -> e.axiomWithoutAnnotations }).collect(Collectors.toList())
@@ -385,7 +396,7 @@ class OWLCloudOntology(filepath: String) {
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers", "runsOn", "proxyTarget", "to" -> {
+                    "has", "offers", "runsOn", "to" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
@@ -452,7 +463,7 @@ class OWLCloudOntology(filepath: String) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
 
                 // Add property
-                var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
+                val property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
@@ -487,7 +498,7 @@ class OWLCloudOntology(filepath: String) {
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
         var rootClassName: String
         rootClassName = getSuperClassName(clazz)
-        if (rootClassName == "CloudResource") {
+        if (rootClassName == resourceNameFromOwlFile) {
             return true
         } else if (clazz.isOWLThing) {
             return false
@@ -497,7 +508,7 @@ class OWLCloudOntology(filepath: String) {
         for (claz in classes) {
             if (getClassName(claz) == rootClassName) {
                 rootClassName = getSuperClassName(claz)
-                if (isRootClassNameResource(claz, classes) == true) {
+                if (isRootClassNameResource(claz, classes)) {
                     return true
                 }
             }
@@ -571,6 +582,21 @@ class OWLCloudOntology(filepath: String) {
         }
         return ""
     }
+
+//    // Get description from OWLClassExpression
+//    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+//        for (elem in nce.classesInSignature) {
+//            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
+//                if (item != null) {
+//                    if (item.property.iri.remainder.get() == "description") {
+//                        return item.property.iri.remainer.get()//if (item.value.toString().contains("\"")) item.value.toString().split("\"")
+//                            .toTypedArray()[1] else (item.value as OWLLiteralImplString).literal
+//                    }
+//                }
+//            }
+//        }
+//        return ""
+//    }
 
     // Get class data property value (relationship in OWL)
     private fun getClassDataPropertyValue(nce: OWLDataHasValue): String {

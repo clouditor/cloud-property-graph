@@ -151,10 +151,13 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         if (service?.name == "postgres") {
             val db =
                 RelationalDatabaseService(
-                    mutableListOf<DatabaseStorage>(),
+                    null,
+                    mutableListOf<Storage>(),
                     container,
                     service.ips,
+                    listOf(),
                     service.ports,
+                    null,
                     service.geoLocation,
                     mapOf()
                 )
@@ -165,10 +168,13 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         if (service?.name == "mongo") {
             val db =
                 DocumentDatabaseService(
-                    mutableListOf<DatabaseStorage>(),
+                    null,
+                    mutableListOf<Storage>(),
                     container,
                     service.ips,
+                    listOf(),
                     service.ports,
+                    null,
                     service.geoLocation,
                     mapOf()
                 )
@@ -208,8 +214,9 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     c.labels["env_" + it.name] = it.value
                 }
 
-                // if the cluster has resource logging, also add a DFG edge to it
-                cluster?.resourceLogging?.let { c.nextDFG.add(it) }
+                // TODO(all): Fix that
+                //                // if the cluster has resource logging, also add a DFG edge to it
+                //                cluster?.resourceLogging?.let { c.nextDFG.add(it) }
 
                 c
             }
@@ -238,7 +245,9 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 NetworkService(
                     null,
                     ips as ArrayList<String>?,
+                    listOf(),
                     spec.ports?.map { it.port.toShort() }?.toCollection(ArrayList()) ?: ArrayList(),
+                    null,
                     cluster?.geoLocation ?: GeoLocation("Europe"),
                     mapOf()
                 )
@@ -291,6 +300,8 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         null,
                         ArrayList(),
                         ArrayList(),
+                        null,
+                        null,
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         mapOf()
                     )
