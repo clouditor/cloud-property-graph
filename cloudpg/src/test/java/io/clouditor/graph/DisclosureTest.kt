@@ -3,13 +3,15 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
 // Disclosure is not a category in LINDDUN GO
+@Tag("TestingLibrary")
 class DisclosureTest {
 
     @Test
-    fun TestDisclosure_Go() {
+    fun testDisclosureGo() {
         val result =
             executePPG(
                 Path(
@@ -37,7 +39,7 @@ class DisclosureTest {
     }
 
     @Test
-    fun TestDisclosure_Go_validation() {
+    fun testDisclosureGoValidation() {
         val result =
             executePPG(
                 Path(
@@ -53,7 +55,7 @@ class DisclosureTest {
     }
 
     @Test
-    fun TestDisclosure_Python() {
+    fun testDisclosurePython() {
         val result =
             executePPG(
                 Path(
@@ -66,7 +68,7 @@ class DisclosureTest {
         assertEquals(1, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this["p"] as Array<*>
             println("result has ${path.size} sub-paths")
             // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
@@ -78,7 +80,7 @@ class DisclosureTest {
     }
 
     @Test
-    fun TestDisclosure_Python_validation() {
+    fun testDisclosurePythonValidation() {
         val result =
             executePPG(
                 Path(

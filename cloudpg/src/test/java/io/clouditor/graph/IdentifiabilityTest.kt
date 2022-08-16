@@ -3,15 +3,17 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
+@Tag("TestingLibrary")
 class IdentifiabilityTest {
 
-    // fun TestI1(){}
-    // fun TestI2(){}
+    // fun testI1(){}
+    // fun testI2(){}
 
     @Test
-    fun TestI3_Go() {
+    fun testI3_Go() {
         val result =
             executePPG(
                 Path(
@@ -33,7 +35,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI3_Python() {
+    fun testI3_Python() {
         val result =
             executePPG(
                 Path(
@@ -57,7 +59,7 @@ class IdentifiabilityTest {
     // I4 Identifying Context out of scope
 
     @Test
-    fun TestI5_Go() {
+    fun testI5_Go() {
         val result =
             executePPG(
                 Path(
@@ -79,7 +81,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI5_Go_Validation() {
+    fun testI5_Go_Validation() {
         val result =
             executePPG(
                 Path(
@@ -93,7 +95,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI5_Python() {
+    fun testI5_Python() {
         val result =
             executePPG(
                 Path(
@@ -115,7 +117,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI5_Python_Validation() {
+    fun testI5_Python_Validation() {
         val result =
             executePPG(
                 Path(
@@ -129,7 +131,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI6_Python() {
+    fun testI6_Python() {
         val result =
             executePPG(
                 Path(
@@ -151,7 +153,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI6_Python_Validation() {
+    fun testI6_Python_Validation() {
         val result =
             executePPG(
                 Path(
@@ -165,7 +167,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI6_Go() {
+    fun testI6_Go() {
         val result =
             executePPG(
                 Path(
@@ -187,7 +189,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI6_Go_Validation() {
+    fun testI6_Go_Validation() {
         val result =
             executePPG(
                 Path(
@@ -201,7 +203,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI7_Python() {
+    fun testI7_Python() {
         val result =
             executePPG(
                 Path(
@@ -223,7 +225,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI7_Python_Validation() {
+    fun testI7_Python_Validation() {
         val result =
             executePPG(
                 Path(
@@ -237,7 +239,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI7_Go() {
+    fun testI7_Go() {
         val result =
             executePPG(
                 Path(
@@ -259,7 +261,7 @@ class IdentifiabilityTest {
     }
 
     @Test
-    fun TestI7_Go_Validation() {
+    fun testI7_Go_Validation() {
         val result =
             executePPG(
                 Path(

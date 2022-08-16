@@ -3,12 +3,14 @@ package io.clouditor.graph
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
 
+@Tag("TestingLibrary")
 class NonRepudiationTest {
 
     @Test
-    fun TestNR2_Python_DigitalSignature() {
+    fun testNR2PythonDigitalSignature() {
         val result =
             executePPG(
                 Path(
@@ -21,7 +23,7 @@ class NonRepudiationTest {
         assertEquals(2, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
@@ -30,7 +32,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Python_DigitalSignature_Validation() {
+    fun testNR2PythonDigitalSignatureValidation() {
         val result =
             executePPG(
                 Path(
@@ -44,7 +46,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Python_Logging() {
+    fun testNR2PythonLogging() {
         val result =
             executePPG(
                 Path(
@@ -66,7 +68,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Python_Logging_Validation() {
+    fun testNR2PythonLoggingValidation() {
         val result =
             executePPG(
                 Path(
@@ -80,7 +82,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Go_DigitalSignature() {
+    fun testNR2GoDigitalSignature() {
         val result =
             executePPG(
                 Path(
@@ -104,7 +106,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Go_DigitalSignature_Validation() {
+    fun testNR2GoDigitalSignature_Validation() {
         val result =
             executePPG(
                 Path(
@@ -118,7 +120,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Go_Logging() {
+    fun testNR2GoLogging() {
         val result =
             executePPG(
                 Path(
@@ -140,7 +142,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR2_Go_Logging_Validation() {
+    fun testNR2GoLogging_Validation() {
         val result =
             executePPG(
                 Path(
@@ -158,7 +160,7 @@ class NonRepudiationTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNR4_Go() {
+    fun testNR4Go() {
         val result =
             executePPG(
                 Path(
@@ -180,7 +182,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR4_Go_Validation() {
+    fun testNR4GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -196,7 +198,7 @@ class NonRepudiationTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNR4_Python() {
+    fun testNR4Python() {
         val result =
             executePPG(
                 Path(
@@ -218,7 +220,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR4_Python_Validation() {
+    fun testNR4PythonValidation() {
         val result =
             executePPG(
                 Path(
@@ -234,7 +236,7 @@ class NonRepudiationTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNR5_Python() {
+    fun testNR5Python() {
         val result =
             executePPG(
                 Path(
@@ -260,7 +262,7 @@ class NonRepudiationTest {
     // Due to missing field-sensitivity in HTTP requests, there is an additional false-positive
     // threat detected here
     @Test
-    fun TestNR5_Go() {
+    fun testNR5Go() {
         val result =
             executePPG(
                 Path(
@@ -282,7 +284,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR5_Go_Validation() {
+    fun testNR5GoValidation() {
         val result =
             executePPG(
                 Path(
@@ -296,7 +298,7 @@ class NonRepudiationTest {
     }
 
     @Test
-    fun TestNR5_Python_Validation() {
+    fun testNR5PythonValidation() {
         val result =
             executePPG(
                 Path(
