@@ -8,12 +8,12 @@ import org.neo4j.driver.internal.InternalPath
 
 // Disclosure is not a category in LINDDUN GO
 @Tag("TestingLibrary")
-class DisclosureTest {
+open class DisclosureTest {
 
     @Test
     fun testDisclosureGo() {
         val result =
-            executePPG(
+            executePPGAndQuery(
                 Path(
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Go"
@@ -41,7 +41,7 @@ class DisclosureTest {
     @Test
     fun testDisclosureGoValidation() {
         val result =
-            executePPG(
+            executePPGAndQuery(
                 Path(
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Go-validation"
@@ -57,7 +57,7 @@ class DisclosureTest {
     @Test
     fun testDisclosurePython() {
         val result =
-            executePPG(
+            executePPGAndQuery(
                 Path(
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Python"
@@ -82,7 +82,7 @@ class DisclosureTest {
     @Test
     fun testDisclosurePythonValidation() {
         val result =
-            executePPG(
+            executePPGAndQuery(
                 Path(
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Python-validation"
