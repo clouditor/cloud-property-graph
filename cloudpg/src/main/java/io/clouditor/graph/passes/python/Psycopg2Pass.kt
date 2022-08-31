@@ -31,6 +31,12 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 }
             )
 
+            // There is no need for us to continue, if we have not found any clients
+            if (clients.isEmpty()) {
+                log.info("Found no clients in {}, we are not processing this any further", tu.name)
+                continue
+            }
+
             // in order to avoid ordering problems, we need to do this one step at a time, so first
             // looking for a cursor.
             t.accept(

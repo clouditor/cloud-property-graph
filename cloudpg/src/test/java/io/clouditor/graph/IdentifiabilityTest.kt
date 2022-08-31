@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import org.junit.Test
 import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
-import org.openjdk.jmh.annotations.Benchmark
 
 @Tag("TestingLibrary")
 open class IdentifiabilityTest {

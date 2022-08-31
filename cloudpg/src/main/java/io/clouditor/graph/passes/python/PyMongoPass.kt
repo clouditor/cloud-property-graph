@@ -36,6 +36,12 @@ class PyMongoPass : DatabaseOperationPass() {
                 }
             )
 
+            // There is no need for us to continue, if we have not found any clients
+            if (clients.isEmpty()) {
+                log.info("Found no clients in {}, we are not processing this any further", tu.name)
+                continue
+            }
+
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
