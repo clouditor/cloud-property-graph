@@ -35,7 +35,6 @@ object SemanticNodeGenerator {
     3nd parameter: Output path for generated Java files (optional, but the order must be respected)
     4th parameter: Go package name
     5th parameter: Output path for generated Go Files (optional, but the order must be respected)
-    
     """.trimIndent()
             )
         }
