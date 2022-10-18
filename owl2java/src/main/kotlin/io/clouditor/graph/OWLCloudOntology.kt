@@ -604,7 +604,9 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     private fun getClassDataPropertyValue(nce: OWLDataSomeValuesFrom): String {
-        return nce.filler.toString().split(":").toTypedArray()[1]
+        var value = nce.filler.toString().split(":").toTypedArray()[1]
+        
+        return value
     }
 
     // Get class data property name (realtionship in OWL)
