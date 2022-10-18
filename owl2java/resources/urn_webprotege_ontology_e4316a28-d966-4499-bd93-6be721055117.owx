@@ -1216,16 +1216,16 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
         <DataSomeValuesFrom>
-            <DataProperty IRI="http://graph.clouditor.io/classes/lastActivity"/>
-            <Datatype abbreviatedIRI="xsd:dateTimeStamp"/>
+            <DataProperty IRI="http://graph.clouditor.io/classes/privileged"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
-        <DataSomeValuesFrom>
-            <DataProperty IRI="http://graph.clouditor.io/classes/privileged"/>
-            <Datatype abbreviatedIRI="xsd:boolean"/>
-        </DataSomeValuesFrom>
+        <DataHasValue>
+            <DataProperty IRI="http://graph.clouditor.io/classes/lastActivity"/>
+            <Literal>xsd:java.time.Duration</Literal>
+        </DataHasValue>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
