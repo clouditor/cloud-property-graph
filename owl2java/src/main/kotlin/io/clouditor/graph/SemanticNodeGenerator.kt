@@ -20,6 +20,7 @@ object SemanticNodeGenerator {
         // TODO During development, the following parameters are default values
         var outputBaseGo = "output/go/"
         var packageNameGo = "voc"
+        //var outputBaseJava = "output/java/"
         var outputBaseJava = "../cloudpg/generated/main/java/io/clouditor/graph/"
         var packageNameJava = "io.clouditor.graph"
         val resourceNameFromOwlFile = "Resource"

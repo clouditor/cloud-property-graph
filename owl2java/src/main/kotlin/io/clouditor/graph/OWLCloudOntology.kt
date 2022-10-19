@@ -86,7 +86,6 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
     private fun setClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
         var className = getClassName(clazz, ontology)
-
         // Format class name
         if (className.contains("#")) className = className.split("#").toTypedArray()[1]
         className = formatString(className)
@@ -132,6 +131,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     // Get a Map<name, type> of superClassParameters
+    // superClassParameters are the parameters needed to call the super constructor; super(/*parameters*/)
     private fun getSuperXClassParameters(
         jcs: JavaClassSource?,
         jcsList: List<JavaClassSource>,

@@ -152,8 +152,8 @@ object App : Callable<Int> {
                 .registerPass(JaxRsClientPass())
                 .registerPass(FetchPass())
                 .registerPass(RequestsPass())
-                .registerPass(PythonLogPass())
-                .registerPass(GolangLogPass())
+                //.registerPass(PythonLogPass()) // TODO(all): fix it
+                //.registerPass(GolangLogPass()) // TODO(all): fix it
                 .registerPass(GormDatabasePass())
                 .registerPass(PyMongoPass())
                 .registerPass(Psycopg2Pass())
