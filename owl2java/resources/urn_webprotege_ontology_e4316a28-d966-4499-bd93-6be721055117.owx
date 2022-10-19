@@ -165,9 +165,6 @@
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
     </Declaration>
     <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/Image"/>
     </Declaration>
     <Declaration>
@@ -397,6 +394,9 @@
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/privileged"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="http://graph.clouditor.io/classes/publicAccess"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/reqBody"/>
@@ -1228,24 +1228,6 @@
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
-        <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
-            <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
-            <Class IRI="http://graph.clouditor.io/classes/Authorization"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Image"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
     </SubClassOf>
@@ -1559,6 +1541,13 @@
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/ObjectStorage"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/publicAccess"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageRequest"/>
         <Class IRI="http://graph.clouditor.io/classes/Operation"/>
     </SubClassOf>
@@ -1844,10 +1833,6 @@
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualNetwork"/>
         <NamedIndividual abbreviatedIRI="aws:EC2VPC"/>
-    </ClassAssertion>
-    <ClassAssertion>
-        <Class IRI="http://graph.clouditor.io/classes/IdentityManagement"/>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
     </ClassAssertion>
     <ClassAssertion>
         <ObjectSomeValuesFrom>
@@ -2515,11 +2500,6 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/IdentityManagement</IRI>
-        <Literal xml:lang="english">Identifiable</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Image</IRI>
         <Literal xml:lang="english">Image</Literal>
     </AnnotationAssertion>
@@ -2887,6 +2867,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/privileged</IRI>
         <Literal>privileged</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/publicAccess</IRI>
+        <Literal>publicAccess</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
