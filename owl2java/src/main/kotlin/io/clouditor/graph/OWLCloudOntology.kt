@@ -254,6 +254,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             System.err.println("SyntaxError: " + javaClass.syntaxErrors)
             return null
         }
+
         return javaClass
     }
 
