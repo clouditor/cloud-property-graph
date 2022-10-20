@@ -5,4 +5,5 @@ class GoStruct(val name: String, val parentClass: String) {
     var dataProperties: List<Properties> = listOf()
 
     var packageName: String? = null
+    var description: String? = null
 }

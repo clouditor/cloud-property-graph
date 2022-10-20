@@ -48,6 +48,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             if (clazz.isOWLThing) continue
             val gs = getGoInformationFromOWLClass(clazz, classes)
             gs.packageName = packageName
+            gs.description = getDescription(clazz, ontology)
             goList.add(gs)
         }
         return goList
@@ -246,8 +247,9 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         javaClass = setClassConstructor(javaClass)
 
         // Set description
-        // TODO(garuppel)
-        //javaClass = setOWLClassObjectDescription(javaClass)
+        var description = getDescription(clazz, ontology)
+        if (description != "")
+            javaClass.javaDoc.setText(description)
 
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
@@ -278,10 +280,6 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         
         return javaClass
     }
-
-    // private fun setOWLClassObjectDescription (javaClass: JavaClassSource): JavaClassSource {
-    //     javaClass.
-    // }
 
     private fun addConstructorShell(javaClass: JavaClassSource): JavaClassSource {
         javaClass.addMethod()
@@ -377,8 +375,6 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     // Set OWl class object properties
     private fun setOWLClassObjectProperties(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
         val propertiesList: MutableList<Properties> = ArrayList()
-
-
 
         // Get sorted List of OWLClassAxioms
         val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED).stream()
@@ -584,20 +580,20 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return ""
     }
 
-//    // Get description from OWLClassExpression
-//    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
-//        for (elem in nce.classesInSignature) {
-//            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
-//                if (item != null) {
-//                    if (item.property.iri.remainder.get() == "description") {
-//                        return item.property.iri.remainer.get()//if (item.value.toString().contains("\"")) item.value.toString().split("\"")
-//                            .toTypedArray()[1] else (item.value as OWLLiteralImplString).literal
-//                    }
-//                }
-//            }
-//        }
-//        return ""
-//    }
+    // Get description from OWLClassExpression
+    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+        for (elem in nce.classesInSignature) {
+            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
+                if (item != null) {
+                    if (item.property.iri.remainder.get().toString() == "description") {
+                        var description = item.value.toString()
+                        return  description.substring(1, description.length-1)
+                    }
+                }
+            }
+        }
+        return ""
+    }
 
     // Get class data property value (relationship in OWL)
     private fun getClassDataPropertyValue(nce: OWLDataHasValue): String {
