@@ -474,8 +474,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
             // at rest seems to be default anyway now
             val storage =
                 ObjectStorage(
-                    false, //TODO(all): Fix it!
-                    Immutability(false),//TODO(all): Fix it!
+                    false, // TODO(all): Fix it!
+                    Immutability(false), // TODO(all): Fix it!
                     mutableListOf(AtRestEncryption("AES-256", true)),
                     t.locationForRegion(account.region()),
                     mapOf()
