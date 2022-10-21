@@ -304,7 +304,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             val ce = classAxiom as OWLSubClassOfAxiomImpl
             val superClass = ce.superClass
 
-            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is  an literal (string)
+            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is a literal (string)
             if (superClass.classExpressionType == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassDataPropertyName(superClass)
                 classDataPropertyValue = getClassDataPropertyValue(superClass as OWLDataSomeValuesFromImpl)
@@ -373,6 +373,12 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     // Set OWl class object properties
+    // These are the ontology class relationship fields in Webprotege.
+    // Based on the realtionship property it is decided if
+    // * it is an interface
+    // * the value is written as plural
+    // * the value is capitalized
+    // * nothing changes
     private fun setOWLClassObjectProperties(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
         val propertiesList: MutableList<Properties> = ArrayList()
 
@@ -387,40 +393,18 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             val ce = classAxiom as OWLSubClassOfAxiomImpl
             val superClass = ce.superClass
 
-            // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
+            // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property' (the webprotege class relationship property)
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers", "runsOn", "to" -> {
+                    "has", "offers", "runsOn", "to", "hasMultiple" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
-                    "hasMultiple" -> {
-                        property.propertyName = getPlural(
-                            decapitalizeString(
-                                formatString(
-                                    getClassName(
-                                        superClass,
-                                        ontology
-                                    )
-                                )
-                            )
-                        )
-                        property.propertyType = formatString(getSliceClassName(superClass, ontology))
-                    }
                     "collectionOf" -> {
-                        property.propertyName = getPlural(
-                            decapitalizeString(
-                                formatString(
-                                    getClassName(
-                                        superClass,
-                                        ontology
-                                    )
-                                )
-                            )
-                        )
+                        property.propertyName = getPlural(decapitalizeString(formatString(getClassName(superClass,ontology))))
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
                     "offersInterface" -> {
@@ -435,6 +419,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                         property.propertyName = classRelationshipPropertyName
                     }
                 }
+                property.propertyProperty = classRelationshipPropertyName
                 propertiesList.add(property)
             }
         }
@@ -488,8 +473,18 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     private fun decapitalizeString(string: String?): String {
-        return if (string == null || string.isEmpty()) "" else string[0].lowercaseChar()
-            .toString() + string.substring(1)
+        var newString = ""
+        if (string.isNullOrEmpty()) {
+            return ""
+        } else if (string[0].isUpperCase() && string[1].isUpperCase()) {
+            //newString = string[0].lowercaseChar().toString() + string.substring(1)
+            newString = string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
+        } else {
+            newString = string[0].lowercaseChar()
+                .toString() + string.substring(1)
+        }
+
+        return newString
     }
 
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {

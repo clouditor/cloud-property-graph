@@ -221,12 +221,18 @@ object SemanticNodeGenerator {
         for (property in properties) {
             propertiesStringSource +=
                 if (!property.isRootClassNameResource && !property.isInterface) {
-                """
+                    """
 	${StringUtils.capitalize(property.propertyName)}	""" + getAdjustedPropertyType(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
-            } else if (!property.isRootClassNameResource && property.isInterface) {
-                """
+                } else if (!property.isRootClassNameResource && property.isInterface) {
+                    """
 	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
-            } else {
+                } else if (property.propertyProperty == "hasMultiple") {
+                    """
+	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
+        } else if (property.propertyProperty == "has") {
+                    """
+	${StringUtils.capitalize(property.propertyName)}	ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
+                } else {
                 // TODO is ResourceID always a slice?
                 """
 	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
