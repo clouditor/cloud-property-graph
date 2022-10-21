@@ -98,10 +98,6 @@ object SemanticNodeGenerator {
              
              """.trimIndent()
 
-        // Add description
-        if (goSource.description != "")
-            goSourceCode += "// " + goSource.description + "\n"
-
         // Add imports
         for (elem in goSource.dataProperties){
             if (getGoType(elem.propertyType.toString()) == "time.Duration" || getGoType(elem.propertyType.toString()) == "time.Time" ) {
@@ -109,6 +105,10 @@ object SemanticNodeGenerator {
                 break
             }
         }
+
+        // Add description
+        if (goSource.description != "")
+            goSourceCode += "// " + goSource.description + "\n"
 
         // Add struct
         goSourceCode += "type " + goSource.name + " struct {\n"
@@ -142,7 +142,7 @@ object SemanticNodeGenerator {
         val receiverType = gs.name
         val receiverChar = receiverType.first().lowercaseChar()
 
-        return "func ($receiverChar *$receiverType) Type() string { \n\treturn \"$receiverType\"\n}"
+        return "func ($receiverChar *$receiverType) Type() string {\n\treturn \"$receiverType\"\n}"
 
     }
 
@@ -254,7 +254,7 @@ object SemanticNodeGenerator {
             "Authorization" -> "IsAuthorization"
             "[]Authorization" -> "[]IsAuthorization"
             "AtRestEncryption" -> "IsAtRestEncryption"
-            else -> type
+            else -> "*$type"
         }
 
         return type

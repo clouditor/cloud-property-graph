@@ -425,7 +425,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                     }
                     "offersInterface" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = "Has" + formatString(getClassName(superClass, ontology))
+                        property.propertyType = "Is" + formatString(getClassName(superClass, ontology))
                         property.isInterface = true
                         interfaceList.add(getClassName(superClass, ontology))
                     }
