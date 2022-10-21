@@ -1,9 +1,9 @@
 package io.clouditor.graph
 
 class Properties {
-    var propertyType: String? = null
-    var propertyName: String? = null
+    var propertyType: String = ""
+    var propertyName: String = ""
     var isRootClassNameResource = false
     var isInterface = false
-    var description: String? = null
+    //var description: String = ""
 }

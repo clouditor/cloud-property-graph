@@ -104,24 +104,20 @@ object SemanticNodeGenerator {
 
         // Add imports
         for (elem in goSource.dataProperties){
-            if (getGoType(elem.propertyType.toString()) == "time.Duration") {
+            if (getGoType(elem.propertyType.toString()) == "time.Duration" || getGoType(elem.propertyType.toString()) == "time.Time" ) {
                 goSourceCode += "import \"time\"\n\n"
                 break
             }
         }
 
-        // Add description
-        //for (elem in goSource.objectProperties) {
-        //    goSourceCode += "// ${elem.description}\n\n"
-        //}
-
         // Add struct
-        goSourceCode += """type ${goSource.name} struct {
-"""
+        goSourceCode += "type " + goSource.name + " struct {\n"
 
         // Check if parentClass exists
         val parentClassName = getParentClassName(goSource.parentClass)
-        if (parentClassName != "") goSourceCode += "\t*" + getParentClassName(goSource.parentClass)
+        if (parentClassName != "") {
+            goSourceCode += "\t*" + getParentClassName(goSource.parentClass)
+        }
 
         // Add object properties
         goSourceCode += getObjectPropertiesForGoSource(goSource.objectProperties)
@@ -145,10 +141,8 @@ object SemanticNodeGenerator {
 
         val receiverType = gs.name
         val receiverChar = receiverType.first().lowercaseChar()
-        val interfaceMethodName = gs.parentClass
-        val interfaceMethodReturnType = gs.parentClass
 
-        return "func ($receiverChar $receiverType) Get$interfaceMethodName() *$interfaceMethodReturnType{ \n\treturn $receiverChar.$interfaceMethodReturnType\n}"
+        return "func ($receiverChar *$receiverType) Type() string { \n\treturn \"$receiverType\"\n}"
 
     }
 
@@ -197,6 +191,7 @@ object SemanticNodeGenerator {
             "float" -> "float32"
             "boolean" -> "bool"
             "java.time.Duration" -> "time.Duration"
+            "java.time.ZonedDateTime" -> "time.Time"
             "java.util.Map<String, String>" -> "map[string]string"
             "java.util.ArrayList<Short>" -> "[]uint16"
             "java.util.ArrayList<String>" -> "[]string"
@@ -221,22 +216,20 @@ object SemanticNodeGenerator {
     }
 
     private fun getObjectPropertiesForGoSource(properties: List<Properties>): String {
+
         var propertiesStringSource = ""
         for (property in properties) {
-            propertiesStringSource += if (!property.isRootClassNameResource && !property.isInterface) {
+            propertiesStringSource +=
+                if (!property.isRootClassNameResource && !property.isInterface) {
                 """
-	${StringUtils.capitalize(property.propertyName)}	*""" + StringUtils.capitalize(
-                    property.propertyType
-                ) + " `json:\"" + property.propertyName + "\"`"
+	${StringUtils.capitalize(property.propertyName)}	""" + getAdjustedPropertyType(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
             } else if (!property.isRootClassNameResource && property.isInterface) {
                 """
-	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(
-                    property.propertyType
-                ) + " `json:\"" + property.propertyName + "\"`"
+	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
             } else {
                 // TODO is ResourceID always a slice?
                 """
-	${StringUtils.capitalize(property.propertyName)}	[]ResourceID `json:"${property.propertyName}"`"""
+	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
             }
         }
         return propertiesStringSource
@@ -247,10 +240,24 @@ object SemanticNodeGenerator {
         for (property in properties) {
             property.propertyType?.let {
                 propertiesStringSource += """
-	${StringUtils.capitalize(property.propertyName)}	${getGoType(it)} `json:"${property.propertyName}"`"""
+	${StringUtils.capitalize(property.propertyName)}	${getGoType(it)}""" + "\t" + """`json:"${property.propertyName}"`"""
             }
         }
         return propertiesStringSource
+    }
+
+    // Checks property type and if it is a security feature (regarding the ontology), return the adjusted type
+    private fun getAdjustedPropertyType(type: String): String {
+        val type: String = when (type) {
+            "Authenticity" -> "IsAuthenticity"
+            "[]Authenticity" -> "[]IsAuthenticity"
+            "Authorization" -> "IsAuthorization"
+            "[]Authorization" -> "[]IsAuthorization"
+            "AtRestEncryption" -> "IsAtRestEncryption"
+            else -> type
+        }
+
+        return type
     }
 
     // Write Go source code to filesystem
