@@ -472,19 +472,18 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         } else s + "s"
     }
 
+    // decapitalizes strings and decapitalizes the first 2 characters if the first 3 characters are upper case
     private fun decapitalizeString(string: String?): String {
-        var newString = ""
         if (string.isNullOrEmpty()) {
             return ""
-        } else if (string[0].isUpperCase() && string[1].isUpperCase()) {
-            //newString = string[0].lowercaseChar().toString() + string.substring(1)
-            newString = string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
+        } else if (string[0].isUpperCase() && string[1].isUpperCase() && string[2].isUpperCase()) {
+            return string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
         } else {
-            newString = string[0].lowercaseChar()
+            return string[0].lowercaseChar()
                 .toString() + string.substring(1)
         }
 
-        return newString
+        return ""
     }
 
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
