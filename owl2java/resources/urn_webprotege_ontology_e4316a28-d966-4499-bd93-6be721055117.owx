@@ -1224,7 +1224,7 @@
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
         <DataHasValue>
             <DataProperty IRI="http://graph.clouditor.io/classes/lastActivity"/>
-            <Literal>xsd:java.time.Duration</Literal>
+            <Literal>xsd:java.time.ZonedDateTime</Literal>
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
