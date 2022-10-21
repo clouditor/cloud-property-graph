@@ -126,8 +126,9 @@ object SemanticNodeGenerator {
         goSourceCode += getDataPropertiesForGoSource(goSource.dataProperties)
         goSourceCode += "\n}\n\n"
 
-        // Create method for interface
-        if (owl3.interfaceList.contains(goSource.parentClass)) {
+        // Add method for interface
+        // TODO(anatheka): Comparison with Authenticity, Authorization and Confidentiality is hacky, we have to put that as annotation in the ontology.
+        if (owl3.interfaceList.contains(goSource.parentClass) || goSource.parentClass == "Authenticity" || goSource.parentClass == "Authorization" || goSource.parentClass == "Confidentiality") {
                 goSourceCode += getInterfaceMethod(goSource)
         }
 
@@ -220,20 +221,22 @@ object SemanticNodeGenerator {
         var propertiesStringSource = ""
         for (property in properties) {
             propertiesStringSource +=
-                if (!property.isRootClassNameResource && !property.isInterface) {
+                if (!property.isRootClassNameResource && !property.isInterface && property.propertyProperty == "hasMultiple"){ // must be a slice
                     """
-	${StringUtils.capitalize(property.propertyName)}	""" + getAdjustedPropertyType(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
-                } else if (!property.isRootClassNameResource && property.isInterface) {
+	${StringUtils.capitalize(property.propertyName)}	""" + getAdjustedPropertyType("[]" + property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
+        }else if (!property.isRootClassNameResource && !property.isInterface) { // nothing special
+                    """
+	${StringUtils.capitalize(property.propertyName)}	"""  + getAdjustedPropertyType(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
+                } else if (!property.isRootClassNameResource && property.isInterface) { // is an interface
                     """
 	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
-                } else if (property.propertyProperty == "hasMultiple") {
+                } else if (property.propertyProperty == "hasMultiple") { // must be a []ResourceID
                     """
 	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
-        } else if (property.propertyProperty == "has") {
+        } else if (property.propertyProperty == "has") { // must be ResourceID
                     """
 	${StringUtils.capitalize(property.propertyName)}	ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
-                } else {
-                // TODO is ResourceID always a slice?
+                } else { // TODO should that be always a []ResourceID?
                 """
 	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
             }

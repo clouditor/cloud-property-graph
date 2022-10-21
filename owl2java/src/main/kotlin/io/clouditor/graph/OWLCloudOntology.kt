@@ -374,7 +374,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
     // Set OWl class object properties
     // These are the ontology class relationship fields in Webprotege.
-    // Based on the realtionship property it is decided if
+    // Based on the relationship property it is decided if
     // * it is an interface
     // * the value is written as plural
     // * the value is capitalized
@@ -399,8 +399,12 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers", "runsOn", "to", "hasMultiple" -> {
+                    "has", "runsOn", "to", "offers" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
+                        property.propertyType = formatString(getClassName(superClass, ontology))
+                    }
+                    "hasMultiple" -> {
+                        property.propertyName = getPlural(decapitalizeString(formatString(getClassName(superClass, ontology))))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
                     "collectionOf" -> {
