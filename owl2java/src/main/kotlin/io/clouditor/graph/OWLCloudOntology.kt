@@ -1,10 +1,11 @@
 package io.clouditor.graph
 
-import kotlin.Throws
 import org.apache.commons.lang3.StringUtils
-import java.util.LinkedHashMap
 import org.jboss.forge.roaster.Roaster
-import org.jboss.forge.roaster.model.source.*
+import org.jboss.forge.roaster.model.source.Import
+import org.jboss.forge.roaster.model.source.JavaClassSource
+import org.jboss.forge.roaster.model.source.MethodSource
+import org.jboss.forge.roaster.model.source.PropertySource
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.*
 import org.semanticweb.owlapi.model.parameters.Imports
@@ -14,11 +15,10 @@ import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl
 import java.io.File
-import java.util.ArrayList
-import java.util.Comparator
 import java.util.stream.Collectors
 
-class OWLCloudOntology(filepath: String) {
+
+class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: String) {
     private var ontology: OWLOntology? = null
     private var df: OWLDataFactory? = null
     val interfaceList: MutableList<String> = ArrayList() // It is assumed, that the classes that are defined as interfaces have a unique name
@@ -48,6 +48,7 @@ class OWLCloudOntology(filepath: String) {
             if (clazz.isOWLThing) continue
             val gs = getGoInformationFromOWLClass(clazz, classes)
             gs.packageName = packageName
+            gs.description = getDescription(clazz, ontology)
             goList.add(gs)
         }
         return goList
@@ -86,7 +87,6 @@ class OWLCloudOntology(filepath: String) {
 
     private fun setClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
         var className = getClassName(clazz, ontology)
-
         // Format class name
         if (className.contains("#")) className = className.split("#").toTypedArray()[1]
         className = formatString(className)
@@ -98,7 +98,7 @@ class OWLCloudOntology(filepath: String) {
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
         val superClassName = getSuperClassName(clazz)
 
-        if (!superClassName.isEmpty()) {
+        if (superClassName.isNotEmpty()) {
             javaClass.superType = superClassName
         } else {
             javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
@@ -132,6 +132,7 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Get a Map<name, type> of superClassParameters
+    // superClassParameters are the parameters needed to call the super constructor; super(/*parameters*/)
     private fun getSuperXClassParameters(
         jcs: JavaClassSource?,
         jcsList: List<JavaClassSource>,
@@ -210,7 +211,7 @@ class OWLCloudOntology(filepath: String) {
         for ((key) in superClassParameters) {
             if (superClassParametersAsCommaSeparatedString != "") superClassParametersAsCommaSeparatedString =
                 "$superClassParametersAsCommaSeparatedString,"
-            superClassParametersAsCommaSeparatedString = superClassParametersAsCommaSeparatedString + key
+            superClassParametersAsCommaSeparatedString += key
         }
         return superClassParametersAsCommaSeparatedString
     }
@@ -227,7 +228,7 @@ class OWLCloudOntology(filepath: String) {
                 Class [$clazz]  	${getClassName(clazz, ontology)}
                 """.trimIndent()
         )
-        if (getClassName(clazz, ontology) == "CloudResource") println("")
+        if (getClassName(clazz, ontology) == resourceNameFromOwlFile) println("")
 
         // Set super class name
         javaClass = setSuperClassName(javaClass, clazz)
@@ -245,11 +246,17 @@ class OWLCloudOntology(filepath: String) {
         // be known
         javaClass = setClassConstructor(javaClass)
 
+        // Set description
+        var description = getDescription(clazz, ontology)
+        if (description != "")
+            javaClass.javaDoc.setText(description)
+
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
             System.err.println("SyntaxError: " + javaClass.syntaxErrors)
             return null
         }
+
         return javaClass
     }
 
@@ -270,6 +277,7 @@ class OWLCloudOntology(filepath: String) {
             javaClassConstructor.body = javaClassConstructor.body + elem.mutator.name + "(" + elem.name + ")" +
                     ";"
         }
+        
         return javaClass
     }
 
@@ -296,7 +304,7 @@ class OWLCloudOntology(filepath: String) {
             val ce = classAxiom as OWLSubClassOfAxiomImpl
             val superClass = ce.superClass
 
-            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is  an literal (string)
+            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is a literal (string)
             if (superClass.classExpressionType == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassDataPropertyName(superClass)
                 classDataPropertyValue = getClassDataPropertyValue(superClass as OWLDataSomeValuesFromImpl)
@@ -365,6 +373,12 @@ class OWLCloudOntology(filepath: String) {
     }
 
     // Set OWl class object properties
+    // These are the ontology class relationship fields in Webprotege.
+    // Based on the relationship property it is decided if
+    // * it is an interface
+    // * the value is written as plural
+    // * the value is capitalized
+    // * nothing changes
     private fun setOWLClassObjectProperties(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
         val propertiesList: MutableList<Properties> = ArrayList()
 
@@ -379,45 +393,27 @@ class OWLCloudOntology(filepath: String) {
             val ce = classAxiom as OWLSubClassOfAxiomImpl
             val superClass = ce.superClass
 
-            // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property'
+            // If type is OBJECT_SOME_VALUES_FROM it is an 'OWL object property' (the webprotege class relationship property)
             if (superClass.classExpressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
                 property.isRootClassNameResource =
                     isRootClassNameResource((superClass as OWLObjectSomeValuesFromImpl).filler.asOWLClass(), classes)
                 when (classRelationshipPropertyName) {
-                    "has", "offers", "runsOn", "proxyTarget", "to" -> {
+                    "has", "runsOn", "to", "offers" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
                     "hasMultiple" -> {
-                        property.propertyName = getPlural(
-                            decapitalizeString(
-                                formatString(
-                                    getClassName(
-                                        superClass,
-                                        ontology
-                                    )
-                                )
-                            )
-                        )
-                        property.propertyType = formatString(getSliceClassName(superClass, ontology))
+                        property.propertyName = getPlural(decapitalizeString(formatString(getClassName(superClass, ontology))))
+                        property.propertyType = formatString(getClassName(superClass, ontology))
                     }
                     "collectionOf" -> {
-                        property.propertyName = getPlural(
-                            decapitalizeString(
-                                formatString(
-                                    getClassName(
-                                        superClass,
-                                        ontology
-                                    )
-                                )
-                            )
-                        )
+                        property.propertyName = getPlural(decapitalizeString(formatString(getClassName(superClass,ontology))))
                         property.propertyType = formatString(getSliceClassName(superClass, ontology))
                     }
                     "offersInterface" -> {
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
-                        property.propertyType = "Has" + formatString(getClassName(superClass, ontology))
+                        property.propertyType = "Is" + formatString(getClassName(superClass, ontology))
                         property.isInterface = true
                         interfaceList.add(getClassName(superClass, ontology))
                     }
@@ -427,6 +423,7 @@ class OWLCloudOntology(filepath: String) {
                         property.propertyName = classRelationshipPropertyName
                     }
                 }
+                property.propertyProperty = classRelationshipPropertyName
                 propertiesList.add(property)
             }
         }
@@ -452,7 +449,7 @@ class OWLCloudOntology(filepath: String) {
                 classRelationshipPropertyName = getClassObjectPropertyName(superClass)
 
                 // Add property
-                var property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
+                val property: PropertySource<JavaClassSource?>? = when (classRelationshipPropertyName) {
                     "has", "offers" -> javaClass.addProperty(
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
@@ -479,15 +476,24 @@ class OWLCloudOntology(filepath: String) {
         } else s + "s"
     }
 
+    // decapitalizes strings and decapitalizes the first 2 characters if the first 3 characters are upper case
     private fun decapitalizeString(string: String?): String {
-        return if (string == null || string.isEmpty()) "" else string[0].lowercaseChar()
-            .toString() + string.substring(1)
+        if (string.isNullOrEmpty()) {
+            return ""
+        } else if (string[0].isUpperCase() && string[1].isUpperCase() && string[2].isUpperCase()) {
+            return string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
+        } else {
+            return string[0].lowercaseChar()
+                .toString() + string.substring(1)
+        }
+
+        return ""
     }
 
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
         var rootClassName: String
         rootClassName = getSuperClassName(clazz)
-        if (rootClassName == "CloudResource") {
+        if (rootClassName == resourceNameFromOwlFile) {
             return true
         } else if (clazz.isOWLThing) {
             return false
@@ -497,7 +503,7 @@ class OWLCloudOntology(filepath: String) {
         for (claz in classes) {
             if (getClassName(claz) == rootClassName) {
                 rootClassName = getSuperClassName(claz)
-                if (isRootClassNameResource(claz, classes) == true) {
+                if (isRootClassNameResource(claz, classes)) {
                     return true
                 }
             }
@@ -572,13 +578,30 @@ class OWLCloudOntology(filepath: String) {
         return ""
     }
 
+    // Get description from OWLClassExpression
+    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+        for (elem in nce.classesInSignature) {
+            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
+                if (item != null) {
+                    if (item.property.iri.remainder.get().toString() == "description") {
+                        var description = item.value.toString()
+                        return  description.substring(1, description.length-1)
+                    }
+                }
+            }
+        }
+        return ""
+    }
+
     // Get class data property value (relationship in OWL)
     private fun getClassDataPropertyValue(nce: OWLDataHasValue): String {
         return nce.filler.toString().split(":").toTypedArray()[1].replace("\"", "")
     }
 
     private fun getClassDataPropertyValue(nce: OWLDataSomeValuesFrom): String {
-        return nce.filler.toString().split(":").toTypedArray()[1]
+        var value = nce.filler.toString().split(":").toTypedArray()[1]
+        
+        return value
     }
 
     // Get class data property name (realtionship in OWL)

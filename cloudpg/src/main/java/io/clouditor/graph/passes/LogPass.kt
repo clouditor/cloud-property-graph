@@ -23,17 +23,19 @@ abstract class LogPass : Pass() {
 
         // check, if application runs somewhere with resource logging
         val log =
-            application?.runsOn?.firstOrNull()?.nextDFG?.filterIsInstance<ResourceLogging>()?.map {
-                it
-            }
-                ?: emptyList()
+            application
+                ?.runsOn
+                ?.firstOrNull()
+                ?.nextDFG
+                ?.filterIsInstance<ResourceLogging>()
+                ?.firstOrNull()
 
-        val out = LogOutput(m, log as List<Logging>, m.arguments.firstOrNull())
+        val out = LogOperation(m, log, m.arguments.firstOrNull())
         out.location = m.location
         out.name = name
 
         // add DFG from expression to sink
-        out.to.forEach { out.value.nextDFG.add((it)) }
+        out.logging?.let { out.value.nextDFG.add((it)) }
 
         t += out
 
