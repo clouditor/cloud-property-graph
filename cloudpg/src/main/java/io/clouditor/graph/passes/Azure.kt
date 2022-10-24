@@ -427,7 +427,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
         // specific to the Storage containers, e.g., authenticity, url,
         // For now we fill it out as good as we can with the current ontology
         val storageAccount =
-            StorageService(
+            ObjectStorageService(
                 HttpEndpoint(
                     auth,
                     null,

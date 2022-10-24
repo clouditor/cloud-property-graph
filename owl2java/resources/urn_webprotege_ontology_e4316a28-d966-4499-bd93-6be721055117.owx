@@ -243,6 +243,9 @@
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageRequest"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/ObjectStorageService"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/Operation"/>
     </Declaration>
     <Declaration>
@@ -1573,6 +1576,17 @@
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/ObjectStorageService"/>
+        <Class IRI="http://graph.clouditor.io/classes/StorageService"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/ObjectStorageService"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Operation"/>
         <Class IRI="http://graph.clouditor.io/classes/Functionality"/>
     </SubClassOf>
@@ -1695,13 +1709,6 @@
         <ObjectSomeValuesFrom>
             <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Storage"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/StorageService"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
-            <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
@@ -2404,6 +2411,11 @@ name = metadata.name</Literal>
         <Literal>DatabaseQuery</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>http://graph.clouditor.io/classes/DatabaseService</IRI>
+        <Literal>This class represents a database service. For example, a postgres SQL server would be modelled as a database service (with a host and IP) and the individual tables or collections would be modelled as a DatabaseStorage entity.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/DatabaseService</IRI>
         <Literal xml:lang="english">DatabaseService</Literal>
@@ -2614,7 +2626,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">NetworkSecurityGroup</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/NetworkService</IRI>
         <Literal>A NetworkService is an application (on the network layer) running on a Compute resource. It provides access to a resource</Literal>
     </AnnotationAssertion>
@@ -2652,6 +2664,16 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/ObjectStorageRequest</IRI>
         <Literal xml:lang="english">ObjectStorageRequest</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>http://graph.clouditor.io/classes/ObjectStorageService</IRI>
+        <Literal>An object storage service represents the network service that is used to access a list of object storage containers. The storage itself is modelled as a ObjectStorage. The service has an http endpoint.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>http://graph.clouditor.io/classes/ObjectStorageService</IRI>
+        <Literal>ObjectStorageService</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -2727,6 +2749,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/Storage</IRI>
         <Literal xml:lang="english">Storage</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>http://graph.clouditor.io/classes/StorageService</IRI>
+        <Literal>This entity represents a network-based service that can be used to access a particular storage backend. It has multiple subclasses, e.g., for databases or object stores. It has a list of storage resources associated to it.</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>

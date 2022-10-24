@@ -151,7 +151,6 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         if (service?.name == "postgres") {
             val db =
                 RelationalDatabaseService(
-                    null,
                     mutableListOf<Storage>(),
                     container,
                     service.ips,
@@ -168,7 +167,6 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         if (service?.name == "mongo") {
             val db =
                 DocumentDatabaseService(
-                    null,
                     mutableListOf<Storage>(),
                     container,
                     service.ips,
