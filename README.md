@@ -12,21 +12,12 @@ Furthermore, we plan to integrate a Go-based version of the CloudPG into our mai
 
 This project primarily serves as a research sandbox and playground, so please do not expect API stability for now (or ever).
 
-## Prerequisites
-- Under Linux JAVA_HOME must be set
-- Install jep, follow the instructions at https://github.com/Fraunhofer-AISEC/cpg#python
-- Usage of experimental language, e.g., go
-    - Checkout [Fraunhofer AISEC - Code Property Graph](https://github.com/Fraunhofer-AISEC/cpg) and build by using the property `-Pexperimental`:  `./gradlew build -Pexperimental`
-    - The libcpgo.so must be placed somewhere in the `java.library.path`. (For further informaton see https://github.com/Fraunhofer-AISEC/cpg#usage-of-experimental-languages)
-        - Under Linux in `/lib/`. `sudo cp ./cpg-library/src/main/golang/libcpgo.so /lib/` 
-        - Und Mac in `~/Library/Java/Extensions`.
-
 ## Build
 
 First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. The build using `./gradlew installDist`.
 ## Usage
  
-Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j` or `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j/neo4j-arm64-experimental:4.3.2-arm64` on ARM systems. 
+Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j`. 
 
 Run `cloudpg/build/install/cloudpg/bin/cloudpg`. This will print a help message with any additional needed parameters. The root path is required and the program can be called as follows: `cloudpg/build/install/cloudpg/bin/cloudpg --root=/x/testprogramm folder1/ folder2/ folder 3/`
 
@@ -41,6 +32,10 @@ Some implementation details need to be considered when writing passes:
 - Passes must overwrite the `accept` and `cleanup` methods
 - Newly created nodes need to be added to the `translationResult` (`t += n`)
 - Add a DFG edge via `node1.addNextDFG(node2)`
+
+## Testing
+The CloudPG includes a testing library that provides test cases for certain threats. At the moment, these threats include primarily privacy threats. 
+To use this testing library, a dedicated testing mode is available which can be enabled via the flag ```--local-mode```. For example, adapt the command above with the flags ```--local-mode --root=. ppg-testing-library/```. 
 
 ## Further reading
 

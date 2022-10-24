@@ -16,7 +16,7 @@ class PythonLogPass : LogPass() {
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
                     fun visit(m: MemberCallExpression) {
-                        if (m.name == "info" && m.base.name == "logging") {
+                        if (m.name == "info" && m.base?.name == "logging") {
                             handleLog(t, m, m.name, tu)
                         }
                     }

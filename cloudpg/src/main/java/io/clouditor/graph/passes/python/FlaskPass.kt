@@ -7,6 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -17,6 +18,18 @@ import io.clouditor.graph.*
 class FlaskPass : Pass() {
     // for now, assume, that we have one Flask application per analysis
     // this might not be the case everytime
+
+    private val httpMap: Map<String, String> =
+        mapOf(
+            // harmonize the http status codes across frameworks; we use the names as used in Spring
+            // here
+            // TODO add more status code mappings
+            "200" to "HttpStatus.OK",
+            "201" to "HttpStatus.CREATED",
+            "202" to "HttpStatus.ACCEPTED",
+            "404" to "HttpStatus.NOT_FOUND",
+            "409" to "HttpStatus.CONFLICT",
+        )
 
     override fun cleanup() {}
 
@@ -100,6 +113,15 @@ class FlaskPass : Pass() {
                 }
             )
 
+            func.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(rs: ReturnStatement) {
+                        handleReturnStatement(rs)
+                    }
+                }
+            )
+
             return endpoint
         }
 
@@ -113,6 +135,7 @@ class FlaskPass : Pass() {
 
             // TODO(oxisto): Once we update the ontology, we should also set this as the
             // "request_body" property of the http endpoint
+
         }
     }
 
@@ -135,5 +158,13 @@ class FlaskPass : Pass() {
         }
 
         return path
+    }
+
+    private fun handleReturnStatement(rs: ReturnStatement) {
+        var returnValue = rs.returnValue as InitializerListExpression
+        // set the correct http status code by looking through the initializers
+        returnValue.initializers.first { it.name in httpMap }.let {
+            returnValue.name = httpMap.get(it.name).toString()
+        }
     }
 }

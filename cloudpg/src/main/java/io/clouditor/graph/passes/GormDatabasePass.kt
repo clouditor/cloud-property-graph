@@ -134,6 +134,48 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
             }
+        } else if (call.name == "Create") {
+            val op =
+                app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                    val op =
+                        createDatabaseQuery(
+                            result,
+                            false,
+                            it,
+                            mutableListOf(),
+                            mutableListOf(call),
+                            app
+                        )
+                    op.name = call.name
+
+                    handleCreate(call, op)
+
+                    op
+                }
+            if (op != null) {
+                op.location = call.location
+            }
+        } else if (call.name == "Update") {
+            val op =
+                app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
+                    val op =
+                        createDatabaseQuery(
+                            result,
+                            true,
+                            it,
+                            mutableListOf(),
+                            mutableListOf(call),
+                            app
+                        )
+                    op.name = call.name
+
+                    handleUpdate(call, op)
+
+                    op
+                }
+            if (op != null) {
+                op.location = call.location
+            }
         }
     }
 
@@ -185,9 +227,49 @@ class GormDatabasePass : DatabaseOperationPass() {
         }
     }
 
+    private fun handleCreate(call: CallExpression, op: DatabaseQuery) {
+        // create should have one argument, that specifies the object which is stored
+        var target = call.arguments.firstOrNull()
+
+        // add a DFG edge towards our target
+        if (target != null) {
+            target.addNextDFG(op)
+
+            // add storage
+            op.to.forEach {
+                val storage = it.getStorageOrCreate(deriveName(target.type))
+                op.storage.add(storage)
+
+                op.addNextDFG(storage)
+            }
+        }
+    }
+
+    private fun handleUpdate(call: CallExpression, op: DatabaseQuery) {
+        var target = call.arguments.firstOrNull()
+        // for update calls, a model condition may be specified which has the actual target
+        if (call.base.name == "Model") {
+            target = (call.base as CallExpression).arguments.first()
+        }
+
+        // add a DFG edge towards our target
+        if (target != null) {
+            target.addNextDFG(op)
+
+            // add storage
+            op.to.forEach {
+                val storage = it.getStorageOrCreate(deriveName(target.type))
+                op.storage.add(storage)
+
+                // also add DFG edge towards the storage
+                op.addNextDFG(storage)
+            }
+        }
+    }
+
     private fun deriveName(type: Type): String {
         // short name
-        val shortName = type.name.substringAfterLast(".")
+        val shortName = type.name.substringAfterLast(".").substringBefore("*")
 
         return shortName.toLowerCase() + "s"
     }

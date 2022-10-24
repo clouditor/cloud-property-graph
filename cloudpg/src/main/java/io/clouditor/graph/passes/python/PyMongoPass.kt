@@ -36,6 +36,12 @@ class PyMongoPass : DatabaseOperationPass() {
                 }
             )
 
+            // There is no need for us to continue, if we have not found any clients
+            if (clients.isEmpty()) {
+                log.info("Found no clients in {}, we are not processing this any further", tu.name)
+                continue
+            }
+
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
@@ -160,7 +166,6 @@ class PyMongoPass : DatabaseOperationPass() {
         pair: Pair<DatabaseConnect, List<DatabaseStorage>>
     ) {
         var (connect, storage) = pair
-
         var op: DatabaseQuery? = null
         if (mce.name == "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
@@ -169,7 +174,7 @@ class PyMongoPass : DatabaseOperationPass() {
             mce.arguments.firstOrNull()?.addNextDFG(op)
         }
 
-        if (mce.name == "find") {
+        if (mce.name == "find" || mce.name == "find_one") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)

@@ -6,6 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
+import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.Pass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -106,7 +107,7 @@ class GinGonicPass : Pass() {
 
             val funcDeclaration =
                 (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
-            if (m.name == "GET" || m.name == "POST") {
+            if (m.name == "GET" || m.name == "POST" || m.name == "PUT") {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
@@ -122,8 +123,18 @@ class GinGonicPass : Pass() {
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
                     object : IVisitor<Node?>() {
-                        fun visit(r: MemberCallExpression) {
-                            handleBindJson(r, endpoint)
+                        fun visit(mce: MemberCallExpression) {
+                            handleBind(mce, endpoint)
+                        }
+                    }
+                )
+
+                // get the endpoint's handler and look through its mes
+                funcDeclaration?.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node?>() {
+                        fun visit(me: MemberExpression) {
+                            handleForm(me, endpoint)
                         }
                     }
                 )
@@ -162,16 +173,61 @@ class GinGonicPass : Pass() {
         }
     }
 
-    private fun handleBindJson(m: MemberCallExpression, e: HttpEndpoint) {
-        // TODO restrict this to the actual parameter that is the input for the function, e.g.
-        // c.bindJSON
-        if (m.name == "BindJSON") {
+    private fun handleBind(m: MemberCallExpression, e: HttpEndpoint) {
+        if (m.name == "BindJSON" || m.name == "Bind") {
             var obj = (m.arguments.firstOrNull() as UnaryOperator).input
             if (obj is DeclaredReferenceExpression) {
                 obj.refersTo?.let { e.addNextDFG(it) }
             } else {
                 e.addNextDFG(obj)
             }
+        } else if (m.name == "Get") {
+            // lets see, whether we have a chain of member calls that go
+            // to the base
+            var memberCall: MemberExpression? = m.base as? MemberExpression
+            val calls = mutableListOf<MemberExpression>()
+            while (memberCall != null) {
+                // add the call to the list of chained calls
+                calls += memberCall
+
+                // check, if its base is already of our gin type
+                if (memberCall.base.type is PointerType &&
+                        memberCall.base.type.name == "gin.Context*"
+                ) {
+                    // we can break immediately
+                    break
+                }
+
+                // otherwise, go to the next base
+                memberCall = memberCall.base as? MemberExpression
+            }
+            e.addNextDFG(m)
+        }
+    }
+
+    // TODO consolidate duplicated code here and above in handleBind
+    private fun handleForm(m: MemberExpression, e: HttpEndpoint) {
+        if (m.name == "Form") {
+            // lets see, whether we have a chain of member calls that go
+            // to the base
+            var memberCall: MemberExpression? = m.base as? MemberExpression
+            val calls = mutableListOf<MemberExpression>()
+            while (memberCall != null) {
+                // add the call to the list of chained calls
+                calls += memberCall
+
+                // check, if its base is already of our gin type
+                if (memberCall.base.type is PointerType &&
+                        memberCall.base.type.name == "gin.Context*"
+                ) {
+                    // we can break immediately
+                    break
+                }
+
+                // otherwise, go to the next base
+                memberCall = memberCall.base as? MemberExpression
+            }
+            e.addNextDFG(m)
         }
     }
 
@@ -190,8 +246,6 @@ class GinGonicPass : Pass() {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
-        // check initializers for http.NewServeMux()
-        // actually check for return types - but that does not work (yet) with the standard library
         if (r.initializer is CallExpression &&
                 (r.initializer as CallExpression).fqn == "gin.Default" ||
                 (r.initializer as CallExpression).fqn == "gin.New"

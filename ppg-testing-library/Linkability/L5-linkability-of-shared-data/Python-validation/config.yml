@@ -1,0 +1,9 @@
+services:
+  - type: server
+    name: server
+    host: test.com
+  - type: third-party
+    name: third-party
+    host: third-party.com
+  - type: client
+    name: client
