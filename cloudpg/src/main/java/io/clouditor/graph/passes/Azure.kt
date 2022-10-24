@@ -31,6 +31,9 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.followDFGReverse
 import io.clouditor.graph.nodes.followEOG
 import io.clouditor.graph.nodes.location
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
 
 class AzureClientSDKPass : Pass() {
     override fun accept(t: TranslationResult) {
@@ -83,7 +86,7 @@ class AzureClientSDKPass : Pass() {
                     val call = it.last().end as CallExpression
                     eog = call
                     endpoint = (call.arguments.first() as Literal<*>).value.toString()
-                    System.out.println(endpoint)
+                    println(endpoint)
 
                     url = endpoint
                 }
@@ -98,7 +101,7 @@ class AzureClientSDKPass : Pass() {
                     val call = it.last().end as CallExpression
                     eog = call
                     containerName = (call.arguments.first() as Literal<*>).value.toString()
-                    System.out.println(containerName)
+                    println(containerName)
 
                     url += containerName
                 }
@@ -192,7 +195,7 @@ class AzureClientSDKPass : Pass() {
         app: Application?
     ) {
         if (c.name == "create") {
-            System.out.println("We got an interesting call: create")
+            println("We got an interesting call: create")
 
             val request = ObjectStorageRequest(c, listOf(storage), "create")
             request.addNextDFG(storage)
@@ -265,7 +268,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
         try {
             val storages = azure.storageAccounts().listByResourceGroup(App.azureResourceGroup)
             for (storage in storages) {
-                t.additionalNodes.addAll(handleStorageAccounts(t, storage, azure))
+                t.additionalNodes.add(handleStorageAccounts(t, storage, azure))
             }
 
             // next, look for our log workbench
@@ -328,8 +331,27 @@ class AzurePass : CloudResourceDiscoveryPass() {
         }
     }
 
-    private fun handleWorkspace(t: TranslationResult, workspace: Workspace): ResourceLogging {
-        val logging = ResourceLogging(t.locationForRegion(workspace.region()), mapOf())
+    private fun handleWorkspace(t: TranslationResult, workspace: Workspace): Logging {
+        val loggingServices = mutableListOf<LoggingService>()
+        val logService =
+            LoggingService(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                t.locationForRegion(workspace.region()),
+                mapOf()
+            )
+        loggingServices += logService
+
+        val logging =
+            ActivityLogging(
+                true,
+                workspace.retentionInDays().toDuration(DurationUnit.DAYS).toJavaDuration(),
+                loggingServices
+            )
         logging.name = workspace.name()
 
         return logging
@@ -343,7 +365,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
         // check if resource logging is activated
         val profile = cluster.addonProfiles().getValue("omsagent")
-        profile?.let {
+        profile?.let { it ->
             if (it.enabled()) {
                 val workspaceId = it.config()["logAnalyticsWorkspaceResourceID"]
 
@@ -366,10 +388,11 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 t.locationForRegion(cluster.region()),
                 mapOf()
             )
-        compute.resourceLogging?.let {
-            // add a DFG edge to it
-            compute.nextDFG.add(it)
-        }
+        // TODO(all): Update compute logging DFG edge
+        //        compute.Logging?.let {
+        //            // add a DFG edge to it
+        //            compute.nextDFG.add(it)
+        //        }
 
         return compute
     }
@@ -378,20 +401,59 @@ class AzurePass : CloudResourceDiscoveryPass() {
         t: TranslationResult,
         account: StorageAccount,
         azure: AzureResourceManager
-    ): List<Storage> {
+    ): StorageService {
         val storageList = mutableListOf<Storage>()
 
+        // Get transport encryption from the storage account information.
+        val te =
+            TransportEncryption(
+                "TLS",
+                true,
+                account.innerModel().enableHttpsTrafficOnly(),
+                account.innerModel().minimumTlsVersion().toString(),
+            )
+
+        // Get authenticity from the storage account information, it would be better to get that
+        // information from the containers.
+        val auth =
+            if (account.isBlobPublicAccessAllowed) {
+                NoAuthentication() // public access
+            } else {
+                SingleSignOn(true) // this is closest to how auth works in Azure. TokenBased would
+                // be better
+            }
+
+        // TODO(all): We are not able to fill out the StorageService as some of the parameters are
+        // specific to the Storage containers, e.g., authenticity, url,
+        // For now we fill it out as good as we can with the current ontology
+        val storageAccount =
+            StorageService(
+                HttpEndpoint(
+                    auth,
+                    null,
+                    "GET",
+                    null,
+                    te,
+                    account.innerModel().primaryEndpoints().blob() /*+ blob.name()*/
+                ),
+                null,
+                null,
+                null,
+                null,
+                ArrayList(listOf<Short>()),
+                TransportEncryption(
+                    "TLS",
+                    true,
+                    account.isHttpsTrafficOnly,
+                    account.minimumTlsVersion().toString()
+                ), // Transport encryption cannot be disabled
+                GeoLocation(account.region().toString()),
+                mapOf<String, String>()
+            )
         // loop through the containers (for our use case this is ok, for larger ones, probably not)
         val paged =
             azure.storageBlobContainers().listAsync(account.resourceGroupName(), account.name())
         for (blob in paged.collectList().block()) {
-            val te =
-                TransportEncryption(
-                    "TLS",
-                    true,
-                    account.innerModel().enableHttpsTrafficOnly(),
-                    account.innerModel().minimumTlsVersion().toString(),
-                )
 
             // TODO: also include other endpoints
 
@@ -401,37 +463,31 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
             val auth =
                 if (blob.publicAccess() == PublicAccess.NONE) {
-                    SingleSignOn() // this is closest to how auth works in Azure. TokenBaseed would
+                    SingleSignOn(
+                        true
+                    ) // this is closest to how auth works in Azure. TokenBased would
                     // be better
                 } else {
-                    NoAuthentication() // public access
+                    NoAuthentication()
                 }
-
-            val endpoint =
-                HttpEndpoint(
-                    auth,
-                    null,
-                    "GET",
-                    null,
-                    te,
-                    account.innerModel().primaryEndpoints().blob() + blob.name(),
-                )
 
             // at rest seems to be default anyway now
             val storage =
                 ObjectStorage(
-                    endpoint,
+                    false, // TODO(all): Fix it!
+                    Immutability(false), // TODO(all): Fix it!
                     mutableListOf(AtRestEncryption("AES-256", true)),
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
             storage.name = blob.name()
 
-            t += endpoint
             storageList += storage
         }
 
-        return storageList
+        storageAccount.storages = storageList
+
+        return storageAccount
     }
 
     private fun handleDisk(t: TranslationResult, disk: Disk): BlockStorage {
@@ -449,7 +505,8 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 ) // not the actual key, but close enough
         }
 
-        val block = BlockStorage(mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
+        val block =
+            BlockStorage(null, mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
         block.name = disk.name()
 
         return block
@@ -460,7 +517,16 @@ class AzurePass : CloudResourceDiscoveryPass() {
         vm: VirtualMachine
     ): io.clouditor.graph.VirtualMachine {
         val compute =
-            VirtualMachine(null, null, null, null, t.locationForRegion(vm.region()), mapOf())
+            VirtualMachine(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                t.locationForRegion(vm.region()),
+                mapOf()
+            )
         compute.name = vm.name()
         compute.labels = mapOf<String, String>()
 
@@ -473,10 +539,12 @@ fun TranslationResult.getImageByName(name: String?): Image? {
 }
 
 fun TranslationResult.getObjectStorageByUrl(url: String?): ObjectStorage? {
-    return this.additionalNodes.firstOrNull {
-        it is ObjectStorage && it.httpEndpoint.url == url
-    } as?
-        ObjectStorage
+    //    return this.additionalNodes.firstOrNull {
+    //        // TODO(all): How to check that?
+    //        it is ObjectStorage && it.httpEndpoint.url == url
+    //    } as?
+    //        ObjectStorage
+    return null
 }
 
 fun TranslationResult.locationForRegion(region: Region): GeoLocation {
