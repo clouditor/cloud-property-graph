@@ -116,7 +116,10 @@ class LocalTestingPass : Pass() {
             if (service.name == "postgres") {
                 val db =
                     RelationalDatabaseService(
-                        mutableListOf<DatabaseStorage>(),
+                        null,
+                        mutableListOf<Storage>(),
+                        null,
+                        null,
                         null,
                         null,
                         null,
@@ -129,7 +132,10 @@ class LocalTestingPass : Pass() {
             if (service.name == "mongo") {
                 val db =
                     DocumentDatabaseService(
-                        mutableListOf<DatabaseStorage>(),
+                        null,
+                        mutableListOf<Storage>(),
+                        null,
+                        null,
                         null,
                         null,
                         null,
