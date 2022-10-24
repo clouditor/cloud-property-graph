@@ -580,11 +580,12 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
     // Get description from OWLClassExpression
     private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+        var description = ""
         for (elem in nce.classesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
                 if (item != null) {
-                    if (item.property.iri.remainder.get() == "comment") {
-                        var description = item.value.toString()
+                    if (item.property.iri.remainder.get() == "comment" || item.property.iri.remainder.get() == "description") {
+                        description = item.value.toString()
                         return  description.substring(1, description.length-1)
                     }
                 }
