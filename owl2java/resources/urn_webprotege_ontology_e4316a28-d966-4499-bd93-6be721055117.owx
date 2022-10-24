@@ -2256,7 +2256,7 @@ name = metadata.name</Literal>
         <Literal>ActivityLogging</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/AnomalyDetection</IRI>
         <Literal>analyzes the activity of a NetworkService (which includes DatabaseServices)</Literal>
     </AnnotationAssertion>
@@ -2266,7 +2266,7 @@ name = metadata.name</Literal>
         <Literal>AnomalyDetection</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/Application</IRI>
         <Literal>This encapsulates the whole (source) code of an application.</Literal>
     </AnnotationAssertion>
@@ -2301,7 +2301,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">Authorization</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/AutomaticUpdates</IRI>
         <Literal>This feature is, e.g., available on some VM services to automatically update their software. It ensures that a resource is protected from tampering with its state.</Literal>
     </AnnotationAssertion>
@@ -2421,7 +2421,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">DatabaseService</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/DatabaseStorage</IRI>
         <Literal>describes the actual database or a table in a database</Literal>
     </AnnotationAssertion>
@@ -2476,7 +2476,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">HttpClientLibrary</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/HttpEndpoint</IRI>
         <Literal>Via the Authenticity relationship, the access type can be specified, e.g. public access (no authentication), password-based, etc.</Literal>
     </AnnotationAssertion>
@@ -2551,7 +2551,7 @@ name = metadata.name</Literal>
         <Literal>L3Firewall</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/LoadBalancer</IRI>
         <Literal>A Load Balancer may have multiple access restriction features, e.g. a L3 firewall and a WAF</Literal>
     </AnnotationAssertion>
@@ -2561,7 +2561,7 @@ name = metadata.name</Literal>
         <Literal>LoadBalancer</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/LogOutput</IRI>
         <Literal>A LogOperation is used by an application</Literal>
     </AnnotationAssertion>
@@ -2581,7 +2581,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">Logging</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/LoggingService</IRI>
         <Literal>A logging-as-a-service offering, e.g. for analyzing logs; has a Storage resource that stores the logs</Literal>
     </AnnotationAssertion>
@@ -2591,7 +2591,7 @@ name = metadata.name</Literal>
         <Literal>LoggingService</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/MalwareProtection</IRI>
         <Literal>analyzes the activity within a Compute resource</Literal>
     </AnnotationAssertion>
@@ -2691,7 +2691,7 @@ name = metadata.name</Literal>
         <Literal>PasswordPolicy</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/ProxiedEndpoint</IRI>
         <Literal>An HTTP endpoint, that is routed through a (reverse) proxy, e.g. a load balancer.</Literal>
     </AnnotationAssertion>
@@ -2761,7 +2761,7 @@ name = metadata.name</Literal>
         <Literal>StorageService</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/TransportEncryption</IRI>
         <Literal>enabled means the resource _can_ be reached via https, while enforced means it _can only_ be reached via https (or http traffic is redirected)</Literal>
     </AnnotationAssertion>
@@ -2791,7 +2791,7 @@ name = metadata.name</Literal>
         <Literal xml:lang="english">VirtualSubNetwork</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/WebApplicationFirewall</IRI>
         <Literal>A WAF is a L7 firewall that includes L3 capabilities</Literal>
     </AnnotationAssertion>
@@ -2811,7 +2811,7 @@ name = metadata.name</Literal>
         <Literal>bootLog</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/broadAssignments</IRI>
         <Literal>see Privacy Smells: Detecting Privacy Problems in Cloud Architectures (2020)</Literal>
     </AnnotationAssertion>
@@ -2836,7 +2836,7 @@ name = metadata.name</Literal>
         <Literal>disablePasswordPolicy</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/interval</IRI>
         <Literal>The interval refers to the update interval in days.</Literal>
     </AnnotationAssertion>
@@ -2856,7 +2856,7 @@ name = metadata.name</Literal>
         <Literal>measures</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
         <IRI>http://graph.clouditor.io/classes/mixedDuties</IRI>
         <Literal>see Privacy Smells: Detecting Privacy Problems in Cloud Architectures (2020)</Literal>
     </AnnotationAssertion>
