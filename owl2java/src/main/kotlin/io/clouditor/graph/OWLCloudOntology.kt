@@ -611,7 +611,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         for (elem in ontology!!.dataPropertiesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(props.elementAt(0), ontology!!)) {
                 if (item != null) {
-                    if (item.property.iri.remainder.get() == "comment") {
+                    if (item.property.iri.remainder.get() == "comment" || item.property.iri.remainder.get() == "description")  {
                         description = item.value.toString()
                         return description.substring(1, description.length - 1)
                     }
