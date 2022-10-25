@@ -588,6 +588,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return ""
     }
 
+    // TODO(all): Refactor methods getClassDescription() and getDataPropertyDescription()
     // Get class description from OWLClassExpression
     private fun getClassDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
         var description = ""
