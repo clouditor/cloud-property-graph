@@ -106,9 +106,9 @@ object SemanticNodeGenerator {
             }
         }
 
-        // Add description
-        if (goSource.description != "")
-            goSourceCode += "// " + goSource.description + "\n"
+        // Add struct description
+        if (goSource.structDescription != "")
+            goSourceCode += "// " + goSource.structDescription + "\n"
 
         // Add struct
         goSourceCode += "type " + goSource.name + " struct {\n"
@@ -247,6 +247,8 @@ object SemanticNodeGenerator {
     private fun getDataPropertiesForGoSource(properties: List<Properties>): String {
         var propertiesStringSource = ""
         for (property in properties) {
+            if (property.propertyDescription != "")
+                propertiesStringSource += "\n\t// ${property.propertyDescription}"
             property.propertyType?.let {
                 propertiesStringSource += """
 	${StringUtils.capitalize(property.propertyName)}	${getGoType(it)}""" + "\t" + """`json:"${property.propertyName}"`"""

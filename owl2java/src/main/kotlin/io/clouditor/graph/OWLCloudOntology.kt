@@ -45,7 +45,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             if (clazz.isOWLThing) continue
             val gs = getGoInformationFromOWLClass(clazz, classes)
             gs.packageName = packageName
-            gs.description = getDescription(clazz, ontology)
+            gs.structDescription = getClassDescription(clazz, ontology)
             goList.add(gs)
         }
         return goList
@@ -244,7 +244,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         javaClass = setClassConstructor(javaClass)
 
         // Set description
-        var description = getDescription(clazz, ontology)
+        var description = getClassDescription(clazz, ontology)
         if (description != "")
             javaClass.javaDoc.setText(description)
 
@@ -309,6 +309,8 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                     StringUtils.capitalize(classDataPropertyValue)
                 property.propertyType = classDataPropertyValue
                 property.propertyName = classRelationshipPropertyName
+                // Set data properties description, e.g., for the property mixedDuties from the RBAC class
+                property.propertyDescription = getDataPropertyDescription(ontology, classAxiom.dataPropertiesInSignature)
             } else if (superClass.classExpressionType == ClassExpressionType.DATA_HAS_VALUE) {
                 // little but hacky,
                 classRelationshipPropertyName = getClassDataPropertyName(superClass)
@@ -317,7 +319,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                     StringUtils.capitalize(classDataPropertyValue)
                 property.propertyType = classDataPropertyValue
                 property.propertyName = classRelationshipPropertyName
-
+                property.propertyDescription = getDataPropertyDescription(ontology, classAxiom.dataPropertiesInSignature)
 //                // check, if the type is a Map, then we need to ignore it in neo4j for now
 //                if (classDataPropertyValue.startsWith("java.util.Map")) {
 //                    property.addAnnotation("org.neo4j.ogm.annotation.Transient");
@@ -586,8 +588,8 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return ""
     }
 
-    // Get description from OWLClassExpression
-    private fun getDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
+    // Get class description from OWLClassExpression
+    private fun getClassDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
         var description = ""
         for (elem in nce.classesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
