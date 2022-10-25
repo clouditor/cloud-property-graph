@@ -10,10 +10,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.*
 import org.semanticweb.owlapi.model.parameters.Imports
 import org.semanticweb.owlapi.search.EntitySearcher
-import uk.ac.manchester.cs.owl.owlapi.OWLDataSomeValuesFromImpl
-import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl
-import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl
+import uk.ac.manchester.cs.owl.owlapi.*
 import java.io.File
 import java.util.stream.Collectors
 
@@ -75,7 +72,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     private fun getGoInformationFromOWLClass(clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
-        var gs = GoStruct(getClassName(clazz), getSuperClassName(clazz))
+        var gs = GoStruct(getFormatedClassName(clazz), getSuperClassName(clazz))
 
         // Set variables by 'OWL object properties'
         gs = setOWLClassObjectProperties(gs, clazz, classes)
@@ -347,13 +344,19 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             val ce = classAxiom as OWLSubClassOfAxiomImpl
             val superClass = ce.superClass
 
-            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is  an literal (string)
+            // If type is DATA_SOME_VALUES_FROM, the 'OWL data property value' is  a literal (string)
             if (superClass.classExpressionType == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                 classRelationshipPropertyName = getClassDataPropertyName(superClass)
                 classDataPropertyValue = getClassDataPropertyValue(superClass as OWLDataSomeValuesFromImpl)
                 if (classDataPropertyValue == "string") classDataPropertyValue =
                     StringUtils.capitalize(classDataPropertyValue)
-                javaClass.addProperty(classDataPropertyValue, classRelationshipPropertyName).field.setProtected()
+
+                // Set data properties description, e.g., for the property mixedDuties from the RBAC class
+                val dataPropertiesDescription = getDataPropertyDescription(ontology, classAxiom.dataPropertiesInSignature)
+                if (dataPropertiesDescription != "")
+                    javaClass.addProperty(classDataPropertyValue, classRelationshipPropertyName).field.setProtected().javaDoc.setText(dataPropertiesDescription)
+                else
+                    javaClass.addProperty(classDataPropertyValue, classRelationshipPropertyName).field.setProtected()
             } else if (superClass.classExpressionType == ClassExpressionType.DATA_HAS_VALUE) {
                 // little but hacky,
                 classRelationshipPropertyName = getClassDataPropertyName(superClass)
@@ -367,6 +370,11 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                 if (classDataPropertyValue.startsWith("java.util.Map")) {
                     property.addAnnotation("org.neo4j.ogm.annotation.Transient")
                 }
+
+                // Set data properties description, e.g., for the property interval from the AutomaticUpdates class
+                val dataPropertiesDescription = getDataPropertyDescription(ontology, classAxiom.dataPropertiesInSignature)
+                if (dataPropertiesDescription != "")
+                    property.javaDoc.setText(dataPropertiesDescription)
             }
         }
         return javaClass
@@ -501,7 +509,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
             return false
         }
         for (claz in classes) {
-            if (getClassName(claz) == rootClassName) {
+            if (getFormatedClassName(claz) == rootClassName) {
                 rootClassName = getSuperClassName(claz)
                 if (isRootClassNameResource(claz, classes)) {
                     return true
@@ -542,7 +550,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return formattedString
     }
 
-    private fun getClassName(clazz: OWLClass): String {
+    private fun getFormatedClassName(clazz: OWLClass): String {
         var objectName = getClassName(clazz, ontology)
 
         // Format class name
@@ -587,6 +595,23 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                     if (item.property.iri.remainder.get() == "comment" || item.property.iri.remainder.get() == "description") {
                         description = item.value.toString()
                         return  description.substring(1, description.length-1)
+                    }
+                }
+            }
+        }
+        return ""
+    }
+
+    // Get description from a data property, e.g., interval
+    private fun getDataPropertyDescription(ontology: OWLOntology?, props: MutableSet<OWLDataProperty>): String {
+        var description = ""
+
+        for (elem in ontology!!.dataPropertiesInSignature) {
+            for (item in EntitySearcher.getAnnotationObjects(props.elementAt(0), ontology!!)) {
+                if (item != null) {
+                    if (item.property.iri.remainder.get() == "comment") {
+                        description = item.value.toString()
+                        return description.substring(1, description.length - 1)
                     }
                 }
             }
