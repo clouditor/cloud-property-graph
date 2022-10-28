@@ -888,7 +888,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1754,7 +1754,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
