@@ -108,7 +108,7 @@ object SemanticNodeGenerator {
 
         // Add struct description
         if (goSource.structDescription != "")
-            goSourceCode += "// " + goSource.name + " " + goSource.structDescription + "\n"
+            goSourceCode += "// " + goSource.name + " is an entity in our Cloud ontology. " + goSource.structDescription + "\n"
 
         // Add struct
         goSourceCode += "type " + goSource.name + " struct {\n"
