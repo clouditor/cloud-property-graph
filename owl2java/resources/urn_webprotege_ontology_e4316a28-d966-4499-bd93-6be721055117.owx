@@ -213,9 +213,6 @@
         <Class IRI="http://graph.clouditor.io/classes/MessagingHub"/>
     </Declaration>
     <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/Metric"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
     </Declaration>
     <Declaration>
@@ -264,16 +261,7 @@
         <Class IRI="http://graph.clouditor.io/classes/RelationalDatabaseService"/>
     </Declaration>
     <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
-    </Declaration>
-    <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/RequirementCatalog"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
-    </Declaration>
-    <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/RiskImpact"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/RoleAssignment"/>
@@ -1449,13 +1437,6 @@
         <Class IRI="http://graph.clouditor.io/classes/IoT"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/Metric"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty IRI="http://graph.clouditor.io/classes/measures"/>
-            <Class IRI="http://graph.clouditor.io/classes/SecurityFeature"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         <Class IRI="http://graph.clouditor.io/classes/Networking"/>
     </SubClassOf>
@@ -1639,29 +1620,8 @@
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
     </SubClassOf>
     <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
-            <Class IRI="http://graph.clouditor.io/classes/Metric"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/RequirementCatalog"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
-            <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
         <Class IRI="http://graph.clouditor.io/classes/Logging"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/RiskImpact"/>
-        <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:value"/>
-            <Datatype abbreviatedIRI="xsd:float"/>
-        </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/RoleAssignment"/>
@@ -2612,11 +2572,6 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/Metric</IRI>
-        <Literal>Metric</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/NetworkInterface</IRI>
         <Literal xml:lang="english">NetworkInterface</Literal>
     </AnnotationAssertion>
@@ -2712,23 +2667,8 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/Requirement</IRI>
-        <Literal>Requirement</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/RequirementCatalog</IRI>
-        <Literal>RequirementCatalog</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/ResourceLogging</IRI>
         <Literal>ResourceLogging</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/RiskImpact</IRI>
-        <Literal xml:lang="english">RiskImpact</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
