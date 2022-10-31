@@ -1392,7 +1392,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoggingService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
