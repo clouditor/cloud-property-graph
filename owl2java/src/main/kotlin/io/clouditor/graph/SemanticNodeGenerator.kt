@@ -143,7 +143,7 @@ object SemanticNodeGenerator {
         val receiverType = gs.name
         val receiverChar = receiverType.first().lowercaseChar()
 
-        return "func ($receiverChar *$receiverType) Type() string {\n\treturn \"$receiverType\"\n}"
+        return "func (*$receiverType) Type() string {\n\treturn \"$receiverType\"\n}"
 
     }
 
