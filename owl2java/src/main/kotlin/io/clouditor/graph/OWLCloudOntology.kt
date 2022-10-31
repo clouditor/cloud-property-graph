@@ -480,8 +480,11 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return javaClass
     }
 
+    // Returns the plural of a string, except the string contains the word 'Storage' (case insensitive).
     private fun getPlural(s: String): String {
-        return if (s[s.length - 1] == 'y') {
+        return if (s.contains("storage", true) ) {
+            return s
+        } else if (s[s.length - 1] == 'y') {
             s.substring(0, s.length - 1) + "ies"
         } else s + "s"
     }
