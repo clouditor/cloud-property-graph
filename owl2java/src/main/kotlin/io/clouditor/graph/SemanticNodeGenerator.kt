@@ -1,15 +1,12 @@
 package io.clouditor.graph
 
-import kotlin.Throws
-import kotlin.jvm.JvmStatic
-import org.jboss.forge.roaster.model.source.JavaClassSource
 import org.apache.commons.lang3.StringUtils
+import org.jboss.forge.roaster.model.source.JavaClassSource
 import org.semanticweb.owlapi.model.OWLOntologyCreationException
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.Arrays
-import java.util.Locale
+import java.util.*
 import java.util.stream.Collectors
 
 object SemanticNodeGenerator {
@@ -97,6 +94,10 @@ object SemanticNodeGenerator {
              
              
              """.trimIndent()
+
+        // Add type array, e.g., var BlockStorageType = []string{"BlockStorage", "Storage", "Resource"}
+        goSourceCode += addTypeArray(goSource.name) + "\n"
+
 
         // Add imports
         for (elem in goSource.dataProperties){
@@ -256,6 +257,26 @@ object SemanticNodeGenerator {
         }
         return propertiesStringSource
     }
+
+    private fun addTypeArray(name: String): String? {
+        when (name) {
+            "BlockStorage" -> return "var BlockStorageType = []string { \"BlockStorage\", \"Storage\", \"Resource\"}\n"
+            "ObjectStorage" -> return "var ObjectStorageType = []string {\"BlockStorage\", \"Storage\", \"Resource\"}\n"
+            "FileStorage" -> return "var FileStorageType = []string {\"FileStorage\", \"Storage\", \"Resource\"}\n"
+            "Container" -> return "var ContainerType = []string {\"Container\", \"Compute\", \"Resource\"}\n"
+            "VirtualMachine" -> return "var VirtualMachineType = []string {\"VirtualMachine\", \"Compute\", \"Resource\"}\n"
+            "Function" -> return "var FunctionType = []string {\"Function\", \"Compute\", \"Resource\"}\n"
+            "NetworkInterface" -> return "var NetworkInterface = []string {\"NetworkInterface\", \"Compute\", \"Resource\"}\n"
+            "NetworkService" -> return "var NetworkServiceType = []string {\"NetworkService\", \"Resource\"}\n"
+            "LoadBalancer" -> return "var LoadBalancerType = []string {\"LoadBalancer\", \"NetworkService\", \"Resource\"}\n"
+            "StorageService" -> return """
+     var StorageServiceType = []string {"StorageService", "NetworkService", "Networking", "Resource"}
+     
+     """.trimIndent()
+        }
+        return ""
+    }
+
 
     // Checks property type and if it is a security feature (regarding the ontology), return the adjusted type
     private fun getAdjustedPropertyType(type: String): String {
