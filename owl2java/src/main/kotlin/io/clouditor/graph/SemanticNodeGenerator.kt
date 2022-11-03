@@ -261,12 +261,12 @@ object SemanticNodeGenerator {
     private fun addTypeArray(name: String): String? {
         when (name) {
             "BlockStorage" -> return "var BlockStorageType = []string { \"BlockStorage\", \"Storage\", \"Resource\"}\n"
-            "ObjectStorage" -> return "var ObjectStorageType = []string {\"BlockStorage\", \"Storage\", \"Resource\"}\n"
+            "ObjectStorage" -> return "var ObjectStorageType = []string {\"ObjectStorage\", \"Storage\", \"Resource\"}\n"
             "FileStorage" -> return "var FileStorageType = []string {\"FileStorage\", \"Storage\", \"Resource\"}\n"
             "Container" -> return "var ContainerType = []string {\"Container\", \"Compute\", \"Resource\"}\n"
             "VirtualMachine" -> return "var VirtualMachineType = []string {\"VirtualMachine\", \"Compute\", \"Resource\"}\n"
             "Function" -> return "var FunctionType = []string {\"Function\", \"Compute\", \"Resource\"}\n"
-            "NetworkInterface" -> return "var NetworkInterface = []string {\"NetworkInterface\", \"Compute\", \"Resource\"}\n"
+            "NetworkInterface" -> return "var NetworkInterfaceType = []string {\"NetworkInterface\", \"Compute\", \"Resource\"}\n"
             "NetworkService" -> return "var NetworkServiceType = []string {\"NetworkService\", \"Resource\"}\n"
             "LoadBalancer" -> return "var LoadBalancerType = []string {\"LoadBalancer\", \"NetworkService\", \"Resource\"}\n"
             "StorageService" -> return """
