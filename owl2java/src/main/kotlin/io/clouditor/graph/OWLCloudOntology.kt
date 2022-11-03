@@ -246,7 +246,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         // Set description
         var description = getClassDescription(clazz, ontology)
         if (description != "")
-            javaClass.javaDoc.setText(description)
+            javaClass.javaDoc.setText(getClassName(clazz, ontology) + " is an entity in our Cloud ontology. " + description)
 
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
