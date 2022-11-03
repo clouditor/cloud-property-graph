@@ -485,7 +485,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
             storageList += storage
         }
 
-        storageAccount.storages = storageList
+        storageAccount.storage = storageList
 
         return storageAccount
     }
