@@ -273,6 +273,10 @@ object SemanticNodeGenerator {
      var StorageServiceType = []string {"StorageService", "NetworkService", "Networking", "Resource"}
      
      """.trimIndent()
+            "ObjectStorageService" -> return """
+     var ObjectStorageServiceType = []string {"ObjectStorageService", "StorageService", "NetworkService", "Networking", "Resource"}
+     
+     """.trimIndent()
         }
         return ""
     }
