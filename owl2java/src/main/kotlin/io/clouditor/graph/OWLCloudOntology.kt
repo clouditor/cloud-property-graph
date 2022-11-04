@@ -72,14 +72,41 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     private fun getGoInformationFromOWLClass(clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
-        var gs = GoStruct(getFormatedClassName(clazz), getSuperClassName(clazz))
+        var gs = GoStruct(getFormatedClassName(clazz), getParentClassName(clazz))
 
         // Set variables by 'OWL object properties'
         gs = setOWLClassObjectProperties(gs, clazz, classes)
 
         // Set variables by 'OWL data properties'
         gs = setOWLClassDataProperties(gs, clazz)
+
+        // Set resource types, e.g., []string {"BlockStorage", "Storage", "Resource"}
+        gs = setResourceTypes(gs, clazz, classes)
         return gs
+    }
+
+    // Sets the resource types of an object property, e.g., []string {"BlockStorage", "Storage", "Resource"}
+    private fun setResourceTypes(gs: GoStruct, clazz: OWLClass, classes: Set<OWLClass>): GoStruct {
+        gs.resourceTypes = getResourceType(clazz, classes).reversed()
+
+        return gs
+    }
+
+    // Returns a list of resource types if the object is under the object Resource, e.g., VirtualMachine belongs to Resource and needs a resource type list, ABAC belongs to SecurityFeature and will not need a resource type list. If the parent of an object has no parent an empty list will be returned.
+    private fun getResourceType(clazz: OWLClass, classes: Set<OWLClass>): List<String> {
+        val resourceTypes: MutableList<String> = ArrayList()
+        if (getParentClassName(clazz) == "" || !isRootClassNameResource(clazz, classes) || getParentClassName(clazz) == "owl:Thing") {
+            return emptyList()
+        } else if (getParentClassName(clazz) == resourceNameFromOwlFile) {
+            resourceTypes.add(resourceNameFromOwlFile)
+            resourceTypes.add(getClassName(clazz, ontology))
+            return resourceTypes
+        }
+
+        resourceTypes.addAll(getParentClass(clazz)?.let { getResourceType(it, classes) }!!)
+        resourceTypes.add(getClassName(clazz, ontology))
+
+        return resourceTypes
     }
 
     private fun setClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
@@ -92,13 +119,17 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return javaClass
     }
 
+    // Sets the super class name. If the super class name is empty or 'owl:Thing' the nodeSuperType is set. Note: It shouldn't happen that the super class name is empty.
     private fun setSuperClassName(javaClass: JavaClassSource, clazz: OWLClass): JavaClassSource {
-        val superClassName = getSuperClassName(clazz)
+        val nodeSuperType = "de.fraunhofer.aisec.cpg.graph.Node"
+        val superClassName = getParentClassName(clazz)
 
-        if (superClassName.isNotEmpty()) {
+        if (superClassName == "owl:Thing") {
+            javaClass.superType = nodeSuperType
+        } else  if (superClassName.isNotEmpty()) {
             javaClass.superType = superClassName
         } else {
-            javaClass.superType = "de.fraunhofer.aisec.cpg.graph.Node"
+            javaClass.superType = nodeSuperType
         }
 
         return javaClass
@@ -214,7 +245,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     // Set OWl class data properties as java class variable
-    fun getJavaClassSourceFromOWLClass(clazz: OWLClass): JavaClassSource? {
+    private fun getJavaClassSourceFromOWLClass(clazz: OWLClass): JavaClassSource? {
         var javaClass = Roaster.create(JavaClassSource::class.java)
 
         // Set class name
@@ -244,9 +275,9 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         javaClass = setClassConstructor(javaClass)
 
         // Set description
-        var description = getClassDescription(clazz, ontology)
+        val description = getClassDescription(clazz, ontology)
         if (description != "")
-            javaClass.javaDoc.setText(getClassName(clazz, ontology) + " is an entity in our Cloud ontology. " + description)
+            javaClass.javaDoc.text = getClassName(clazz, ontology) + " is an entity in our Cloud ontology. " + description
 
         // Check syntax
         if (javaClass.hasSyntaxErrors()) {
@@ -376,7 +407,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                 // Set data properties description, e.g., for the property interval from the AutomaticUpdates class
                 val dataPropertiesDescription = getDataPropertyDescription(ontology, classAxiom.dataPropertiesInSignature)
                 if (dataPropertiesDescription != "")
-                    property.javaDoc.setText(dataPropertiesDescription)
+                    property.javaDoc.text = dataPropertiesDescription
             }
         }
         return javaClass
@@ -491,21 +522,20 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
     // decapitalizes strings and decapitalizes the first 2 characters if the first 3 characters are upper case
     private fun decapitalizeString(string: String?): String {
-        if (string.isNullOrEmpty()) {
-            return ""
+        return if (string.isNullOrEmpty()) {
+            ""
         } else if (string[0].isUpperCase() && string[1].isUpperCase() && string[2].isUpperCase()) {
-            return string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
+            string[0].lowercaseChar().toString() + string[1].lowercaseChar().toString() + string.substring(2)
         } else {
-            return string[0].lowercaseChar()
+            string[0].lowercaseChar()
                 .toString() + string.substring(1)
         }
-
-        return ""
     }
 
+    // Returns true if the root class name of an object is Resource. Note: It doesn't matter in which level it is located, it only checks if the object furthest up is a Resource.
     private fun isRootClassNameResource(clazz: OWLClass, classes: Set<OWLClass>): Boolean {
         var rootClassName: String
-        rootClassName = getSuperClassName(clazz)
+        rootClassName = getParentClassName(clazz)
         if (rootClassName == resourceNameFromOwlFile) {
             return true
         } else if (clazz.isOWLThing) {
@@ -515,7 +545,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         }
         for (claz in classes) {
             if (getFormatedClassName(claz) == rootClassName) {
-                rootClassName = getSuperClassName(claz)
+                rootClassName = getParentClassName(claz)
                 if (isRootClassNameResource(claz, classes)) {
                     return true
                 }
@@ -524,10 +554,11 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return false
     }
 
-    private fun getSuperClassName(clazz: OWLClass): String {
-        // Get Set of OWLClassAxioms
+    // Return the class object one level above, e.g., for the OWLClass VirtualMachine it returns the OWLClass Compute
+    private fun getParentClass(clazz: OWLClass): OWLClass? {
+// Get Set of OWLClassAxioms
         val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
-        var superClassName = ""
+        var superClassEntity: OWLClass? = null
 
         // Currently, it is assumed that there is only one 'OWL parent', but there can be several 'OWL relationships'
         for (classAxiom in tempAx) {
@@ -536,14 +567,41 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
             // If type is OWL_CLASS it is the 'OWL parent'
             if (superClass.classExpressionType == ClassExpressionType.OWL_CLASS) {
-                superClassName = getClassName(superClass, ontology)
+                superClassEntity = superClass as OWLClass
+            }
+        }
+
+        return superClassEntity
+    }
+
+    // Returns the parent class, e.g., the parent of VirtualMachine is Compute
+    // TODO(anatheka): Only call getSuperClass and get name
+    private fun getParentClassName(clazz: OWLClass): String {
+        /*val parent = getParentClass(clazz)
+        if (parent != null) {
+            return getClassName(parent, ontology)
+        }
+
+        return ""*/
+        // Get Set of OWLClassAxioms
+        val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
+        var parentClassName = ""
+
+        // Currently, it is assumed that there is only one 'OWL parent', but there can be several 'OWL relationships'
+        for (classAxiom in tempAx) {
+            val ce = classAxiom as OWLSubClassOfAxiomImpl
+            val superClass = ce.superClass
+
+            // If type is OWL_CLASS it is the 'OWL parent'
+            if (superClass.classExpressionType == ClassExpressionType.OWL_CLASS) {
+                parentClassName = getClassName(superClass, ontology)
             }
         }
 
         // Format super class name
-        superClassName = formatString(superClassName)
+        parentClassName = formatString(parentClassName)
 
-        return superClassName
+        return parentClassName
     }
 
     // Deletes not needed characters from string, e.g. space, '/', '-'
@@ -562,10 +620,6 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         if (objectName.contains("#")) objectName = objectName.split("#").toTypedArray()[1]
         objectName = formatString(objectName)
         return objectName
-    }
-
-    private fun getGoArrayClassName(nce: OWLClassExpression, ontology: OWLOntology): String {
-        return getClassName(nce, ontology) + "[]"
     }
 
     private fun getSliceClassName(nce: OWLClassExpression, ontology: OWLOntology?): String {
@@ -594,7 +648,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     // TODO(all): Refactor methods getClassDescription() and getDataPropertyDescription()
     // Get class description from OWLClassExpression
     private fun getClassDescription(nce: OWLClassExpression, ontology: OWLOntology?): String {
-        var description = ""
+        val description: String
         for (elem in nce.classesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
                 if (item != null) {
@@ -610,10 +664,10 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
 
     // Get description from a data property, e.g., interval
     private fun getDataPropertyDescription(ontology: OWLOntology?, props: MutableSet<OWLDataProperty>): String {
-        var description = ""
+        val description: String
 
         for (elem in ontology!!.dataPropertiesInSignature) {
-            for (item in EntitySearcher.getAnnotationObjects(props.elementAt(0), ontology!!)) {
+            for (item in EntitySearcher.getAnnotationObjects(props.elementAt(0), ontology)) {
                 if (item != null) {
                     if (item.property.iri.remainder.get() == "comment" || item.property.iri.remainder.get() == "description")  {
                         description = item.value.toString()
@@ -631,9 +685,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     }
 
     private fun getClassDataPropertyValue(nce: OWLDataSomeValuesFrom): String {
-        var value = nce.filler.toString().split(":").toTypedArray()[1]
-        
-        return value
+        return nce.filler.toString().split(":").toTypedArray()[1]
     }
 
     // Get class data property name (realtionship in OWL)

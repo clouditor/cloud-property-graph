@@ -7,5 +7,4 @@ class Properties {
     var propertyDescription: String = ""
     var isRootClassNameResource = false
     var isInterface = false
-    //var description: String = ""
 }

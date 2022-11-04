@@ -126,9 +126,6 @@
         <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
     </Declaration>
     <Declaration>
-        <Class IRI="http://graph.clouditor.io/classes/Evidence"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
     </Declaration>
     <Declaration>
@@ -1005,13 +1002,6 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DocumentDatabaseService"/>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="http://graph.clouditor.io/classes/Evidence"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
-            <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
-        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
@@ -2402,11 +2392,6 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <IRI>http://graph.clouditor.io/classes/Evidence</IRI>
-        <Literal>Evidence</Literal>
-    </AnnotationAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <IRI>http://graph.clouditor.io/classes/FileStorage</IRI>
         <Literal xml:lang="english">FileStorage</Literal>
     </AnnotationAssertion>
@@ -3384,6 +3369,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>xsd:de.fraunhofer.aisec.cpg.graph.Node</AbbreviatedIRI>
         <Literal xml:lang="english">xsd:de.fraunhofer.aisec.cpg.graph.Node</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>owl:Thing</AbbreviatedIRI>
+        <Literal>owl:Thing</Literal>
     </AnnotationAssertion>
 </Ontology>
 

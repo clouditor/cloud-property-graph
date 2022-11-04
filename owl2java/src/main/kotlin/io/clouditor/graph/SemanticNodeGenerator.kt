@@ -95,17 +95,18 @@ object SemanticNodeGenerator {
              
              """.trimIndent()
 
-        // Add type array, e.g., var BlockStorageType = []string{"BlockStorage", "Storage", "Resource"}
-        goSourceCode += addTypeArray(goSource.name) + "\n"
-
-
         // Add imports
         for (elem in goSource.dataProperties){
-            if (getGoType(elem.propertyType.toString()) == "time.Duration" || getGoType(elem.propertyType.toString()) == "time.Time" ) {
+            if (getGoType(elem.propertyType) == "time.Duration" || getGoType(elem.propertyType) == "time.Time" ) {
                 goSourceCode += "import \"time\"\n\n"
                 break
             }
         }
+
+        // Add type array, e.g., var BlockStorageType = []string{"BlockStorage", "Storage", "Resource"}
+        if (goSource.resourceTypes.isNotEmpty())
+            goSourceCode += addResourceTypeArray(goSource) + "\n\n"
+
 
         // Add struct description
         if (goSource.structDescription != "")
@@ -133,58 +134,16 @@ object SemanticNodeGenerator {
                 goSourceCode += getInterfaceMethod(goSource)
         }
 
-        // TODO: Do we need that anymore?
-        // Create new function
-        //goSourceCode += getNewFunctionForObjectProperties(goSource);
         return goSourceCode
     }
 
+    // Return the golang interface method for the given struct
     private fun getInterfaceMethod(gs: GoStruct): String {
-
         val receiverType = gs.name
-        val receiverChar = receiverType.first().lowercaseChar()
 
         return "func (*$receiverType) Type() string {\n\treturn \"$receiverType\"\n}"
 
     }
-
-    // TODO: Do we need that anymore?
-//    private fun getNewFunctionForObjectProperties(gs: GoStruct): String {
-//        var newFunctionString = ""
-//        newFunctionString += "func New" + gs.name + "("
-//        for (property in gs.dataProperties) {
-//            property.propertyType?.let {
-//                newFunctionString += property.propertyName + " " + getGoType(it) + ", "
-//            }
-//        }
-//
-//        // Delete last `,` if exists and close )
-//        if (newFunctionString[newFunctionString.length - 2] == ',') {
-//            newFunctionString = newFunctionString.substring(0, newFunctionString.length - 2) + ") "
-//        } else {
-//            newFunctionString += ") "
-//        }
-//        newFunctionString += """
-//            *${gs.name}{
-//
-//            """.trimIndent()
-//        newFunctionString += """	return &${gs.name}{
-//"""
-//        for (property in gs.objectProperties) {
-//            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}: TODO get propertyName stuff,
-//"""
-//        }
-//        for (property in gs.dataProperties) {
-//            newFunctionString += """		${StringUtils.capitalize(property.propertyName)}:	${
-//                StringUtils.uncapitalize(
-//                    property.propertyName
-//                )
-//            },
-//"""
-//        }
-//        newFunctionString += "\t}\n}"
-//        return newFunctionString
-//    }
 
     // Change property type to GO type
     private fun getGoType(type: String): String {
@@ -212,7 +171,7 @@ object SemanticNodeGenerator {
     }
 
     private fun getParentClassName(parentClass: String): String {
-        if (parentClass == "") return ""
+        if (parentClass == "" || parentClass == "owl:Thing") return ""
         val parentClassSplit = parentClass.split("\\.").toTypedArray()
         return parentClassSplit[parentClassSplit.size - 1]
     }
@@ -250,41 +209,33 @@ object SemanticNodeGenerator {
         for (property in properties) {
             if (property.propertyDescription != "")
                 propertiesStringSource += "\n\t// ${property.propertyDescription}"
-            property.propertyType?.let {
+            property.propertyType.let {
                 propertiesStringSource += """
-	${StringUtils.capitalize(property.propertyName)}	${getGoType(it)}""" + "\t" + """`json:"${property.propertyName}"`"""
+            ${StringUtils.capitalize(property.propertyName)}	${getGoType(it)}""" + "\t" + """`json:"${property.propertyName}"`"""
             }
         }
         return propertiesStringSource
     }
 
-    private fun addTypeArray(name: String): String? {
-        when (name) {
-            "BlockStorage" -> return "var BlockStorageType = []string { \"BlockStorage\", \"Storage\", \"Resource\"}\n"
-            "ObjectStorage" -> return "var ObjectStorageType = []string {\"ObjectStorage\", \"Storage\", \"Resource\"}\n"
-            "FileStorage" -> return "var FileStorageType = []string {\"FileStorage\", \"Storage\", \"Resource\"}\n"
-            "Container" -> return "var ContainerType = []string {\"Container\", \"Compute\", \"Resource\"}\n"
-            "VirtualMachine" -> return "var VirtualMachineType = []string {\"VirtualMachine\", \"Compute\", \"Resource\"}\n"
-            "Function" -> return "var FunctionType = []string {\"Function\", \"Compute\", \"Resource\"}\n"
-            "NetworkInterface" -> return "var NetworkInterfaceType = []string {\"NetworkInterface\", \"Compute\", \"Resource\"}\n"
-            "NetworkService" -> return "var NetworkServiceType = []string {\"NetworkService\", \"Resource\"}\n"
-            "LoadBalancer" -> return "var LoadBalancerType = []string {\"LoadBalancer\", \"NetworkService\", \"Resource\"}\n"
-            "StorageService" -> return """
-     var StorageServiceType = []string {"StorageService", "NetworkService", "Networking", "Resource"}
-     
-     """.trimIndent()
-            "ObjectStorageService" -> return """
-     var ObjectStorageServiceType = []string {"ObjectStorageService", "StorageService", "NetworkService", "Networking", "Resource"}
-     
-     """.trimIndent()
+    // Returns the resource type array
+    private fun addResourceTypeArray(struct: GoStruct): String {
+        var resourceTypeString = "var " + struct.name + "Type = []string {"
+
+        for ((counter, type) in struct.resourceTypes.withIndex()) {
+            resourceTypeString += if (counter == struct.resourceTypes.size-1){
+                "\"$type\"}"
+            } else {
+                "\"$type\", "
+            }
         }
-        return ""
+
+        return resourceTypeString
     }
 
 
     // Checks property type and if it is a security feature (regarding the ontology), return the adjusted type
     private fun getAdjustedPropertyType(type: String): String {
-        val type: String = when (type) {
+        val propType: String = when (type) {
             "Authenticity" -> "IsAuthenticity"
             "[]Authenticity" -> "[]IsAuthenticity"
             "Authorization" -> "IsAuthorization"
@@ -293,7 +244,7 @@ object SemanticNodeGenerator {
             else -> "*$type"
         }
 
-        return type
+        return propType
     }
 
     // Write Go source code to filesystem
@@ -359,14 +310,14 @@ object SemanticNodeGenerator {
             }
         }
     }
-private fun autoGeneratedCodeText(): String{
-    val autoGenCodeText = "// Auto-generated code by owl2java (https://github.com/clouditor/cloud-property-graph)"
 
-    return autoGenCodeText
-}
+    // Returns text with auto-generation message
+    private fun autoGeneratedCodeText(): String{
+        return "// Auto-generated code by owl2java (https://github.com/clouditor/cloud-property-graph)"
+    }
 
     private fun clouditorCopyright():String {
-        val copyright = """
+       return """
 // Copyright 2022 Fraunhofer AISEC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -392,6 +343,5 @@ private fun autoGeneratedCodeText(): String{
 //
 // This file is part of Clouditor Community Edition.
 """
-        return copyright
     }
 }
