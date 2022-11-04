@@ -554,7 +554,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return false
     }
 
-    // Return the class object one level above, e.g., for the OWLClass VirtualMachine it returns the OWLClass Compute
+    // Returns the parent class object (one level above), e.g., for the OWLClass VirtualMachine it returns the OWLClass Compute
     private fun getParentClass(clazz: OWLClass): OWLClass? {
 // Get Set of OWLClassAxioms
         val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
@@ -574,34 +574,15 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return superClassEntity
     }
 
-    // Returns the parent class, e.g., the parent of VirtualMachine is Compute
-    // TODO(anatheka): Only call getSuperClass and get name
+    // Returns the parent class name, e.g., the parent of VirtualMachine is Compute
     private fun getParentClassName(clazz: OWLClass): String {
-        /*val parent = getParentClass(clazz)
+        val parent = getParentClass(clazz)
         if (parent != null) {
-            return getClassName(parent, ontology)
+            // Format class name
+            return formatString(getClassName(parent, ontology))
         }
 
-        return ""*/
-        // Get Set of OWLClassAxioms
-        val tempAx = ontology!!.getAxioms(clazz, Imports.EXCLUDED)
-        var parentClassName = ""
-
-        // Currently, it is assumed that there is only one 'OWL parent', but there can be several 'OWL relationships'
-        for (classAxiom in tempAx) {
-            val ce = classAxiom as OWLSubClassOfAxiomImpl
-            val superClass = ce.superClass
-
-            // If type is OWL_CLASS it is the 'OWL parent'
-            if (superClass.classExpressionType == ClassExpressionType.OWL_CLASS) {
-                parentClassName = getClassName(superClass, ontology)
-            }
-        }
-
-        // Format super class name
-        parentClassName = formatString(parentClassName)
-
-        return parentClassName
+        return ""
     }
 
     // Deletes not needed characters from string, e.g. space, '/', '-'
