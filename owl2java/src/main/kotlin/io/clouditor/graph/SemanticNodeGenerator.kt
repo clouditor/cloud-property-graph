@@ -62,6 +62,11 @@ object SemanticNodeGenerator {
                 owlInputPath = args[0]
             }
         }
+
+        // Clear contents of previous output folders to guarantee full rebuild
+        java.io.File(outputBaseJava).deleteRecursively()
+        java.io.File(outputBaseGo).deleteRecursively()
+
         val owl3 = OWLCloudOntology(owlInputPath, resourceNameFromOwlFile)
 
         // Create java class sources
