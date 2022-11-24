@@ -5,6 +5,8 @@ import kotlin.test.assertEquals
 import org.junit.Test
 import org.junit.jupiter.api.Tag
 import org.neo4j.driver.internal.InternalPath
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Measurement
 
 @Tag("TestingLibrary")
 open class DetectabilityTest {
@@ -22,7 +24,6 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        // we expect exactly one threat path
         assertEquals(1, result.count())
 
         result.first().apply {
@@ -107,7 +108,7 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
-        // assertEquals(2, result.count())
+        assertEquals(2, result.count())
     }
 
     @Test
@@ -135,7 +136,7 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
-        // assertEquals(2, result.count())
+        assertEquals(2, result.count())
     }
 
     @Test
@@ -163,7 +164,7 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
-        // assertEquals(2, result.count())
+        assertEquals(2, result.count())
     }
 
     @Test
@@ -183,15 +184,15 @@ open class DetectabilityTest {
     @Test
     fun testD5Python() {
         val result =
-            executePPGAndQuery(
-                Path(
-                    System.getProperty("user.dir") +
-                        "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python"
-                ),
-                listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
-            )
-        // assertEquals(2, result.count())
+        executePPGAndQuery(
+            Path(
+                System.getProperty("user.dir") +
+                    "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python"
+            ),
+            listOf(Path(".")),
+            "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
+        )
+        assertEquals(2, result.count())
     }
 
     @Test

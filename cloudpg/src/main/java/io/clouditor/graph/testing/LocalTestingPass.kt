@@ -23,7 +23,7 @@ class LocalTestingPass : Pass() {
             // specified the exact test case location, e.g.
             // ".../ppg-testing-library/Non-Repudiation/NR1-credentials-non-repudiation/Go"
             rootPath.toFile().walkTopDown().iterator().forEach { file ->
-                if (file.extension == "yml") {
+                if (file.name == "config.yml") {
                     val mapper = ObjectMapper(YAMLFactory())
                     mapper.registerModule(KotlinModule())
 
