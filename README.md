@@ -1,4 +1,4 @@
-# Cloud Property Graph (CloudPG)
+# Cloud Property Graph (CloudPG) / Privacy Property Graph
 
 [![build](https://github.com/clouditor/cloud-property-graph/actions/workflows/build.yml/badge.svg)](https://github.com/clouditor/cloud-property-graph/actions/workflows/build.yml)
 ![GitHub last commit](https://img.shields.io/github/last-commit/clouditor/cloud-property-graph)
@@ -7,11 +7,14 @@
 
 
 The Cloud Property Graph [1] is based on a Code Property Graph and tries to connect static code analysis and Cloud runtime assessment. It is based on the [CPG](https://github.com/Fraunhofer-AISEC/cpg) project by Fraunhofer AISEC. We plan to contribute certain parts of this project back to the upstream repo, once they are more matured.
-We have recently created an extension of the CloudPG which we call the Privacy Property Graph [2]. This extension includes, among others, a taint tracking mechanism for personal data.
+
+We have recently extended the CloudPG to also enable software privacy analyses. This extension is called the Privacy Property Graph [2]. This extension includes, among others, a taint tracking mechanism for personal data.
+The following graphic describes the differences between cpg, CloudPG, and Privacy Property Graph (PPG).
+
+![](figures/propertygraphs.png)
 
 Furthermore, we plan to integrate a Go-based version of the CloudPG into our main Cloud assessment tool, [Clouditor](https://github.com/clouditor/clouditor).
-
-This project primarily serves as a research prototype, so please do not expect API stability.
+Note that this project primarily serves as a research prototype, so please do not expect API stability.
 
 ## Build
 
