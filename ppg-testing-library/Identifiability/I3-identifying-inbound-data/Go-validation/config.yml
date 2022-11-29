@@ -4,7 +4,3 @@ services:
     host: test.com
   - type: client
     name: client
-  - type: db
-    name: postgres
-  - type: db
-    name: mongo

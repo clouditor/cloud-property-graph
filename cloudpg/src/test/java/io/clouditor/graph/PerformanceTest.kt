@@ -10,10 +10,10 @@ import org.openjdk.jmh.annotations.*
 open class PerformanceTest {
 
     // sets up many files
-    @Setup
+    // @Setup
     open fun setUpMultipleFiles() {
         // set the range
-        val range = Math.pow(2.0, 0.0)
+        val range = 7500
         // set the temporary directory and duplicate files into it
         val dir =
             Path(
@@ -27,11 +27,29 @@ open class PerformanceTest {
             System.getProperty("user.dir") +
                 "/../ppg-testing-library/Disclosure/unencrypted-transmission/Python/server.py"
 
+        // duplicate the function as specified in the range
         for (i in 1..range.toInt()) {
-            val srvTmp = createTempFile(dir, "disclosureServer$i", ".py")
-            srvTmp.writeText(serverSrc.readFile())
-            val clientTmp = createTempFile(dir, "disclosureClient$i", ".py")
-            clientTmp.writeText(serverSrc.readFile())
+            val tmp = createTempFile(dir, "detectability", ".py")
+            // append the function 10 times so the file has 100 LoC
+            for (i in 1..10) {
+                val sampleFunction =
+                    "def encrypt(input_string: str, key: int, alphabet: str | None = None) -> str:\n" +
+                        "    alpha = alphabet or ascii_letters\n" +
+                        "\n" +
+                        "    result = \"\"\n" +
+                        "\n" +
+                        "    for character in input_string:\n" +
+                        "        if character not in alpha:\n" +
+                        "            result += character\n" +
+                        "        else:\n" +
+                        "            new_key = (alpha.index(character) + key) % len(alpha)\n" +
+                        "            result += alpha[new_key]\n" +
+                        "\n" +
+                        "    return result" +
+                        "\n" +
+                        "\n"
+                tmp.appendText(sampleFunction)
+            }
         }
     }
 
@@ -74,10 +92,9 @@ open class PerformanceTest {
     }
 
     // executes the PPG on the generated file(s)
-    @Benchmark
+    // @Benchmark
     @Test
     open fun testScalability() {
-        // println(Runtime.getRuntime().totalMemory())
         executePPG(
             Path(
                 System.getProperty("user.dir") +
@@ -89,7 +106,7 @@ open class PerformanceTest {
 
     // deletes the generated test files
     @OptIn(ExperimentalPathApi::class)
-    @TearDown
+    // @TearDown
     open fun tearDown() {
         val dir =
             Path(

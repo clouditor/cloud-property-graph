@@ -107,9 +107,9 @@ open class PolicyNonComplianceTest {
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -138,16 +138,16 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-retrieval/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p, s"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -178,14 +178,14 @@ open class PolicyNonComplianceTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -216,14 +216,14 @@ open class PolicyNonComplianceTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 

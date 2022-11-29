@@ -6,7 +6,6 @@ import (
 	"net/url"
 )
 
-// working query: MATCH p=(:Identifier)--()-[:DFG*]-(:HttpEndpoint) RETURN p
 func main() {
 	var err error
 

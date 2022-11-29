@@ -5,7 +5,6 @@ import json
 import requests
 from pymongo import MongoClient, database 
 
-# phr_db client (MongoDB)
 mongo_host = "mongo"
 user_db_client = MongoClient("mongodb://mongo:27017/")
 user_db = user_db_client.userdata

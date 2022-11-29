@@ -21,11 +21,8 @@ open class DisclosureTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
         assertEquals(1, result.count())
 
-        // compare expected nodes
         result.first().apply {
             var path = this.get("p") as Array<*>
             println("result has ${path.size} sub-paths")
@@ -49,8 +46,6 @@ open class DisclosureTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
-        // compare expected number of paths
-        println("Found ${result.count()} results")
         assertEquals(0, result.count())
     }
 
@@ -90,7 +85,6 @@ open class DisclosureTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
-        // no paths expected
         assertEquals(0, result.count())
     }
 }

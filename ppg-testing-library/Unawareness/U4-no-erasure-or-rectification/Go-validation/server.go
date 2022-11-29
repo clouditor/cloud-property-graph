@@ -21,7 +21,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(logger.SetLogger())
 
-    // All methods for submitting, retrieving, modifying, and deleting personal data are foreseen, so no Unawareness threat should be detected
+    // All methods for submitting, retrieving, modifying, and deleting personal data are implemented, so no Unawareness threat should be detected
 	r.POST("/data", post_data)
 	r.GET("/data", get_data)
 	r.PUT("/data", put_data)

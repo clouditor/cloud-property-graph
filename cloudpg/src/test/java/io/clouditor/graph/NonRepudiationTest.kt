@@ -170,14 +170,14 @@ open class NonRepudiationTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -208,14 +208,14 @@ open class NonRepudiationTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -248,14 +248,14 @@ open class NonRepudiationTest {
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
-        // assertEquals(2, result.count())
+        assertEquals(2, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
