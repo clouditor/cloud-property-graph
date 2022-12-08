@@ -97,14 +97,14 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             val path = this["p"] as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("HttpRequest"))
+            assert(lastNode.labels().contains("HttpRequest"))
         }
     }
 
@@ -133,14 +133,14 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             val path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("HttpRequest"))
+            assert(lastNode.labels().contains("HttpRequest"))
         }
     }
 
@@ -169,14 +169,15 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
-        // assertEquals(1, result.count())
+
+        assertEquals(1, result.count())
 
         result.first().apply {
             val path = this["p"] as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -205,14 +206,14 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -241,14 +242,14 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -277,14 +278,14 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 

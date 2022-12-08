@@ -1,4 +1,4 @@
-# Cloud Property Graph (CloudPG)
+# Cloud Property Graph (CloudPG) / Privacy Property Graph
 
 [![build](https://github.com/clouditor/cloud-property-graph/actions/workflows/build.yml/badge.svg)](https://github.com/clouditor/cloud-property-graph/actions/workflows/build.yml)
 ![GitHub last commit](https://img.shields.io/github/last-commit/clouditor/cloud-property-graph)
@@ -6,11 +6,15 @@
 [![](https://jitpack.io/v/clouditor/cloud-property-graph.svg)](https://jitpack.io/#clouditor/cloud-property-graph)
 
 
-The Cloud Property Graph is based on a Code Property Graph and tries to connect static code analysis and Cloud runtime assessment. It is based on the [CPG](https://github.com/Fraunhofer-AISEC/cpg) project by Fraunhofer AISEC. We aim to contribute certain parts of this project back to the upstream repo, once they are more matured.
+The Cloud Property Graph [1] is based on a Code Property Graph and tries to connect static code analysis and Cloud runtime assessment. It is based on the [CPG](https://github.com/Fraunhofer-AISEC/cpg) project by Fraunhofer AISEC. We plan to contribute certain parts of this project back to the upstream repo, once they are more matured.
+
+We have recently extended the CloudPG to also enable software privacy analyses. This extension is called the Privacy Property Graph [2]. This extension includes, among others, a taint tracking mechanism for personal data.
+The following graphic describes the differences between cpg, CloudPG, and Privacy Property Graph (PPG).
+
+![](figures/propertygraphs.png)
 
 Furthermore, we plan to integrate a Go-based version of the CloudPG into our main Cloud assessment tool, [Clouditor](https://github.com/clouditor/clouditor).
-
-This project primarily serves as a research sandbox and playground, so please do not expect API stability for now (or ever).
+Note that this project primarily serves as a research prototype, so please do not expect API stability.
 
 ## Build
 
@@ -20,6 +24,7 @@ First, the graph classes need to be built from the Ontology definitions by calli
 Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j`. 
 
 Run `cloudpg/build/install/cloudpg/bin/cloudpg`. This will print a help message with any additional needed parameters. The root path is required and the program can be called as follows: `cloudpg/build/install/cloudpg/bin/cloudpg --root=/x/testprogramm folder1/ folder2/ folder 3/`
+To also enable the taint tracking of privacy labels, include the `--enable-labels` flag: `cloudpg/build/install/cloudpg/bin/cloudpg --enable-labels --root=/x/testprogramm folder1/ folder2/ folder 3/`
 
 ## Developing Passes
 
@@ -34,9 +39,9 @@ Some implementation details need to be considered when writing passes:
 - Add a DFG edge via `node1.addNextDFG(node2)`
 
 ## Testing
-The CloudPG includes a testing library that provides test cases for certain threats. At the moment, these threats include primarily privacy threats. 
-To use this testing library, a dedicated testing mode is available which can be enabled via the flag ```--local-mode```. For example, adapt the command above with the flags ```--local-mode --root=. ppg-testing-library/```. 
+The CloudPG includes a testing library that provides test cases for certain threats. At the moment, these threats primarily include privacy threats. For more information, see [ppg-testing-library](https://github.com/clouditor/cloud-property-graph/tree/main/ppg-testing-library) folder. 
 
 ## Further reading
 
 [1] Christian Banse, Immanuel Kunz, Angelika Schneider and Konrad Weiss. Cloud Property Graph: Connecting Cloud Security Assessments with Static Code Analysis. IEEE CLOUD 2021. https://doi.org/10.1109/CLOUD53861.2021.00014
+[2] Immanuel Kunz, Konrad Weiss, Angelika Schneider and Christian Banse. Privacy Property Graph: Towards Automated Privacy Threat Modeling via Static Graph-based Analysis. Proceedings on Privacy Enhancing Technologies 2022.

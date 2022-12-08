@@ -97,7 +97,7 @@ open class UnawarenessTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>
@@ -147,15 +147,15 @@ open class UnawarenessTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             val path = this["p"] as Array<*>
             println("result has ${path.size} sub-paths")
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 
@@ -171,15 +171,15 @@ open class UnawarenessTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             val path = this["p"] as Array<*>
             println("result has ${path.size} sub-paths")
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
-            // assert(firstNode.labels().contains("PseudoIdentifier"))
+            assert(firstNode.labels().contains("PseudoIdentifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            // assert(lastNode.labels().contains("DatabaseStorage"))
+            assert(lastNode.labels().contains("DatabaseStorage"))
         }
     }
 

@@ -13,8 +13,8 @@ app = Flask(__name__)
 def parse_data():
     req = request.json
     data = {
-        "Name": req['name'],
-        "Message": req['message']
+        "name": req['name'],
+        "message": req['message']
     }
     if user_db_collection.find( { "name": data['name'] } ).count() > 0:
         return "Conflict", 409
