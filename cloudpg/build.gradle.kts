@@ -10,7 +10,7 @@ plugins {
     application
     idea
     `maven-publish`
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.5"
     // use this plugin to set all classes open which is required for kotlinx benchmark: id("org.jetbrains.kotlin.plugin.allopen") version "1.7.20-Beta"
 }
 
@@ -139,7 +139,7 @@ tasks.withType<Test>().configureEach {
     // Some tests in our testing library (intentionally) fail, so we need to ignore those tests
     ignoreFailures = true
     // increase heap for tests/benchmarks of large code files
-    // jvmArgs = mutableListOf("-Xms1024m", "-Xmx1024m")
+    // jvmArgs = mutableListOf("-Xms1024m", "-Xms1024m")
 }
 
 // configuration for kotlinx benchmark

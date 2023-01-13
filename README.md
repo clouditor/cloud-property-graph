@@ -18,7 +18,10 @@ Note that this project primarily serves as a research prototype, so please do no
 
 ## Build
 
-First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. The build using `./gradlew installDist`.
+We recommend using Java 11 to build the project. A Gradle wrapper using version 7.5 is included.
+First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. 
+Then, build the project using `./gradlew installDist`.
+
 ## Usage
  
 Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j`. 
