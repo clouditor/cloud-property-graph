@@ -98,7 +98,7 @@ open class PerformanceTest {
 
     // deletes the generated test files
     @OptIn(ExperimentalPathApi::class)
-    @TearDown
+    // @TearDown
     open fun tearDown() {
         var dir =
             Path(
