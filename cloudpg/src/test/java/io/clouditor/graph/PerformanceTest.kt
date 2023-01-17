@@ -69,7 +69,6 @@ open class PerformanceTest {
     }
 
     // executes the PPG on the generated file(s)
-    // @Benchmark
     @Test
     // @Benchmark
     // @Measurement(iterations = 6)

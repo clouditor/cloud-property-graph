@@ -11,3 +11,6 @@ It also includes validation test cases which test for the *non*-existence of a t
 ## Usage
 To execute tests, we recommend executing the existing JUnit tests. A specific test can simply be executed using gradle: `gradle test --tests io.clouditor.graph.NonRepudiationTest.testNR2PythonLoggingValidation`.
 Note that the tests use a dedicated mode called ``local-mode``, which enables a specific pass that scans for config files and creates mock hosts and databases according to its specification. It also disables some passes that are designed to retrieve information from the cloud. This mode can also manually be enabled via a flag: `cloudpg/build/install/cloudpg/bin/cloudpg --enable-labels --local-mode --root=/x/testprogramm folder1/`
+
+## Reproduce Test Results With Docker
+TODO
