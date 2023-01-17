@@ -13,4 +13,6 @@ To execute tests, we recommend executing the existing JUnit tests. A specific te
 Note that the tests use a dedicated mode called ``local-mode``, which enables a specific pass that scans for config files and creates mock hosts and databases according to its specification. It also disables some passes that are designed to retrieve information from the cloud. This mode can also manually be enabled via a flag: `cloudpg/build/install/cloudpg/bin/cloudpg --enable-labels --local-mode --root=/x/testprogramm folder1/`
 
 ## Reproduce Test Results With Docker
-TODO
+`docker build -t "ppg" .`
+`docker run -d --name ppg-tests ppg`
+`docker exec ppg-tests ./gradlew test`
