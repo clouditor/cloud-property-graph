@@ -18,13 +18,16 @@ Note that this project primarily serves as a research prototype, so please do no
 
 ## Build
 
-First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. The build using `./gradlew installDist`.
+Note that we recommend using Java 11. First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. Then, build using `./gradlew installDist`.
+
 ## Usage
  
 Start neo4j using `docker run -d --env NEO4J_AUTH=neo4j/password -p7474:7474 -p7687:7687 neo4j`. 
 
 Run `cloudpg/build/install/cloudpg/bin/cloudpg`. This will print a help message with any additional needed parameters. The root path is required and the program can be called as follows: `cloudpg/build/install/cloudpg/bin/cloudpg --root=/x/testprogramm folder1/ folder2/ folder 3/`
 To also enable the taint tracking of privacy labels, include the `--enable-labels` flag: `cloudpg/build/install/cloudpg/bin/cloudpg --enable-labels --root=/x/testprogramm folder1/ folder2/ folder 3/`
+
+The CloudPG / PPG can be used on various programming languages, such as Java, Go, Python, Typescript, and more (some of these are still in an experimental status). Also, it analyzes GitHub workflow files (see https://docs.github.com/en/actions/using-workflows).
 
 ## Developing Passes
 
