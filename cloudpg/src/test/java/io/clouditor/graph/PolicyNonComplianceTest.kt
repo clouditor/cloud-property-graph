@@ -18,7 +18,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatement) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one

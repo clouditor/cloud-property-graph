@@ -9,7 +9,7 @@ import org.neo4j.driver.internal.InternalPath
 @Tag("TestingLibrary")
 open class DetectabilityTest {
 
-    // D1 Dectectable Credentials out of scope
+    // D1 Detectable Credentials out of scope
 
     @Test
     fun testD2Python() {

@@ -76,6 +76,7 @@ class LocalTestingPass : Pass() {
                         tud
                     }
 
+                // TODO: Use component from the new CPG API
                 val application =
                     Application(
                         mutableListOf(),

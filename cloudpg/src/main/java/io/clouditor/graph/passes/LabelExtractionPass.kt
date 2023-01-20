@@ -6,6 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
@@ -284,7 +285,13 @@ class LabelExtractionPass : Pass() {
                 addLabelToInstantiations(node, label)
             }
             is DeclarationStatement -> {
-                addLabelToDFGBorderEdges(node, label)
+                // To connect to all border edges, we first need to iterate through all declared
+                // variables and find their USAGEs
+                val usages =
+                    node.declarations.filterIsInstance<VariableDeclaration>().flatMap {
+                        it.usageEdges
+                    }
+                usages.forEach { addLabelToDFGBorderEdges(it.end, label) }
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)
@@ -306,8 +313,7 @@ class LabelExtractionPass : Pass() {
 
     /** Adds a newly created Label to the DFG-Border nodes, */
     fun addLabelToDFGBorderEdges(n: Node, label: Label) {
-
-        var dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
+        val dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
 
         label.labeledNodes.addAll(dfgExitNodes)
     }

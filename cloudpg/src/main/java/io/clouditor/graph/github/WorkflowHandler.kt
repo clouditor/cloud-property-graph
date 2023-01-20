@@ -130,6 +130,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                     }
 
                 // create a new application based on the path
+                // TODO: Use component from the new CPG API
                 val application =
                     Application(
                         mutableListOf(),
