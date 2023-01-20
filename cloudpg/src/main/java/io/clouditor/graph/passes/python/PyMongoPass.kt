@@ -29,7 +29,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     fun visit(call: CallExpression) {
                         // TODO: actually, this should be a ConstructExpression, but currently, it
                         // is parsed as a CallExpression in the CPG
-                        if (call.name == "MongoClient") {
+                        if (call.name leq "MongoClient") {
                             handleClientCreate(t, call, app)
                         }
                     }
@@ -81,7 +81,7 @@ class PyMongoPass : DatabaseOperationPass() {
                 // work
                 object : IVisitor<Node?>() {
                     fun visit(mce: MemberCallExpression) {
-                        collections[mce.base]?.let { handleQuery(t, mce, app, it) }
+                        collections[mce.base!!]?.let { handleQuery(t, mce, app, it) }
                     }
                 }
             )
@@ -119,7 +119,8 @@ class PyMongoPass : DatabaseOperationPass() {
         // the services are reachable by proxies, or are clustered. Thus technically, we have
         // multiple database storage nodes (one per service)
         val storages =
-            connect.to?.map { it.getStorageOrCreate(memberExpression.name) } ?: emptyList()
+            connect.to?.map { it.getStorageOrCreate(memberExpression.name.localName) }
+                ?: emptyList()
 
         // the DFG target of this member expression is the DB object, we are interested in
         val target = memberExpression.nextDFG.iterator().next()
@@ -144,9 +145,9 @@ class PyMongoPass : DatabaseOperationPass() {
                 val pair = dbs[memberExpression.base]
                 // name should be the same in all storages of all the dbs of all the clients of all
                 // the services
-                var parentName = pair?.second?.firstOrNull()?.name
+                val parentName = pair?.second?.firstOrNull()?.name
 
-                it.getStorageOrCreate(memberExpression.name, parentName)
+                it.getStorageOrCreate(memberExpression.name.localName, parentName?.localName)
             }
                 ?: emptyList()
 
@@ -167,14 +168,14 @@ class PyMongoPass : DatabaseOperationPass() {
     ) {
         var (connect, storage) = pair
         var op: DatabaseQuery? = null
-        if (mce.name == "insert_one") {
+        if (mce.name leq "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
 
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
         }
 
-        if (mce.name == "find" || mce.name == "find_one") {
+        if (mce.name leq "find" || mce.name leq "find_one") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)

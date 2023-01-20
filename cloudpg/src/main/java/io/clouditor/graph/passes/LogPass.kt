@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.passes.Pass
@@ -32,7 +33,7 @@ abstract class LogPass : Pass() {
 
         val out = LogOperation(m, log, m.arguments.firstOrNull())
         out.location = m.location
-        out.name = name
+        out.name = Name(name)
 
         // add DFG from expression to sink
         out.logging?.let { out.value.nextDFG.add((it)) }

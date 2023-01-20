@@ -3,17 +3,17 @@ package io.clouditor.graph.github
 import com.azure.core.management.Region
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import io.clouditor.graph.*
 import io.clouditor.graph.docker.DockerCompose
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.nodes.location
 import io.clouditor.graph.passes.locationForRegion
-import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.name
 
 class WorkflowHandler(private val result: TranslationResult, val rootPath: Path) {
 
@@ -43,7 +43,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 ?.let { command ->
                     val application =
                         result.additionalNodes.filterIsInstance(Application::class.java)
-                            .firstOrNull { it.name == Path.of(path).fileName.toString() }
+                            .firstOrNull { it.name.localName == Path.of(path).fileName.toString() }
                     val rr = command.split(" ")
 
                     // look for the host
@@ -65,13 +65,22 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 result.locationForRegion(Region.US_EAST),
                                 mutableMapOf()
                             )
-                        compute.name = host
+                        compute.name = Name(host)
                         application?.runsOn?.plusAssign(compute)
 
                         result += compute
 
                         val mapper = ObjectMapper(YAMLFactory())
-                        mapper.registerModule(KotlinModule())
+                        mapper.registerModule(
+                            KotlinModule.Builder()
+                                .withReflectionCacheSize(512)
+                                .configure(KotlinFeature.NullToEmptyCollection, false)
+                                .configure(KotlinFeature.NullToEmptyMap, false)
+                                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                                .configure(KotlinFeature.SingletonSupport, false)
+                                .configure(KotlinFeature.StrictNullChecks, false)
+                                .build()
+                        )
 
                         Files.newBufferedReader(rootPath.resolve(composePath)).use { reader ->
                             val compose = mapper.readValue(reader, DockerCompose::class.java)
@@ -89,7 +98,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                             compute.geoLocation,
                                             mutableMapOf()
                                         )
-                                    networkService.name = host
+                                    networkService.name = Name(host)
 
                                     result += networkService
                                 }
@@ -110,7 +119,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 // solved
                 val tus =
                     result.translationUnits.filter {
-                        val tuPath = Path.of(it.name)
+                        val tuPath = Path.of(it.name.localName)
 
                         try {
                             tuPath.startsWith(Path.of(path).toAbsolutePath().normalize()) ||
@@ -128,18 +137,18 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         mutableListOf(),
                         tus,
                     )
-                application.name = Path.of(path).fileName.toString()
+                application.name = Name(Path.of(path).fileName.toString())
 
                 result.additionalNodes += application
 
                 // we need to assume, that GH stores its images in the US
                 val image = Image(application, result.location("US"), mapOf())
-                image.name = name
+                image.name = Name(name)
 
                 result.images += image
 
                 val builder = Builder(mutableListOf(image))
-                step.name?.let { builder.name = it }
+                step.name?.let { builder.name = Name(it) }
 
                 result.builders += builder
 

@@ -3,15 +3,18 @@
  */
 package io.clouditor.graph
 
-import de.fraunhofer.aisec.cpg.*
-import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
+import de.fraunhofer.aisec.cpg.TranslationConfiguration
+import de.fraunhofer.aisec.cpg.TranslationManager
+import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguage
+import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
+import de.fraunhofer.aisec.cpg.frontends.typescript.JavaScriptLanguage
+import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
+import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.graph
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
@@ -34,12 +37,6 @@ import picocli.CommandLine
     name = "cloud-property-graph",
     mixinStandardHelpOptions = true,
     description = ["Builds the Cloud Property Graph and persists it into a graph database."]
-)
-@OptIn(
-    ExperimentalTypeScript::class,
-    ExperimentalPython::class,
-    ExperimentalGolang::class,
-    ExperimentalGraph::class
 )
 object App : Callable<Int> {
     @CommandLine.Option(
@@ -93,7 +90,7 @@ object App : Callable<Int> {
         val result = doTranslate()
 
         val nodes = mutableListOf<Node>()
-        nodes.addAll(result.graph.nodes)
+        nodes.addAll(result.allChildren())
         nodes.addAll(result.translationUnits)
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
@@ -125,23 +122,14 @@ object App : Callable<Int> {
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
                 .defaultLanguages()
-                .registerLanguage(
+                /*.registerLanguage(
                     RubyLanguageFrontend::class.java,
                     RubyLanguageFrontend.RUBY_EXTENSIONS
-                )
-                .registerLanguage(
-                    TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS +
-                        TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
-                )
-                .registerLanguage(
-                    PythonLanguageFrontend::class.java,
-                    PythonLanguageFrontend.PY_EXTENSIONS
-                )
-                .registerLanguage(
-                    GoLanguageFrontend::class.java,
-                    GoLanguageFrontend.GOLANG_EXTENSIONS
-                )
+                )*/
+                .registerLanguage<TypeScriptLanguage>()
+                .registerLanguage<JavaScriptLanguage>()
+                .registerLanguage<PythonLanguage>()
+                .registerLanguage<GoLanguage>()
                 .debugParser(true)
                 .registerPass(GitHubWorkflowPass())
                 .registerPass(SpringBootPass())
@@ -177,8 +165,8 @@ object App : Callable<Int> {
                 .processAnnotations(true)
 
         if (labelsEnabled) {
-            val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
-            val labelPass: LabelExtractionPass = LabelExtractionPass()
+            val edgesCache = BidirectionalEdgesCachePass()
+            val labelPass = LabelExtractionPass()
             labelPass.edgesCachePass = edgesCache
             builder
                 .registerPass(DFGExtensionPass())
@@ -196,7 +184,6 @@ object App : Callable<Int> {
     }
 }
 
-@OptIn(ExperimentalPython::class, ExperimentalTypeScript::class, ExperimentalGolang::class)
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(App).execute(*args))
 
 val TranslationResult.images: MutableList<Image>
@@ -225,4 +212,8 @@ fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Appli
 
 operator fun TranslationResult.plusAssign(node: Node) {
     this.additionalNodes += node
+}
+
+infix fun Name?.leq(s: String): Boolean {
+    return this?.localName == s
 }

@@ -97,7 +97,7 @@ class LabelExtractionPass : Pass() {
     private fun handleAnnotations(t: TranslationResult, annotationParent: Node) {
         annotationParent.annotations.forEach {
             var label: Label? = null
-            when (it.name) {
+            when (it.name.localName) {
                 "PrivacyLabel" -> label = handlePrivacyLabelAnnotation(annotationParent, it)
                 "Identifier" -> label = labelCreationDispatcher<Identifier>(annotationParent)
                 "PseudoIdentifier" ->
@@ -216,7 +216,7 @@ class LabelExtractionPass : Pass() {
         val values: MutableList<Expression> =
             annotation
                 .members
-                .filter { member -> member.name == "level" }
+                .filter { member -> member.name.localName == "level" }
                 .map { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in
@@ -244,7 +244,7 @@ class LabelExtractionPass : Pass() {
         val values: MutableList<Expression> =
             annotation
                 .members
-                .filter { member -> member.name == "level" }
+                .filter { member -> member.name.localName == "level" }
                 .map { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in

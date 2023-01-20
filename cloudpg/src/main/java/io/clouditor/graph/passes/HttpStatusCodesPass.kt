@@ -8,12 +8,10 @@ import io.clouditor.graph.HttpEndpoint
 import io.clouditor.graph.additionalNodes
 
 class HttpStatusCodesPass : Pass() {
-
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-
-        result?.additionalNodes?.filterIsInstance(HttpEndpoint::class.java)?.forEach {
+    override fun accept(result: TranslationResult) {
+        result.additionalNodes?.filterIsInstance(HttpEndpoint::class.java)?.forEach {
             (it.handler?.body as CompoundStatement).statements.forEach {
                 if (it is ReturnStatement) {}
             }

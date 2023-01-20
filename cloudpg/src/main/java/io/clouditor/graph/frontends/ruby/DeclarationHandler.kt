@@ -1,9 +1,9 @@
 package io.clouditor.graph.frontends.ruby
 
 import de.fraunhofer.aisec.cpg.frontends.Handler
-import de.fraunhofer.aisec.cpg.graph.NodeBuilder
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.ProblemDeclaration
+import de.fraunhofer.aisec.cpg.graph.newParamVariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.types.UnknownType
 import org.jruby.ast.*
 
@@ -20,11 +20,11 @@ class DeclarationHandler(lang: RubyLanguageFrontend) :
         }
 
         val param =
-            NodeBuilder.newMethodParameterIn(
+            newParamVariableDeclaration(
                 node.name.idString(),
                 UnknownType.getUnknownType(),
                 false,
-                lang.getCodeFromRawNode(node)
+                frontend.getCodeFromRawNode(node)
             )
 
         return param

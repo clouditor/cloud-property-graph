@@ -23,7 +23,7 @@ class PythonValueResolver(
 
                 // support for some special calls, i.e. format
                 val s =
-                    if (node.name == "format") {
+                    if (node.name.localName == "format") {
                         // basic sub for now, loop through arguments
                         for (i in 0 until node.arguments.size) {
                             // sub on base
@@ -32,7 +32,9 @@ class PythonValueResolver(
                         }
 
                         base
-                    } else if (node.base.name == "environ" && node.name == "get") {
+                    } else if (node.base?.name?.localName == "environ" &&
+                            node.name.localName == "get"
+                    ) {
                         // environment lookup on python
                         val key = resolver.resolve(node.arguments.firstOrNull())
 

@@ -15,18 +15,16 @@ class GoCryptoPass : Pass() {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(c: CallExpression) {
-                            handleSign(result, tu, c)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(c: CallExpression) {
+                        handleSign(result, tu, c)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -35,11 +33,11 @@ class GoCryptoPass : Pass() {
         tu: TranslationUnitDeclaration,
         c: CallExpression
     ) {
-        if (c.fqn == "ed25519.Sign") {
+        if (c.name.toString() == "ed25519.Sign") {
             // the text that is signed is the second argument
-            val text_to_be_signedDRE = c.arguments[1] as DeclaredReferenceExpression
-            val plain_text = text_to_be_signedDRE.refersTo as VariableDeclaration
-            val signature = Signature(plain_text, c.nextDFG.first() as VariableDeclaration)
+            val textToBeSigned = c.arguments[1] as DeclaredReferenceExpression
+            val plainText = textToBeSigned.refersTo as VariableDeclaration
+            val signature = Signature(plainText, c.nextDFG.first() as VariableDeclaration)
             t += signature
         }
     }

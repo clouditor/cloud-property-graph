@@ -21,17 +21,20 @@ class JaxRsClientPass : HttpClientPass() {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node?>() {
-                    fun visit(r: StaticCallExpression) {
+                    fun visit(r: CallExpression) {
                         try {
                             // look for ClientBuilder.newClient (Jersey 3.x and 2.x)
-                            if (r.fqn == "jakarta.ws.rs.client.ClientBuilder.newClient" ||
-                                    r.fqn == "javax.ws.rs.client.ClientBuilder.newClient"
+                            if (r.name.toString() ==
+                                    "jakarta.ws.rs.client.ClientBuilder.newClient" ||
+                                    r.name.toString() ==
+                                        "javax.ws.rs.client.ClientBuilder.newClient"
                             ) {
                                 handleClient(t, r, tu)
                             }
 
                             // or ClientBuilder.newBuilder
-                            if (r.fqn == "javax.ws.rs.client.ClientBuilder.newBuilder") {
+                            if (r.name.toString() == "javax.ws.rs.client.ClientBuilder.newBuilder"
+                            ) {
                                 handleBuilder(t, r, tu)
                             }
                         } catch (t: Throwable) {
@@ -45,7 +48,7 @@ class JaxRsClientPass : HttpClientPass() {
 
     private fun handleBuilder(
         t: TranslationResult,
-        r: StaticCallExpression,
+        r: CallExpression,
         tu: TranslationUnitDeclaration
     ) {
         var builder: VariableDeclaration? = null
@@ -60,7 +63,7 @@ class JaxRsClientPass : HttpClientPass() {
 
         val buildCall =
             builder
-                ?.followEOG { it.end is MemberCallExpression && it.end.name == "build" }
+                ?.followEOG { it.end is MemberCallExpression && it.end.name.localName == "build" }
                 ?.lastOrNull()
 
         (buildCall?.end as? MemberCallExpression)?.let { handleClient(t, it, tu) }
@@ -89,7 +92,9 @@ class JaxRsClientPass : HttpClientPass() {
         }
 
         val edges =
-            creationCall.followEOG { it.end is MemberCallExpression && it.end.name == "target" }
+            creationCall.followEOG {
+                it.end is MemberCallExpression && it.end.name.localName == "target"
+            }
         edges?.let { it ->
             val last = it.last()
 
@@ -117,9 +122,9 @@ class JaxRsClientPass : HttpClientPass() {
         val url =
             ValueResolver { node, resolver ->
                     when (node) {
-                        is StaticCallExpression -> {
+                        is CallExpression -> {
                             // support for some special calls, i.e. format
-                            if (node.name == "getenv") {
+                            if (node.name.localName == "getenv") {
                                 // environment lookup on Java
                                 val key = resolver.resolve(node.arguments.firstOrNull())
 
@@ -140,7 +145,7 @@ class JaxRsClientPass : HttpClientPass() {
                 fun visit(mce: MemberCallExpression) {
                     // just look for a "get"
                     // TODO: actually look for client/builder... Hacky for now
-                    if (mce.name == "get") {
+                    if (mce.name.localName == "get") {
                         handleGetCall(t, url.toString(), mce, app)
                     }
                 }

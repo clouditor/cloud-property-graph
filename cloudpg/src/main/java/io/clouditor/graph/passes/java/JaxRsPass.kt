@@ -2,6 +2,7 @@ package io.clouditor.graph.passes.java
 
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
@@ -18,18 +19,16 @@ class JaxRsPass : Pass() {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: RecordDeclaration) {
-                            handleAnnotations(result, tu, r, r.annotations)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(r: RecordDeclaration) {
+                        handleAnnotations(result, tu, r, r.annotations)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -41,7 +40,7 @@ class JaxRsPass : Pass() {
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if (annotations.any { it.name == "Path" }) {
+        if (annotations.any { it.name.localName == "Path" }) {
             // handle it as a request handler
             val handler = HttpRequestHandler(app, mutableListOf(), "")
             handler.name = r.name
@@ -49,7 +48,7 @@ class JaxRsPass : Pass() {
             app?.functionalities?.plusAssign(handler)
 
             // the path of the controller is in the Path annotation, if it is set
-            handler.path = getPath(r.annotations.firstOrNull { it.name == "Path" })
+            handler.path = getPath(r.annotations.firstOrNull { it.name.localName == "Path" })
 
             // look for methods
             for (method in r.methods) {
@@ -68,13 +67,16 @@ class JaxRsPass : Pass() {
 
     private fun handleMapping(methodDeclaration: MethodDeclaration): HttpEndpoint? {
         val mapping =
-            methodDeclaration.annotations.firstOrNull { it.name == "GET" || it.name == "POST" }
+            methodDeclaration.annotations.firstOrNull {
+                it.name.localName == "GET" || it.name.localName == "POST"
+            }
         if (mapping != null) {
             // TE is not really interesting for us here, but we need to fill it. maybe make it
             // optional later
             val te = /*TransportEncryption(null, null, false, false)*/ null
 
-            val pathMapping = methodDeclaration.annotations.firstOrNull { it.name == "Path" }
+            val pathMapping =
+                methodDeclaration.annotations.firstOrNull { it.name.localName == "Path" }
 
             // the url is unknown at this point
             val endpoint =
@@ -86,7 +88,7 @@ class JaxRsPass : Pass() {
                     te,
                     null
                 )
-            endpoint.name = endpoint.path
+            endpoint.name = Name(endpoint.path)
 
             return endpoint
         }
@@ -97,7 +99,7 @@ class JaxRsPass : Pass() {
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
 
-        if (mapping.name == "POST") {
+        if (mapping.name.localName == "POST") {
             method = "POST"
         }
 

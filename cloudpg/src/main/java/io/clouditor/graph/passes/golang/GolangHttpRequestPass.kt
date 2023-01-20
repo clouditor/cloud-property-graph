@@ -36,9 +36,9 @@ class GolangHttpRequestPass : HttpClientPass() {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        var requestFunction = c.invokes.first() as FunctionDeclaration
+        val requestFunction = c.invokes.first() as FunctionDeclaration
         // should also have c.base.name == "http" but this is not parsed correctly atm
-        if (c.name == "PostForm") {
+        if (c.name.localName == "PostForm") {
             createHttpRequest(
                 result,
                 // TODO this should be resolved if it targets a variable
@@ -51,7 +51,7 @@ class GolangHttpRequestPass : HttpClientPass() {
                 app
             )
             // should also have c.base.name == "http" but this is not parsed correctly atm
-        } else if (c.name == "PutForm") {
+        } else if (c.name.localName == "PutForm") {
             createHttpRequest(
                 result,
                 (c.arguments[0] as Literal<String>).value,
@@ -60,7 +60,7 @@ class GolangHttpRequestPass : HttpClientPass() {
                 requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
                 app
             )
-        } else if (c.fqn == "http.Get") {
+        } else if (c.name.toString() == "http.Get") {
             createHttpRequest(
                 result,
                 (c.arguments[0] as Literal<String>).value,
@@ -69,7 +69,7 @@ class GolangHttpRequestPass : HttpClientPass() {
                 null,
                 app
             )
-        } else if (c.name == "NewRequest" && c.arguments.first().code == "\"POST\"") {
+        } else if (c.name.localName == "NewRequest" && c.arguments.first().code == "\"POST\"") {
             createHttpRequest(
                 result,
                 (c.arguments[1] as Literal<String>).value,

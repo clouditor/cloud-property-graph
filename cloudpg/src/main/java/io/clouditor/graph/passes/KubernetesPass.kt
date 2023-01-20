@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.isInSelector
 import io.kubernetes.client.openapi.ApiClient
@@ -109,18 +110,20 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 val container =
                     t.computes.filterIsInstance(Container::class.java).firstOrNull {
                         // not sure why/when there are more addresses
-                        it.name == subset.addresses?.get(0)?.targetRef?.name
+                        it.name.localName == subset.addresses?.get(0)?.targetRef?.name
                     }
 
                 // look for the service
                 val service =
                     t.additionalNodes.filterIsInstance(NetworkService::class.java).firstOrNull() {
                         // not sure if the name is really unique, probably need the namespace later
-                        it.name == item.metadata?.name
+                        it.name.localName == item.metadata?.name
                     }
 
-                // some quick and dirty database heuristics
-                heuristics(service, container, t)
+                if (service != null) {
+                    // some quick and dirty database heuristics
+                    heuristics(service, container, t)
+                }
 
                 // was runsOn
                 service?.compute = container
@@ -147,8 +150,8 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         }
     }
 
-    private fun heuristics(service: NetworkService?, container: Container?, t: TranslationResult) {
-        if (service?.name == "postgres") {
+    private fun heuristics(service: NetworkService, container: Container?, t: TranslationResult) {
+        if (service.name.localName == "postgres") {
             val db =
                 RelationalDatabaseService(
                     mutableListOf<Storage>(),
@@ -164,7 +167,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
             t += db
         }
 
-        if (service?.name == "mongo") {
+        if (service.name.localName == "mongo") {
             val db =
                 DocumentDatabaseService(
                     mutableListOf<Storage>(),
@@ -192,7 +195,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val image: Image =
             t.getImageByName(name)
                 ?: Image(null, null, mapOf()).let {
-                    name?.let { n -> it.name = n }
+                    name?.let { n -> it.name = Name(n) }
                     t += it
                     it
                 }
@@ -205,7 +208,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         meta.labels?.toMap(HashMap())
                     )
-                c.name = meta.name ?: ""
+                c.name = Name(meta.name ?: "")
 
                 // add env to labels with env_ prefix
                 pod.spec?.containers?.first()?.env?.forEach {
@@ -250,7 +253,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     mapOf()
                 )
             service.metadata?.name?.let {
-                node.name = it
+                node.name = Name(it)
 
                 // also add the name as IP / host
                 node.ips.add(it)
@@ -274,7 +277,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 // look for the service (TODO: add namespace to filter)
                 val service =
                     t.additionalNodes.filterIsInstance(NetworkService::class.java).firstOrNull {
-                        it.name == path.backend?.serviceName
+                        it.name.localName == path.backend?.serviceName
                     }
 
                 val hasTLS = ingress.spec?.tls?.isEmpty() ?: false

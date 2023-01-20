@@ -50,7 +50,7 @@ class GormDatabasePass : DatabaseOperationPass() {
         call: CallExpression,
         app: Application?
     ) {
-        if (call.fqn == "postgres.Open") {
+        if (call.name.toString() == "postgres.Open") {
             call.arguments.firstOrNull()?.let { expr ->
                 val dsn = resolveDSN(expr, app) as? String
 
@@ -77,10 +77,11 @@ class GormDatabasePass : DatabaseOperationPass() {
         app: Application?
     ) {
         // it can either be a direct call, without any chained selectors, such as Where
-        val directCall = call.base.type is PointerType && call.base.type.name == "gorm.DB*"
+        val directCall =
+            call.base?.type is PointerType && call.base!!.type.name.localName == "gorm.DB*"
 
         // make sure, the base call is really to a gorm DB object
-        if (call.name == "First" || call.name == "Find") {
+        if (call.name.localName == "First" || call.name.localName == "Find") {
             val calls = mutableListOf<CallExpression>(call)
 
             if (!directCall) {
@@ -94,8 +95,8 @@ class GormDatabasePass : DatabaseOperationPass() {
                     calls += memberCall
 
                     // check, if its base is already of our database type
-                    if (memberCall.base.type is PointerType &&
-                            memberCall.base.type.name == "gorm.DB*"
+                    if (memberCall.base?.type is PointerType &&
+                            memberCall.base!!.type.name.localName == "gorm.DB*"
                     ) {
                         // found it, yay!
                         found = true
@@ -121,7 +122,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
                     // loop through the calls and set DFG edges
                     calls.forEach {
-                        when (it.name) {
+                        when (it.name.localName) {
                             "First" -> handleFirst(it, op)
                             "Where" -> handleWhere(it, op)
                             "Find" -> handleFind(it, op)
@@ -134,7 +135,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
             }
-        } else if (call.name == "Create") {
+        } else if (call.name.localName == "Create") {
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
                     val op =
@@ -155,7 +156,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
             }
-        } else if (call.name == "Update") {
+        } else if (call.name.localName == "Update") {
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
                     val op =
@@ -245,10 +246,10 @@ class GormDatabasePass : DatabaseOperationPass() {
         }
     }
 
-    private fun handleUpdate(call: CallExpression, op: DatabaseQuery) {
+    private fun handleUpdate(call: MemberCallExpression, op: DatabaseQuery) {
         var target = call.arguments.firstOrNull()
         // for update calls, a model condition may be specified which has the actual target
-        if (call.base.name == "Model") {
+        if (call.base?.name?.localName == "Model") {
             target = (call.base as CallExpression).arguments.first()
         }
 
@@ -268,10 +269,7 @@ class GormDatabasePass : DatabaseOperationPass() {
     }
 
     private fun deriveName(type: Type): String {
-        // short name
-        val shortName = type.name.substringAfterLast(".").substringBefore("*")
-
-        return shortName.toLowerCase() + "s"
+        return type.name.localName
     }
 
     override fun cleanup() {}
@@ -288,7 +286,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                 when (node) {
                     is CallExpression -> {
                         // support for some special calls, i.e. format
-                        if (node.name == "Sprintf") {
+                        if (node.name.localName == "Sprintf") {
                             val str = resolver.resolve(node.arguments.firstOrNull()) as String
                             val arguments = node.arguments.drop(1)
 
@@ -299,7 +297,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
                         // a little bit of a hack, this is specific to our use case, since the
                         // stdlib doesnt have that built-in
-                        if (node.name == "EnvOrDefault") {
+                        if (node.name.localName == "EnvOrDefault") {
                             // environment lookup on python
                             val key = resolver.resolve(node.arguments.firstOrNull())
 

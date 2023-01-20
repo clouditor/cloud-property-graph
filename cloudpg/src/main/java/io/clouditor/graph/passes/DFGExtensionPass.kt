@@ -27,7 +27,9 @@ class DFGExtensionPass : Pass() {
         val memberExpressions = nodes.filterIsInstance<MemberExpression>()
 
         val stringifyFunctions =
-            nodes.filterIsInstance<CallExpression>().filter { node -> node.name == "stringify" }
+            nodes.filterIsInstance<CallExpression>().filter { node ->
+                node.name.localName == "stringify"
+            }
         // val stringFunctions: List<CallExpression>  =
         // nodes.filterIsInstance<CallExpression>().filter { node -> node.name == "stringify" ||
         // node.name == "toString" }

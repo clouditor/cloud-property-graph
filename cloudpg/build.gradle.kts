@@ -31,13 +31,13 @@ java {
     sourceSets["main"].java {
         srcDir("${generatedDir}/main/java")
     }
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
@@ -59,7 +59,7 @@ repositories {
     }
 
     ivy {
-        setUrl("https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.2/plugins")
+        setUrl("https://download.eclipse.org/tools/cdt/releases/11.0/cdt-11.0.0/plugins")
         metadataSources {
             artifact()
         }
@@ -71,12 +71,13 @@ repositories {
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    val version = "4.6.0"
+    val version = "6.0.0"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
     implementation("de.fraunhofer.aisec:cpg-language-go:$version")
     implementation("de.fraunhofer.aisec:cpg-language-python:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
@@ -84,10 +85,10 @@ class LocalTestingPass : Pass() {
                         // mutableListOf(if (tud != null) tud else null)
                         mutableListOf(tud)
                     )
-                application.name = service.name
+                application.name = Name(service.name)
                 t += application
             } else if (service.type.contains("client")) {
-                var tud =
+                val tud =
                     t.components.let {
                         var tud: TranslationUnitDeclaration? = null
                         for (component in it) {
@@ -107,7 +108,7 @@ class LocalTestingPass : Pass() {
                         mutableListOf(),
                         mutableListOf(tud)
                     )
-                application.name = service.name
+                application.name = Name(service.name)
                 t += application
             }
         }
@@ -125,7 +126,7 @@ class LocalTestingPass : Pass() {
                         null,
                         mapOf()
                     )
-                db.name = service.name
+                db.name = Name(service.name)
                 t += db
             }
             if (service.name == "mongo") {
@@ -140,7 +141,7 @@ class LocalTestingPass : Pass() {
                         null,
                         mapOf()
                     )
-                db.name = service.name
+                db.name = Name(service.name)
                 t += db
             }
         }
