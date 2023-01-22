@@ -19,31 +19,28 @@ class GolangHttpPass : HttpClientPass() {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        if (result != null) {
-
-            // first, look for clients
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: VariableDeclaration) {
-                            handleVariable(result, tu, r)
-                        }
+        // first, look for clients
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(r: VariableDeclaration) {
+                        handleVariable(result, tu, r)
                     }
-                )
-            }
+                }
+            )
+        }
 
-            // then for the member calls
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(m: MemberCallExpression) {
-                            handleMemberCall(result, tu, m)
-                        }
+        // then for the member calls
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(m: MemberCallExpression) {
+                        handleMemberCall(result, tu, m)
                     }
-                )
-            }
+                }
+            )
         }
     }
 

@@ -6,6 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.Pass
@@ -88,7 +89,7 @@ class GinGonicPass : Pass() {
         ) {
             // replace the status code name with the harmonized naming
             m.arguments.firstOrNull()?.name =
-                Name(httpMap.get(m.arguments.firstOrNull()?.name.toString()).toString())
+                m.parseName(httpMap[m.arguments.firstOrNull()?.name.toString()].toString())
         }
     }
 

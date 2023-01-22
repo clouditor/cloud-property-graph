@@ -104,7 +104,7 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({fullName:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(2, result.count())
     }
@@ -118,7 +118,7 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({fullName:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(0, result.count())
     }
