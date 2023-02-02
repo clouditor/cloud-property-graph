@@ -102,7 +102,7 @@ open class PolicyNonComplianceTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS((:DatabaseOperation)<-[:DFG]-(s)) RETURN p"
             )
-        // assertEquals(1, result.count())
+        assertEquals(1, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

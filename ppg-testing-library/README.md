@@ -11,3 +11,6 @@ It also includes validation test cases which test for the *non*-existence of a t
 ## Usage
 To execute tests, we recommend executing the existing JUnit tests. A specific test can simply be executed using gradle: `gradle test --tests io.clouditor.graph.NonRepudiationTest.testNR2PythonLoggingValidation`.
 Note that the tests use a dedicated mode called ``local-mode``, which enables a specific pass that scans for config files and creates mock hosts and databases according to its specification. It also disables some passes that are designed to retrieve information from the cloud. This mode can also manually be enabled via a flag: `cloudpg/build/install/cloudpg/bin/cloudpg --enable-labels --local-mode --root=/x/testprogramm folder1/`
+
+## Test Results
+When executing all tests of the testing library (e.g. with ```./gradlew test```), 24 tests should fail due to AssertionErrors. This is expected, since some test cases produce false negative or false positive results as explained in our paper ```Privacy Property Graph: Towards Automated Privacy Threat Modeling via Static Graph-based Analysis``` (which will be published soon).
