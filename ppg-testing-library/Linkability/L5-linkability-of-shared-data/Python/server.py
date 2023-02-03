@@ -16,12 +16,8 @@ app = Flask(__name__)
 @app.route("/data", methods=['POST'])
 def receive_data_and_send_to_other_party():
     req = request.json
-    data = {
-        "Name": req['name'],
-        "Message": req['message']
-    }
     third_party = "http://third-party.com/externaldata"
-    requests.post(third_party, data)
+    requests.post(third_party, req)
     return "OK", 200
 
 if __name__ == '__main__':

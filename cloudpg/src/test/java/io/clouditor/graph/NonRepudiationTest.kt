@@ -54,8 +54,9 @@ open class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOperation) RETURN p"
             )
+
         assertEquals(1, result.count())
 
         result.first().apply {
@@ -63,7 +64,7 @@ open class NonRepudiationTest {
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("Identifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("LogOperation"))
         }
     }
 
@@ -76,7 +77,7 @@ open class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOperation) RETURN p"
             )
         assertEquals(0, result.count())
     }
@@ -128,7 +129,7 @@ open class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-Logging"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOperation) RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -137,7 +138,7 @@ open class NonRepudiationTest {
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("Identifier"))
             val lastNode = (path.last() as InternalPath.SelfContainedSegment).end()
-            assert(lastNode.labels().contains("LogOutput"))
+            assert(lastNode.labels().contains("LogOperation"))
         }
     }
 
@@ -150,7 +151,7 @@ open class NonRepudiationTest {
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-Logging-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOutput) RETURN p"
+                "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOperation) RETURN p"
             )
         assertEquals(0, result.count())
     }

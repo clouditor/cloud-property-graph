@@ -16,9 +16,13 @@ The following graphic describes the differences between cpg, CloudPG, and Privac
 Furthermore, we plan to integrate a Go-based version of the CloudPG into our main Cloud assessment tool, [Clouditor](https://github.com/clouditor/clouditor).
 Note that this project primarily serves as a research prototype, so please do not expect API stability.
 
-## Build
+## Setup and Build
 
-Note that we recommend using Java 11. First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. Then, build using `./gradlew installDist`.
+### Python Setup
+Please follow the instruction at https://github.com/ninia/jep/wiki/Getting-Started#installing-jep to install jep. Also, make sure you are using Python 3.10.
+
+### Build
+Note that we recommend using Java 17. First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. Then, build using `./gradlew installDist`.
 
 ## Usage
  
