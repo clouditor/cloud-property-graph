@@ -19,7 +19,7 @@ Note that this project primarily serves as a research prototype, so please do no
 ## Setup and Build
 
 ### Python Setup
-Please follow the instruction at https://github.com/ninia/jep/wiki/Getting-Started#installing-jep to install jep. Also, make sure you are using Python 3.
+Please follow the instruction at https://github.com/ninia/jep/wiki/Getting-Started#installing-jep to install jep. Also, make sure you are using Python 3.10.
 
 ### Build
 Note that we recommend using Java 17. First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. Then, build using `./gradlew installDist`.
