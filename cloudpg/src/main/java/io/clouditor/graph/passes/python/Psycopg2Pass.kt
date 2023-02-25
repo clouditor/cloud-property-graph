@@ -9,6 +9,7 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
+import io.clouditor.graph.utils.DatabaseQueryType
 
 class Psycopg2Pass : DatabaseOperationPass() {
 
@@ -148,7 +149,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
             val dbName = dbStorage.firstOrNull()?.name
             val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName) }
 
-            val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app)
+            val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app, DatabaseQueryType.UNKNOWN)
             op.name = call.name
 
             // in the select case, the arguments are just arguments to the query itself and flow

@@ -13,6 +13,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
+import io.clouditor.graph.utils.DatabaseQueryType
 
 class GormDatabasePass : DatabaseOperationPass() {
     override fun accept(t: TranslationResult) {
@@ -116,7 +117,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
-                    val op = createDatabaseQuery(result, false, it, mutableListOf(), calls, app)
+                    val op = createDatabaseQuery(result, false, it, mutableListOf(), calls, app, DatabaseQueryType.READ)
                     op.name = call.name
 
                     // loop through the calls and set DFG edges
@@ -144,7 +145,8 @@ class GormDatabasePass : DatabaseOperationPass() {
                             it,
                             mutableListOf(),
                             mutableListOf(call),
-                            app
+                            app,
+                            DatabaseQueryType.CREATE
                         )
                     op.name = call.name
 
@@ -165,7 +167,8 @@ class GormDatabasePass : DatabaseOperationPass() {
                             it,
                             mutableListOf(),
                             mutableListOf(call),
-                            app
+                            app,
+                            DatabaseQueryType.UPDATE
                         )
                     op.name = call.name
 
