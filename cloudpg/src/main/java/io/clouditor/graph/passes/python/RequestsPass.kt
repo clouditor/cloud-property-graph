@@ -29,6 +29,10 @@ class RequestsPass : HttpClientPass() {
                             handleClientRequest(tu, t, r, "GET")
                         } else if (r.name == "post" && r.base.name == "requests") {
                             handleClientRequest(tu, t, r, "POST")
+                        } else if (r.name == "delete" && r.base.name == "requests") {
+                            handleClientRequest(tu, t, r, "DELETE")
+                        } else if (r.name == "put" && r.base.name == "requests") {
+                            handleClientRequest(tu, t, r, "PUT")
                         }
                     }
                 }
