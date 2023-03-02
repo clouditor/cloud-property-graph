@@ -1,0 +1,17 @@
+services:
+  - type: server
+    directory: server
+    name: server
+    host: test-online-notepad.com
+  - type: db
+    directory: server
+    name: postgres
+    storages:
+      - userdata
+      - otherdata
+  - type: db
+    directory: server
+    name: mongo
+    storages:
+      - userdata
+      - otherdata
