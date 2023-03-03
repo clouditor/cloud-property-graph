@@ -144,7 +144,33 @@ open class GDPRComplianceChecks {
 
     @Test
     fun checkComplianceToArticle20_paragraph_2() {
+        // query: MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:"READ"})--()-[:DFG*]->(hr2:HttpRequest {name: "PUT"}) WHERE NOT EXISTS {MATCH p2=(hr2)--()-[:DFG*]->(he2:HttpEndpoint)} WITH COLLECT(psi) as correctPseudos MATCH p3=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p3
+        val result =
+            executePPGAndQuery(
+                Path(
+                    System.getProperty("user.dir") +
+                            "/../ppg-testing-library/GDPRComplianceChecks/RightToDataPortability/Python"
 
+                ),
+                listOf(Path(".")),
+                "MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->(hr2:HttpRequest {name: \"PUT\"}) WHERE NOT EXISTS {MATCH p2=(hr2)--()-[:DFG*]->(he2:HttpEndpoint)} WITH COLLECT(psi) as correctPseudos MATCH p3=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p3"
+            )
+        // create a list for all pseudoidentifiers with no compliant data portability (to external service)
+        val listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity = mutableListOf<Long>()
+        // iterate over all paths and add to the list
+        result.forEach {
+            var path = it.get("p3") as Array<*>
+
+            // the first node is the pseudoidentifier because of the query
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            if (firstNode.labels().contains("PseudoIdentifier")) {
+                // add the pseudoidentifier to the list if it is not already in it
+                if (!listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity.contains(firstNode.id()))
+                    listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity.add(firstNode.id())
+            }
+        }
+        // if the code is compliant to article 20(2), the list should be empty
+        assertEquals(0, listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity.size)
     }
 
     // For testing purposes
