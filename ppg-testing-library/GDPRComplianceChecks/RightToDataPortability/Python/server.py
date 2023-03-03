@@ -20,9 +20,28 @@ def get_data_in_csv_format():
         return "Conflict", 409
     else:
         # get the data from the database (mongodb)
-        user_data = user_db_collection.find_one({"username": data['username']}), 200
+        user_data = user_db_collection.find_one({"username": data['username']})
         # send the data to the client
         return user_data, 200
+
+@app.route("/transfer", methods=['GET'])
+def transfer_data_to_another_service():
+    req = request.json
+    data = {
+        "receiver_url": req['receiver_url'],
+        "personal_data": req['personal_data']
+    }
+    if user_db_collection.find( { "username": data['personal_data']['username'] } ).count() > 0:
+        return "Conflict", 409
+    else:
+        # get the data from the database (mongodb)
+        user_data = user_db_collection.find_one({"username": data['personal_data']['username']})
+        response = requests.put(data['receiver_url'], json = user_data)
+        if response.status_code == 201:
+            return "OK", 200
+        else:
+            return "Internal Server Error", 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
