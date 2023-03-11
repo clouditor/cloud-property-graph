@@ -20,7 +20,7 @@ open class GDPRComplianceChecks {
 
                 ),
                 listOf(Path(".")),
-                "MATCH p=(n:PseudoIdentifier)--()-[:DFG*]->(hr:HttpRequest)--()-[:DFG*]->(he:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery) WHERE (d.type = 'UPDATE') AND (hr.name = 'PUT') AND (he.method = 'PUT') WITH COLLECT(n) as pseudosWithUpdate MATCH path=(psi:PseudoIdentifier)--() WHERE NOT psi IN pseudosWithUpdate RETURN path"
+                "MATCH path1=(psi1:PseudoIdentifier)--()-[:DFG*]->(hr:HttpRequest)--()-[:DFG*]->(he:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery) WHERE (d.type = 'UPDATE') AND (hr.name = 'PUT') AND (he.method = 'PUT') WITH COLLECT(psi1) as pseudosWithUpdate MATCH path2=(psi2:PseudoIdentifier)--() WHERE NOT psi2 IN pseudosWithUpdate RETURN path2"
             )
 
         // create a list for all pseudoidentifiers with no update call connected to them via a data flow
@@ -81,14 +81,13 @@ open class GDPRComplianceChecks {
 
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(psi1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(hr2:HttpRequest) WHERE NOT EXISTS { MATCH (psi1)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(h:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest)-[:TO]->(:HttpEndpoint)} AND (hr1.name='DELETE') AND NOT (hr2.name = hr1.name) RETURN p1"
+                "MATCH (hr1:HttpRequest) WHERE NOT (hr1)-[:TO]->(:HttpEndpoint) MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr2:HttpRequest {name: 'DELETE'})-[:TO]->(he2:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]-(hr1) WHERE (hr1.name<>'DELETE') RETURN path1"
             )
-        // TODO: DELETE NOTE: Alle pseudo die extern kommunziert werden bekommt man mit folgender query: MATCH p1=(psi1:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest)--()-[:DFG*]->(:HttpRequest) WHERE NOT EXISTS { MATCH (psi1)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(h:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest)-[:TO]->(:HttpEndpoint)} RETURN p1
         // create a list for all pseudoidentifiers, which are communicated to extern with no delete call to extern connected to them via a data flow
         val listOfAllPseudoIdentifierWithNoDeleteToExternByIdentity = mutableListOf<Long>()
         // iterate over all paths and add to the list
         result.forEach {
-            var path = it.get("p1") as Array<*>
+            var path = it.get("path1") as Array<*>
 
             // the first node is the pseudoidentifier because of the query
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
@@ -104,6 +103,60 @@ open class GDPRComplianceChecks {
 
     @Test
     fun checkComplianceToArticle19() {
+        val result_data_flows =
+            executePPGAndQuery(
+                Path(
+                    System.getProperty("user.dir") +
+                            "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python"
+
+                ),
+                listOf(Path(".")),
+                "MATCH (hr1:HttpRequest) WHERE NOT (hr1)-[:TO]->(:HttpEndpoint) MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr2:HttpRequest)-[:TO]->(he2:HttpEndpoint)--()-[:DFG*]-(hr1) WHERE NOT (hr1.name='DELETE') AND NOT (hr1.name='PUT') AND ((hr2.name='DELETE') OR (hr2.name='PUT')) RETURN path1"
+            )
+        // create a list for all pseudoidentifiers, which are communicated to extern with no delete or update call to extern connected to them via a data flow
+        val listOfAllPseudoIdentifierWithNoDeleteOrUpdateToExternByIdentity = mutableListOf<Long>()
+        // iterate over all paths and add to the list
+        result_data_flows.forEach {
+            var path = it.get("path1") as Array<*>
+
+            // the first node is the pseudoidentifier because of the query
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            if (firstNode.labels().contains("PseudoIdentifier")) {
+                // add the pseudoidentifier to the list if it is not already in it
+                if (!listOfAllPseudoIdentifierWithNoDeleteOrUpdateToExternByIdentity.contains(firstNode.id()))
+                    listOfAllPseudoIdentifierWithNoDeleteOrUpdateToExternByIdentity.add(firstNode.id())
+            }
+        }
+        // if the code is compliant to article 19, the list should be empty
+        assertEquals(0, listOfAllPseudoIdentifierWithNoDeleteOrUpdateToExternByIdentity.size)
+
+        val result_data_storage =
+            executePPGAndQuery(
+                Path(
+                    System.getProperty("user.dir") +
+                            "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python"
+
+                ),
+                listOf(Path(".")),
+                "MATCH p1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]-(hr1:HttpRequest)-[:CALL]-()-[:ARGUMENTS]-()--(l1:Literal) WHERE NOT (hr1)-[:TO]-(:HttpEndpoint) WITH COLLECT(DISTINCT l1) as dataRecipients, l1 MATCH p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-()--(l2:Literal), p3=(l1)--() WHERE ANY(recipient IN dataRecipients WHERE NOT l2.value CONTAINS recipient.name) RETURN p3"
+            )
+        // create a list for all personal data recipients, which are not mentioned in the information about the data recipients
+        val listOfAllPersonalDataRecipientsNotMentionedInInformation = mutableListOf<String>()
+        // iterate over all paths and add to the list
+        result_data_storage.forEach {
+            var path = it.get("p3") as Array<*>
+
+            // the first node is the literal, which contains the name of the personal data recipient
+            val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
+            if (firstNode.labels().contains("Literal")) {
+                val nameOfPersonalDataRecipient = firstNode.get("name").toString()
+                // add the literal to the list if it is not already in it
+                if (!listOfAllPersonalDataRecipientsNotMentionedInInformation.contains(nameOfPersonalDataRecipient))
+                    listOfAllPersonalDataRecipientsNotMentionedInInformation.add(nameOfPersonalDataRecipient)
+            }
+        }
+        // if the code is compliant to article 19, the list should be empty aswell
+        assertEquals(0, listOfAllPersonalDataRecipientsNotMentionedInInformation.size)
 
     }
 
@@ -135,16 +188,10 @@ open class GDPRComplianceChecks {
         }
         // if the code is compliant to article 20(1), the list should be empty
         assertEquals(0, listOfAllPseudoIdentifierWithNoCompliantDataPortabilityByIdentity.size)
-
-
-        // MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:"READ"})--()-[:DFG*]->({name: "HttpStatus.OK"}) return p1
-        // Alle nodes die das erfüllen sind compliant: MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:"READ"})--()-[:DFG*]->({name: "HttpStatus.OK"}), p2=(m:MemberCallExpression {name:"write"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), p3=(m2:MemberCallExpression)--()-[:DFG*]-(:Node)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) return p2
-        // Finale Abfrage: MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:"READ"})--()-[:DFG*]->({name: "HttpStatus.OK"}), p2=(m:MemberCallExpression {name:"write"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), p3=(m2:MemberCallExpression)--()-[:DFG*]-(:Node)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) WITH COLLECT(psi) as correctPseudos MATCH p4=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p4
     }
 
     @Test
     fun checkComplianceToArticle20_paragraph_2() {
-        // query: MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:"READ"})--()-[:DFG*]->(hr2:HttpRequest {name: "PUT"}) WHERE NOT EXISTS {MATCH p2=(hr2)--()-[:DFG*]->(he2:HttpEndpoint)} WITH COLLECT(psi) as correctPseudos MATCH p3=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p3
         val result =
             executePPGAndQuery(
                 Path(
@@ -153,7 +200,7 @@ open class GDPRComplianceChecks {
 
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->(hr2:HttpRequest {name: \"PUT\"}) WHERE NOT EXISTS {MATCH p2=(hr2)--()-[:DFG*]->(he2:HttpEndpoint)} WITH COLLECT(psi) as correctPseudos MATCH p3=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p3"
+                "MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->(hr2:HttpRequest {name: \"PUT\"}) WHERE NOT (hr2)-[:TO]-(:HttpEndpoint) WITH COLLECT(psi) as correctPseudos MATCH p3=(psi2:PseudoIdentifier)--() WHERE NOT psi2 IN correctPseudos RETURN p3"
             )
         // create a list for all pseudoidentifiers with no compliant data portability (to external service)
         val listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity = mutableListOf<Long>()
@@ -173,9 +220,10 @@ open class GDPRComplianceChecks {
         assertEquals(0, listOfAllPseudoIdentifierWithNoCompliantDataPortabilityToExternalServiceByIdentity.size)
     }
 
-    // For testing purposes
+    // TODO: remove For testing purposes
     @Test
     fun checkComplianceOfArticle17() {
+        return
         val result =
             executePPGAndQuery(
                 Path(
