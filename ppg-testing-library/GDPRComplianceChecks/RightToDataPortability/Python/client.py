@@ -25,20 +25,5 @@ def get_own_data_in_machine_readable_format(transfer = False):
         f.write(personal_data)
         f.close()
 
-#def transfer_personal_data_to_another_service():
-#    url = 'test-online-notepad.com/transfer'
-#    #@PseudoIdentifier
-#    personal_data = {
-#        "username": "testuser",
-#        "name": "",
-#        "notes": ""
-#    }
-#    data = {
-#        "receiver_url": "other-test-online-notepad.com/data",
-#        "personal_data": personal_data
-#    }
-#    # send get request to the server, which will then send the data to the specified url
-#    response = requests.get(url, json = data)
-
 if __name__ == '__main__':
     get_own_data_in_machine_readable_format()
