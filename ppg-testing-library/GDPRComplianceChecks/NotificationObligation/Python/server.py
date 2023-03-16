@@ -36,5 +36,17 @@ def parse_data():
     requests.put(url, json = data)
     return "OK", 200
 
+@app.route("/data", methods=['POST'])
+def parse_data():
+    req = request.json
+    data = {
+        "username": req['username'],
+        "notes": req['notes']
+    }
+    url = "ext-ad-server.com/data"
+    # send notes to external advertising server
+    requests.post("ext-ad-server.com/data", json = data['notes'])
+    return "OK", 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
