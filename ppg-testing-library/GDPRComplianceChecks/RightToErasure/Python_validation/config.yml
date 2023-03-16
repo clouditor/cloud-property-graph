@@ -1,0 +1,6 @@
+services:
+  - type: server
+    name: server
+    host: test-online-notepad.com
+  - type: client
+    name: client
