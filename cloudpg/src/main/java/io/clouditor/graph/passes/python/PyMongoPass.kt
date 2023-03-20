@@ -169,14 +169,32 @@ class PyMongoPass : DatabaseOperationPass() {
         var (connect, storage) = pair
         var op: DatabaseQuery? = null
         if (mce.name == "insert_one") {
-            op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app, DatabaseQueryType.CREATE)
+            op =
+                createDatabaseQuery(
+                    t,
+                    true,
+                    connect,
+                    storage,
+                    listOf(mce),
+                    app,
+                    DatabaseQueryType.CREATE
+                )
 
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
         }
 
         if (mce.name == "find" || mce.name == "find_one") {
-            op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app, DatabaseQueryType.READ)
+            op =
+                createDatabaseQuery(
+                    t,
+                    false,
+                    connect,
+                    storage,
+                    listOf(mce),
+                    app,
+                    DatabaseQueryType.READ
+                )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
 
@@ -185,7 +203,16 @@ class PyMongoPass : DatabaseOperationPass() {
         }
 
         if (mce.name == "delete_one" || mce.name == "delete_many") {
-            op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app, DatabaseQueryType.DELETE)
+            op =
+                createDatabaseQuery(
+                    t,
+                    true,
+                    connect,
+                    storage,
+                    listOf(mce),
+                    app,
+                    DatabaseQueryType.DELETE
+                )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
 
@@ -194,7 +221,16 @@ class PyMongoPass : DatabaseOperationPass() {
         }
 
         if (mce.name == "update_one" || mce.name == "update_many") {
-            op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app, DatabaseQueryType.UPDATE)
+            op =
+                createDatabaseQuery(
+                    t,
+                    true,
+                    connect,
+                    storage,
+                    listOf(mce),
+                    app,
+                    DatabaseQueryType.UPDATE
+                )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
 
@@ -205,8 +241,6 @@ class PyMongoPass : DatabaseOperationPass() {
         if (op != null) {
             op.name = mce.name
         }
-
-
     }
 
     override fun cleanup() {

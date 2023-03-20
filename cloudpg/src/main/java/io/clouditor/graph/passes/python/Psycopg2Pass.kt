@@ -149,7 +149,16 @@ class Psycopg2Pass : DatabaseOperationPass() {
             val dbName = dbStorage.firstOrNull()?.name
             val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName) }
 
-            val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app, DatabaseQueryType.UNKNOWN)
+            val op =
+                createDatabaseQuery(
+                    result,
+                    false,
+                    connect,
+                    storage,
+                    mutableListOf(call),
+                    app,
+                    DatabaseQueryType.UNKNOWN
+                )
             op.name = call.name
 
             // in the select case, the arguments are just arguments to the query itself and flow

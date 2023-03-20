@@ -117,7 +117,16 @@ class GormDatabasePass : DatabaseOperationPass() {
 
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
-                    val op = createDatabaseQuery(result, false, it, mutableListOf(), calls, app, DatabaseQueryType.READ)
+                    val op =
+                        createDatabaseQuery(
+                            result,
+                            false,
+                            it,
+                            mutableListOf(),
+                            calls,
+                            app,
+                            DatabaseQueryType.READ
+                        )
                     op.name = call.name
 
                     // loop through the calls and set DFG edges
