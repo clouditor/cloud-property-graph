@@ -3,14 +3,8 @@
 import requests
 import os
 
-def get_own_data_in_machine_readable_format(transfer = False):
+def get_own_data_in_machine_readable_format(transfer = False, personal_data=None):
     url = 'test-online-notepad.com/data'
-    #@PseudoIdentifier
-    personal_data = {
-        "username": "testuser",
-        "name": "",
-        "notes": ""
-    }
     if transfer:
         url = 'test-online-notepad.com/transfer'
         data = {
@@ -25,5 +19,16 @@ def get_own_data_in_machine_readable_format(transfer = False):
         f.write(personal_data)
         f.close()
 
+def store_personal_data_on_server(personal_data):
+    url = 'test-online-notepad.com/data'
+    requests.put(url, json = personal_data)
+
 if __name__ == '__main__':
-    get_own_data_in_machine_readable_format()
+    #@PseudoIdentifier
+    personal_data = {
+        "username": "testuser",
+        "name": "",
+        "notes": ""
+    }
+    store_personal_data_on_server(personal_data)
+    get_own_data_in_machine_readable_format(personal_data=personal_data)

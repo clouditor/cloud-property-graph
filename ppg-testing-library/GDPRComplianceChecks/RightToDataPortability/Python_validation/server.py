@@ -36,7 +36,22 @@ def transfer_data_to_another_service():
     else:
         # get the data from the database (mongodb)
         user_data = user_db_collection.find_one({"username": data['personal_data']['username']})
-        # VALIDATION: Data is not transfered to external service
+        # VALIDATION: Personal data is not sent to a third party
+        return "OK", 200
+
+
+@app.route("/data", methods=['PUT'])
+def parse_data():
+    req = request.json
+    data = {
+        "username": req['username'],
+        "notes": req['notes']
+    }
+    if user_db_collection.find( { "username": data['username'] } ).count() > 0:
+        return "Conflict", 409
+    else:
+        # save data to database
+        user_db_collection.insert_one(data)
         return "OK", 200
 
 

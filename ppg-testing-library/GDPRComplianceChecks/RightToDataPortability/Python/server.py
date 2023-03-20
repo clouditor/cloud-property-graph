@@ -42,6 +42,20 @@ def transfer_data_to_another_service():
         else:
             return "Internal Server Error", 500
 
+@app.route("/data", methods=['PUT'])
+def parse_data():
+    req = request.json
+    data = {
+        "username": req['username'],
+        "notes": req['notes']
+    }
+    if user_db_collection.find( { "username": data['username'] } ).count() > 0:
+        return "Conflict", 409
+    else:
+        # save data to database
+        user_db_collection.insert_one(data)
+        return "OK", 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
