@@ -344,14 +344,14 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToDataPortability/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->({name: \"HttpStatus.OK\"}), p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), p3=(m2:MemberCallExpression)--()-[:DFG*]-(:Node)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) WITH COLLECT(psi) as correctPseudos MATCH p4=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p4"
+                "MATCH path1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery) WHERE (d.type=\"CREATE\") OR (d.type=\"UPDATE\") AND NOT EXISTS { MATCH path2=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->({name: \"HttpStatus.OK\"}), path3=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), path4=(open:CallExpression)-[:INITIALIZER]-(:VariableDeclaration)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) WHERE open.code CONTAINS \".json\" } RETURN path1"
             )
         // create a list for all pseudoidentifiers with no compliant data portability
         val listOfAllPseudoIdentifierWithNoCompliantDataPortabilityByIdentity =
             mutableListOf<Long>()
         // iterate over all paths and add to the list
         result.forEach {
-            var path = it.get("p4") as Array<*>
+            val path = it.get("path1") as Array<*>
 
             // the first node is the pseudoidentifier because of the query
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
@@ -379,14 +379,14 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToDataPortability/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->({name: \"HttpStatus.OK\"}), p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), p3=(m2:MemberCallExpression)--()-[:DFG*]-(:Node)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) WITH COLLECT(psi) as correctPseudos MATCH p4=(psi2:PseudoIdentifier)--(:Node) WHERE NOT psi2 IN correctPseudos RETURN p4"
+                "MATCH path1=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery) WHERE (d.type=\"CREATE\") OR (d.type=\"UPDATE\") AND NOT EXISTS { MATCH path2=(psi:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)--()-[:DFG*]->(he1:HttpEndpoint)--()-[:DFG*]->(d:DatabaseQuery {type:\"READ\"})--()-[:DFG*]->({name: \"HttpStatus.OK\"}), path3=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-(:Node)--()-[:DFG*]-(hr1), path4=(open:CallExpression)-[:INITIALIZER]-(:VariableDeclaration)-[:REFERS_TO]-(:DeclaredReferenceExpression)-[:BASE]-(m) WHERE open.code CONTAINS \".json\" } RETURN path1"
             )
         // create a list for all pseudoidentifiers with no compliant data portability
         val listOfAllPseudoIdentifierWithNoCompliantDataPortabilityByIdentity =
             mutableListOf<Long>()
         // iterate over all paths and add to the list
         result.forEach {
-            var path = it.get("p4") as Array<*>
+            val path = it.get("path1") as Array<*>
 
             // the first node is the pseudoidentifier because of the query
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
