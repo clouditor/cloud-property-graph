@@ -36,11 +36,10 @@ def transfer_data_to_another_service():
     else:
         # get the data from the database (mongodb)
         user_data = user_db_collection.find_one({"username": data['personal_data']['username']})
-        # VALIDATION: Personal data is not sent to a third party
+        # VALIDATION: Personal data is not transferred to a third party
         return "OK", 200
 
-
-@app.route("/data", methods=['PUT'])
+@app.route("/store_data", methods=['PUT'])
 def parse_data():
     req = request.json
     data = {
