@@ -177,7 +177,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     storage,
                     listOf(mce),
                     app,
-                    DatabaseQueryType.CREATE
+                    DatabaseQueryType.CREATE.toString()
                 )
 
             // data flows from first argument to op
@@ -193,7 +193,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     storage,
                     listOf(mce),
                     app,
-                    DatabaseQueryType.READ
+                    DatabaseQueryType.READ.toString()
                 )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
@@ -211,7 +211,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     storage,
                     listOf(mce),
                     app,
-                    DatabaseQueryType.DELETE
+                    DatabaseQueryType.DELETE.toString()
                 )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
@@ -229,7 +229,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     storage,
                     listOf(mce),
                     app,
-                    DatabaseQueryType.UPDATE
+                    DatabaseQueryType.UPDATE.toString()
                 )
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)

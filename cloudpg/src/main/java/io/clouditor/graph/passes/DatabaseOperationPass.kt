@@ -7,7 +7,6 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
-import io.clouditor.graph.utils.DatabaseQueryType
 
 abstract class DatabaseOperationPass : Pass() {
 
@@ -43,9 +42,9 @@ abstract class DatabaseOperationPass : Pass() {
         storage: List<DatabaseStorage>,
         calls: List<CallExpression>,
         app: Application?,
-        type: DatabaseQueryType
+        type: String
     ): DatabaseQuery {
-        val op = DatabaseQuery(modify, calls, storage, connect.to, type)
+        val op = DatabaseQuery(modify, type, calls, storage, connect.to)
         op.location = app?.location
 
         storage.forEach {

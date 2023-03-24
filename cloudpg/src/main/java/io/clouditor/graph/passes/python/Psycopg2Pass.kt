@@ -157,7 +157,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
                     storage,
                     mutableListOf(call),
                     app,
-                    DatabaseQueryType.UNKNOWN
+                    DatabaseQueryType.UNKNOWN.toString()
                 )
             op.name = call.name
 

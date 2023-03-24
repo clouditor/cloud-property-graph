@@ -125,7 +125,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                             mutableListOf(),
                             calls,
                             app,
-                            DatabaseQueryType.READ
+                            DatabaseQueryType.READ.toString()
                         )
                     op.name = call.name
 
@@ -155,7 +155,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                             mutableListOf(),
                             mutableListOf(call),
                             app,
-                            DatabaseQueryType.CREATE
+                            DatabaseQueryType.CREATE.toString()
                         )
                     op.name = call.name
 
@@ -177,7 +177,7 @@ class GormDatabasePass : DatabaseOperationPass() {
                             mutableListOf(),
                             mutableListOf(call),
                             app,
-                            DatabaseQueryType.UPDATE
+                            DatabaseQueryType.UPDATE.toString()
                         )
                     op.name = call.name
 
