@@ -6,17 +6,11 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      ontologyIRI="urn:webprotege:ontology:e4316a28-d966-4499-bd93-6be721055117">
-    <Prefix name="aws" IRI="http://graph.clouditor.io/individuals/aws/"/>
-    <Prefix name="k8s" IRI="http://graph.clouditor.io/individuals/k8s/"/>
     <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
     <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
     <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
-    <Prefix name="prop" IRI="http://graph.clouditor.io/properties/"/>
     <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
-    <Prefix name="azure" IRI="http://graph.clouditor.io/individuals/azure/"/>
-    <Prefix name="docker" IRI="http://graph.clouditor.io/individuals/docker/"/>
-    <Prefix name="library" IRI="http://graph.clouditor.io/individuals/libraries/"/>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/ABAC"/>
     </Declaration>
@@ -324,46 +318,46 @@
         <ObjectProperty IRI="http://graph.clouditor.io/classes/output"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:backend"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/backend"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:collectionOf"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/collectionOf"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:deployedOn"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/deployedOn"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:has"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:implements"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/implements"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:offers"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:parent"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/parent"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:proxyTarget"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/proxyTarget"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:runsOn"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/runsOn"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:storage"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/storage"/>
     </Declaration>
     <Declaration>
-        <ObjectProperty abbreviatedIRI="prop:to"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/to"/>
     </Declaration>
     <Declaration>
         <DataProperty IRI="http://graph.clouditor.io/classes/broadAssignments"/>
@@ -417,109 +411,109 @@
         <DataProperty IRI="http://graph.clouditor.io/classes/securityOnly"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:activated"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/activated"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:algorithm"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/algorithm"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:apiListFunction"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/apiListFunction"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:argument"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/argument"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:call"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/call"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:enabled"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:enforced"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/enforced"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:field"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/field"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:from"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/from"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:handler"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/handler"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:impact"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/impact"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:inbound"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/inbound"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:ips"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/ips"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:keyManagement"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/keyManagement"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:keyManager"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/keyManager"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:keyUrl"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/keyUrl"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:labels"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/labels"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:managementUrl"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/managementUrl"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:method"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/method"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:modify"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/modify"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:path"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/path"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:policy"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/policy"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:ports"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/ports"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:programmingLanguage"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/programmingLanguage"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:propertyMapping"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/propertyMapping"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:public"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/public"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:region"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/region"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:restrictedPorts"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/restrictedPorts"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:serves"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/serves"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:source"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/source"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:tlsVersion"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/tlsVersion"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:translationUnits"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/translationUnits"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:type"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/type"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:url"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/url"/>
     </Declaration>
     <Declaration>
-        <DataProperty abbreviatedIRI="prop:value"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/value"/>
     </Declaration>
     <Declaration>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
@@ -534,145 +528,145 @@
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/TeamCity"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:Account"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Account"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:Aurora"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Aurora"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:CloudTrail"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/CloudTrail"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:DynamoDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/DynamoDB"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2Instance"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Instance"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2LoadBalancer"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2LoadBalancer"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2NetworkInterface"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2NetworkInterface"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2Subnet"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Subnet"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:EC2VPC"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2VPC"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAM"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:IAMUser"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAMUser"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:IoTCore"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IoTCore"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:IoTDeviceManagement"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IoTDeviceManagement"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:Lambda"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Lambda"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:RDS"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/RDS"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:S3"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:S3Bucket"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3Bucket"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="aws:Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Volume"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:ActivityLog"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/ActivityLog"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:Azure"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Azure"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDB"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDBAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDBAccount"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:DeviceProvisioning"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/DeviceProvisioning"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:Disk"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Disk"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:Functions"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Functions"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:IoTHub"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/IoTHub"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:SQLDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDB"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:SQLDBDatabase"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDBDatabase"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccount"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccounts"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccounts"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:Subscription"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Subscription"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachines"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachines"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachinesVM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachinesVM"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="docker:Image"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/docker/Image"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Container"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Container"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Ingress"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Ingress"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Namespace"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Namespace"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Node"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Node"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Pod"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Pod"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Service"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Service"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="k8s:Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Volume"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="library:Jersey"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/Jersey"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="library:SpringBoot"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBoot"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="library:SpringBootRESTController"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBootRESTController"/>
     </Declaration>
     <Declaration>
-        <NamedIndividual abbreviatedIRI="library:SpringBootRequestMapping"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBootRequestMapping"/>
     </Declaration>
     <Declaration>
         <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
@@ -706,42 +700,42 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/AnomalyDetection"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/ApplicationLog"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/AnomalyDetection"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Application"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Functionality"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Application"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:runsOn"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/runsOn"/>
             <Class IRI="http://graph.clouditor.io/classes/Compute"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Application"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:programmingLanguage"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/programmingLanguage"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Application"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:translationUnits"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/translationUnits"/>
             <Literal>xsd:java.util.List&lt;de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration&gt;</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -756,14 +750,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/AtRestEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:algorithm"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/algorithm"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/AtRestEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -793,7 +787,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/AutomaticUpdates"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -815,14 +809,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Backup"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Backup"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:policy"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/policy"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -852,28 +846,28 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CertificateBasedAuthentication"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/GeoLocation"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:labels"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/labels"/>
             <Literal>xsd:java.util.Map&lt;String, String&gt;</Literal>
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CloudResourceGroup"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:collectionOf"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/collectionOf"/>
             <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -888,7 +882,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -903,7 +897,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Container"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/Image"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -918,21 +912,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/ResourceLogging"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Container"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:managementUrl"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/managementUrl"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -947,7 +941,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/CustomerKeyEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:keyUrl"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/keyUrl"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -966,14 +960,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:storage"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/storage"/>
             <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseOperation"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:to"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/to"/>
             <Class IRI="http://graph.clouditor.io/classes/DatabaseService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -991,8 +985,15 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:modify"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/modify"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/DatabaseQuery"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/properties/type"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
@@ -1006,7 +1007,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/DatabaseStorage"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:parent"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/parent"/>
             <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1021,7 +1022,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Evidence"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1058,7 +1059,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/GeoLocation"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:region"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/region"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1073,42 +1074,42 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:method"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/method"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:path"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/path"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:url"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/url"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:handler"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/handler"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -1119,7 +1120,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequest"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:to"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/to"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1133,7 +1134,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequest"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:call"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/call"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -1144,21 +1145,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequestHandler"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/Application"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequestHandler"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequestHandler"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:path"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/path"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1169,7 +1170,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpServer"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpRequestHandler"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1180,21 +1181,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/Authorization"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identifiable"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:activated"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/activated"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1205,7 +1206,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Authenticity"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1237,7 +1238,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Image"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/Application"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1248,7 +1249,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Immutability"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1271,14 +1272,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:activated"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/activated"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/JwtBasedAuthentication"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enforced"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enforced"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1293,21 +1294,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:inbound"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/inbound"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/L3Firewall"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:restrictedPorts"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/restrictedPorts"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1318,28 +1319,28 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/AccessRestriction"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:url"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/url"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1350,21 +1351,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LogOutput"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/Logging"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LogOutput"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:call"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/call"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression</Literal>
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LogOutput"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:value"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/value"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -1379,14 +1380,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Logging"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:to"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/to"/>
             <Class IRI="http://graph.clouditor.io/classes/LoggingService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Logging"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1404,7 +1405,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/LoggingService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1415,7 +1416,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/MalwareProtection"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/ApplicationLog"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1429,7 +1430,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/MalwareProtection"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1462,14 +1463,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/AccessRestriction"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1491,28 +1492,28 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/Compute"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:ips"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/ips"/>
             <Literal>xsd:java.util.ArrayList&lt;String&gt;</Literal>
         </DataHasValue>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:ports"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/ports"/>
             <Literal>xsd:java.util.ArrayList&lt;Short&gt;</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -1535,7 +1536,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/OTPBasedAuthentication"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:activated"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/activated"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1557,21 +1558,21 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageRequest"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:to"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/to"/>
             <Class IRI="http://graph.clouditor.io/classes/ObjectStorage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageRequest"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:type"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/type"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageRequest"/>
         <DataHasValue>
-            <DataProperty abbreviatedIRI="prop:source"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/source"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.Node</Literal>
         </DataHasValue>
     </SubClassOf>
@@ -1582,7 +1583,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1597,7 +1598,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/PasswordBasedAuthentication"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:activated"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/activated"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1612,7 +1613,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ProxiedEndpoint"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:proxyTarget"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/proxyTarget"/>
             <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1641,14 +1642,14 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Metric"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/RequirementCatalog"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Requirement"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1659,7 +1660,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/RiskImpact"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:value"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/value"/>
             <Datatype abbreviatedIRI="xsd:float"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1678,7 +1679,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/SingleSignOn"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1696,7 +1697,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/Immutability"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1707,7 +1708,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/StorageService"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
             <Class IRI="http://graph.clouditor.io/classes/Storage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1718,28 +1719,28 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:algorithm"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/algorithm"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enforced"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enforced"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/TransportEncryption"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:tlsVersion"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/tlsVersion"/>
             <Datatype abbreviatedIRI="xsd:string"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1754,35 +1755,35 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:has"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
             <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/AutomaticUpdates"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/BootLog"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/MalwareProtection"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/OSLog"/>
         </ObjectSomeValuesFrom>
     </SubClassOf>
@@ -1801,7 +1802,7 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/WebApplicationFirewall"/>
         <DataSomeValuesFrom>
-            <DataProperty abbreviatedIRI="prop:enabled"/>
+            <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
             <Datatype abbreviatedIRI="xsd:boolean"/>
         </DataSomeValuesFrom>
     </SubClassOf>
@@ -1815,419 +1816,419 @@
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Account"/>
-        <NamedIndividual abbreviatedIRI="aws:Account"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Account"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2Instance"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Instance"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2LoadBalancer"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2LoadBalancer"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/NetworkInterface"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2NetworkInterface"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2NetworkInterface"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualSubNetwork"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2Subnet"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Subnet"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualNetwork"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2VPC"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2VPC"/>
     </ClassAssertion>
     <ClassAssertion>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/PasswordBasedAuthentication"/>
         </ObjectSomeValuesFrom>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAM"/>
     </ClassAssertion>
     <ClassAssertion>
         <ObjectSomeValuesFrom>
-            <ObjectProperty abbreviatedIRI="prop:offers"/>
+            <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
             <Class IRI="http://graph.clouditor.io/classes/RBAC"/>
         </ObjectSomeValuesFrom>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAM"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Identity"/>
-        <NamedIndividual abbreviatedIRI="aws:IAMUser"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAMUser"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/MessagingHub"/>
-        <NamedIndividual abbreviatedIRI="aws:IoTCore"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IoTCore"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/DeviceProvisioningService"/>
-        <NamedIndividual abbreviatedIRI="aws:IoTDeviceManagement"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IoTDeviceManagement"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
-        <NamedIndividual abbreviatedIRI="aws:Lambda"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Lambda"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/RelationalDatabaseService"/>
-        <NamedIndividual abbreviatedIRI="aws:RDS"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/RDS"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
-        <NamedIndividual abbreviatedIRI="aws:S3"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorage"/>
-        <NamedIndividual abbreviatedIRI="aws:S3Bucket"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3Bucket"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
-        <NamedIndividual abbreviatedIRI="aws:Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Volume"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/KeyValueDatabaseService"/>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDB"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/DeviceProvisioningService"/>
-        <NamedIndividual abbreviatedIRI="azure:DeviceProvisioning"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/DeviceProvisioning"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
-        <NamedIndividual abbreviatedIRI="azure:Disk"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Disk"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
-        <NamedIndividual abbreviatedIRI="azure:Functions"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Functions"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/MessagingHub"/>
-        <NamedIndividual abbreviatedIRI="azure:IoTHub"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/IoTHub"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/RelationalDatabaseService"/>
-        <NamedIndividual abbreviatedIRI="azure:SQLDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDB"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/FileStorage"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccount"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorage"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccount"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Storage"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccounts"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccounts"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Account"/>
-        <NamedIndividual abbreviatedIRI="azure:Subscription"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Subscription"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Compute"/>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachines"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachines"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachinesVM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachinesVM"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/ContainerImage"/>
-        <NamedIndividual abbreviatedIRI="docker:Image"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/docker/Image"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Container"/>
-        <NamedIndividual abbreviatedIRI="k8s:Container"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Container"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/LoadBalancer"/>
-        <NamedIndividual abbreviatedIRI="k8s:Ingress"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Ingress"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/ContainerOrchestration"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/CloudResourceGroup"/>
-        <NamedIndividual abbreviatedIRI="k8s:Namespace"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Namespace"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/VirtualMachine"/>
-        <NamedIndividual abbreviatedIRI="k8s:Node"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Node"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/NetworkService"/>
-        <NamedIndividual abbreviatedIRI="k8s:Service"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Service"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/BlockStorage"/>
-        <NamedIndividual abbreviatedIRI="k8s:Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Volume"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/HttpClientLibrary"/>
-        <NamedIndividual abbreviatedIRI="library:Jersey"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/Jersey"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/Framework"/>
-        <NamedIndividual abbreviatedIRI="library:SpringBoot"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBoot"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequestHandler"/>
-        <NamedIndividual abbreviatedIRI="library:SpringBootRESTController"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBootRESTController"/>
     </ClassAssertion>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/HttpEndpoint"/>
-        <NamedIndividual abbreviatedIRI="library:SpringBootRequestMapping"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/libraries/SpringBootRequestMapping"/>
     </ClassAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:Aurora"/>
-        <NamedIndividual abbreviatedIRI="aws:RDS"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Aurora"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/RDS"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:DynamoDB"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/DynamoDB"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2Instance"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Instance"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2LoadBalancer"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2LoadBalancer"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2NetworkInterface"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2NetworkInterface"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2Subnet"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2Subnet"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2VPC"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2VPC"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAM"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:IAMUser"/>
-        <NamedIndividual abbreviatedIRI="aws:IAM"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAMUser"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/IAM"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:Lambda"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Lambda"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:RDS"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/RDS"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:parent"/>
-        <NamedIndividual abbreviatedIRI="aws:S3"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/parent"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3"/>
         <NamedIndividual IRI="http://graph.clouditor.io/individuals/AmazonWebServices"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:S3Bucket"/>
-        <NamedIndividual abbreviatedIRI="aws:S3"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3Bucket"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/S3"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="aws:Volume"/>
-        <NamedIndividual abbreviatedIRI="aws:EC2"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/aws/EC2"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDB"/>
-        <NamedIndividual abbreviatedIRI="azure:Azure"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Azure"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDBAccount"/>
-        <NamedIndividual abbreviatedIRI="azure:CosmosDB"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDBAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/CosmosDB"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:SQLDB"/>
-        <NamedIndividual abbreviatedIRI="azure:Azure"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDB"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Azure"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:SQLDBDatabase"/>
-        <NamedIndividual abbreviatedIRI="azure:SQLDB"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDBDatabase"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/SQLDB"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccount"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccounts"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccount"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccounts"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:StorageAccounts"/>
-        <NamedIndividual abbreviatedIRI="azure:Azure"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/StorageAccounts"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Azure"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:serviceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachines"/>
-        <NamedIndividual abbreviatedIRI="azure:Azure"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/serviceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachines"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/Azure"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachinesVM"/>
-        <NamedIndividual abbreviatedIRI="azure:VirtualMachines"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachinesVM"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/azure/VirtualMachines"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Container"/>
-        <NamedIndividual abbreviatedIRI="k8s:Pod"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Container"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Pod"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Ingress"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Ingress"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Namespace"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Namespace"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Node"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Node"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:collectionOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Pod"/>
-        <NamedIndividual abbreviatedIRI="k8s:Container"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/collectionOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Pod"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Container"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Pod"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Pod"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ObjectPropertyAssertion>
     <ObjectPropertyAssertion>
-        <ObjectProperty abbreviatedIRI="prop:resourceOf"/>
-        <NamedIndividual abbreviatedIRI="k8s:Volume"/>
-        <NamedIndividual abbreviatedIRI="k8s:Kubernetes"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/resourceOf"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Volume"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Kubernetes"/>
     </ObjectPropertyAssertion>
     <DataPropertyAssertion>
-        <DataProperty abbreviatedIRI="prop:apiListFunction"/>
-        <NamedIndividual abbreviatedIRI="k8s:Pod"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/apiListFunction"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Pod"/>
         <Literal>listNamespacedPod</Literal>
     </DataPropertyAssertion>
     <DataPropertyAssertion>
-        <DataProperty abbreviatedIRI="prop:propertyMapping"/>
-        <NamedIndividual abbreviatedIRI="k8s:Service"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/propertyMapping"/>
+        <NamedIndividual IRI="http://graph.clouditor.io/individuals/k8s/Service"/>
         <Literal>ips += clusterIP
 ips += externalIP
 ips += loadBalancerIP
 name = metadata.name</Literal>
     </DataPropertyAssertion>
     <SubObjectPropertyOf>
-        <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
-        <ObjectProperty abbreviatedIRI="prop:has"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/hasMultiple"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
     </SubObjectPropertyOf>
     <ObjectPropertyDomain>
-        <ObjectProperty abbreviatedIRI="prop:has"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
     </ObjectPropertyDomain>
     <ObjectPropertyDomain>
-        <ObjectProperty abbreviatedIRI="prop:offers"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
     </ObjectPropertyDomain>
     <ObjectPropertyRange>
-        <ObjectProperty abbreviatedIRI="prop:has"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/has"/>
         <Class IRI="http://graph.clouditor.io/classes/CloudResource"/>
     </ObjectPropertyRange>
     <ObjectPropertyRange>
-        <ObjectProperty abbreviatedIRI="prop:offers"/>
+        <ObjectProperty IRI="http://graph.clouditor.io/properties/offers"/>
         <Class IRI="http://graph.clouditor.io/classes/SecurityFeature"/>
     </ObjectPropertyRange>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:algorithm"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/algorithm"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:apiListFunction"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/apiListFunction"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:call"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/call"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:field"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/field"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:handler"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/handler"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:keyUrl"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/keyUrl"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:labels"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/labels"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:method"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/method"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:path"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/path"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:programmingLanguage"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/programmingLanguage"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:propertyMapping"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/propertyMapping"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:serves"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/serves"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:source"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/source"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:translationUnits"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/translationUnits"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <SubDataPropertyOf>
-        <DataProperty abbreviatedIRI="prop:url"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/url"/>
         <DataProperty abbreviatedIRI="owl:topDataProperty"/>
     </SubDataPropertyOf>
     <DataPropertyRange>
-        <DataProperty abbreviatedIRI="prop:enabled"/>
+        <DataProperty IRI="http://graph.clouditor.io/properties/enabled"/>
         <Datatype abbreviatedIRI="xsd:boolean"/>
     </DataPropertyRange>
     <AnnotationAssertion>
@@ -2947,492 +2948,492 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:Account</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/Account</IRI>
         <Literal xml:lang="english">AWS Account</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:Aurora</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/Aurora</IRI>
         <Literal xml:lang="english">AWS Aurora</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:CloudTrail</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/CloudTrail</IRI>
         <Literal xml:lang="english">AWS CloudTrail</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:DynamoDB</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/DynamoDB</IRI>
         <Literal xml:lang="english">AWS DynamoDB</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2</IRI>
         <Literal xml:lang="english">AWS EC2</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2Instance</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2Instance</IRI>
         <Literal xml:lang="english">AWS EC2 Instance</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2LoadBalancer</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2LoadBalancer</IRI>
         <Literal xml:lang="english">AWS EC2 LoadBalancer</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2NetworkInterface</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2NetworkInterface</IRI>
         <Literal xml:lang="english">AWS EC2 Network Interface</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2Subnet</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2Subnet</IRI>
         <Literal xml:lang="english">AWS EC2 Subnet</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:EC2VPC</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/EC2VPC</IRI>
         <Literal xml:lang="english">AWS EC2 VPC</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:IAM</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/IAM</IRI>
         <Literal xml:lang="english">AWS IAM</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:IAMUser</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/IAMUser</IRI>
         <Literal xml:lang="english">AWS IAM User</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:IoTCore</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/IoTCore</IRI>
         <Literal xml:lang="english">AWS IoT Core</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:IoTDeviceManagement</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/IoTDeviceManagement</IRI>
         <Literal xml:lang="english">AWS IoT Device Management</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:Lambda</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/Lambda</IRI>
         <Literal xml:lang="english">AWS Lambda</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:RDS</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/RDS</IRI>
         <Literal xml:lang="english">AWS RDS</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:S3</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/S3</IRI>
         <Literal>AWS S3</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:S3Bucket</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/S3Bucket</IRI>
         <Literal xml:lang="english">AWS S3 Bucket</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:type"/>
-        <AbbreviatedIRI>aws:S3Bucket</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/S3Bucket</IRI>
         <Literal>AWS::S3::Bucket</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>aws:Volume</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/aws/Volume</IRI>
         <Literal>Volume</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:ActivityLog</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/ActivityLog</IRI>
         <Literal xml:lang="english">Azure Activity Log</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:Azure</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/Azure</IRI>
         <Literal xml:lang="english">Azure</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:CosmosDB</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/CosmosDB</IRI>
         <Literal xml:lang="english">Azure CosmosDB</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:CosmosDBAccount</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/CosmosDBAccount</IRI>
         <Literal xml:lang="english">Azure CosmosDB Account</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:DeviceProvisioning</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/DeviceProvisioning</IRI>
         <Literal xml:lang="english">Azure Device Provisioning</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:Disk</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/Disk</IRI>
         <Literal xml:lang="english">Azure Disk</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:Functions</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/Functions</IRI>
         <Literal xml:lang="english">Azure Functions</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:IoTHub</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/IoTHub</IRI>
         <Literal xml:lang="english">Azure IoT Hub</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:SQLDB</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/SQLDB</IRI>
         <Literal xml:lang="english">Azure SQLDB</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:SQLDBDatabase</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/SQLDBDatabase</IRI>
         <Literal xml:lang="english">Azure SQLDB Database</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:StorageAccount</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/StorageAccount</IRI>
         <Literal xml:lang="english">Azure StorageAccount</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:type"/>
-        <AbbreviatedIRI>azure:StorageAccount</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/StorageAccount</IRI>
         <Literal>Microsoft.Storage/storageAccounts</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:StorageAccounts</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/StorageAccounts</IRI>
         <Literal xml:lang="english">Azure StorageAccounts</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:Subscription</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/Subscription</IRI>
         <Literal xml:lang="english">Azure Subscription</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:VirtualMachines</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/VirtualMachines</IRI>
         <Literal xml:lang="english">Azure VirtualMachines</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>azure:VirtualMachinesVM</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/azure/VirtualMachinesVM</IRI>
         <Literal xml:lang="english">Azure VirtualMachines VM</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>docker:Image</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/docker/Image</IRI>
         <Literal xml:lang="english">Docker Image</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Container</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Container</IRI>
         <Literal xml:lang="english">Kubernetes Container</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Ingress</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Ingress</IRI>
         <Literal>Kubernetes Ingress</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Kubernetes</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Kubernetes</IRI>
         <Literal xml:lang="english">Kubernetes</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Namespace</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Namespace</IRI>
         <Literal xml:lang="english">Kubernetes Namespace</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Node</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Node</IRI>
         <Literal xml:lang="english">Kubernetes Node</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Pod</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Pod</IRI>
         <Literal xml:lang="english">Kubernetes Pod</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Service</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Service</IRI>
         <Literal xml:lang="english">Kubernetes Service</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>k8s:Volume</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/k8s/Volume</IRI>
         <Literal xml:lang="english">Kubernetes Volume</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>library:Jersey</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/libraries/Jersey</IRI>
         <Literal xml:lang="english">Jersey</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>library:SpringBoot</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/libraries/SpringBoot</IRI>
         <Literal xml:lang="english">SpringBoot</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>library:SpringBootRESTController</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/libraries/SpringBootRESTController</IRI>
         <Literal xml:lang="english">SpringBoot - REST Controller</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>library:SpringBootRequestMapping</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/individuals/libraries/SpringBootRequestMapping</IRI>
         <Literal xml:lang="english">SpringBoot - Request Mapping</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:activated</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/activated</IRI>
         <Literal xml:lang="english">activated</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:algorithm</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/algorithm</IRI>
         <Literal xml:lang="english">algorithm</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:apiListFunction</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/apiListFunction</IRI>
         <Literal xml:lang="english">apiListFunction</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:argument</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/argument</IRI>
         <Literal xml:lang="english">argument</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:backend</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/backend</IRI>
         <Literal xml:lang="english">backend</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:call</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/call</IRI>
         <Literal xml:lang="english">call</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:collectionOf</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/collectionOf</IRI>
         <Literal xml:lang="english">collectionOf</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:deployedOn</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/deployedOn</IRI>
         <Literal xml:lang="english">deployedOn</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:enabled</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/enabled</IRI>
         <Literal xml:lang="english">enabled</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:enforced</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/enforced</IRI>
         <Literal xml:lang="english">enforced</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:field</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/field</IRI>
         <Literal xml:lang="english">field</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:from</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/from</IRI>
         <Literal xml:lang="english">from</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:handler</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/handler</IRI>
         <Literal xml:lang="english">handler</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:has</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/has</IRI>
         <Literal xml:lang="english">has</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:hasMultiple</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/hasMultiple</IRI>
         <Literal xml:lang="english">hasMultiple</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:impact</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/impact</IRI>
         <Literal xml:lang="english">impact</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:implements</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/implements</IRI>
         <Literal xml:lang="english">implements</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:inbound</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/inbound</IRI>
         <Literal xml:lang="english">inbound</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:ips</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/ips</IRI>
         <Literal xml:lang="english">ips</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:keyManagement</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/keyManagement</IRI>
         <Literal xml:lang="english">keymanagement</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:keyManager</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/keyManager</IRI>
         <Literal xml:lang="english">keyManager</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:keyUrl</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/keyUrl</IRI>
         <Literal xml:lang="english">keyUrl</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:labels</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/labels</IRI>
         <Literal>labels</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:managementUrl</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/managementUrl</IRI>
         <Literal xml:lang="english">managementUrl</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:method</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/method</IRI>
         <Literal xml:lang="english">method</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:modify</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/modify</IRI>
         <Literal>modify</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:offers</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/offers</IRI>
         <Literal xml:lang="english">offers</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:parent</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/parent</IRI>
         <Literal xml:lang="english">parent</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:path</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/path</IRI>
         <Literal xml:lang="english">path</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:policy</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/policy</IRI>
         <Literal xml:lang="english">policy</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:ports</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/ports</IRI>
         <Literal xml:lang="english">ports</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:programmingLanguage</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/programmingLanguage</IRI>
         <Literal xml:lang="english">programmingLanguage</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:propertyMapping</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/propertyMapping</IRI>
         <Literal xml:lang="english">propertyMapping</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:proxyTarget</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/proxyTarget</IRI>
         <Literal xml:lang="english">proxyTarget</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:public</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/public</IRI>
         <Literal xml:lang="english">public</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:region</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/region</IRI>
         <Literal xml:lang="english">region</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:resourceOf</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/resourceOf</IRI>
         <Literal xml:lang="english">resourceOf</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:restrictedPorts</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/restrictedPorts</IRI>
         <Literal xml:lang="english">restrictedPorts</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:runsOn</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/runsOn</IRI>
         <Literal xml:lang="english">runsOn</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:serves</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/serves</IRI>
         <Literal xml:lang="english">serves</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:serviceOf</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/serviceOf</IRI>
         <Literal xml:lang="english">serviceOf</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:source</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/source</IRI>
         <Literal xml:lang="english">source</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:storage</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/storage</IRI>
         <Literal>storage</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:tlsVersion</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/tlsVersion</IRI>
         <Literal xml:lang="english">tlsVersion</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:to</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/to</IRI>
         <Literal xml:lang="english">to</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:translationUnits</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/translationUnits</IRI>
         <Literal xml:lang="english">translationUnits</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:type</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/type</IRI>
         <Literal xml:lang="english">type</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:url</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/url</IRI>
         <Literal xml:lang="english">url</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
-        <AbbreviatedIRI>prop:value</AbbreviatedIRI>
+        <IRI>http://graph.clouditor.io/properties/value</IRI>
         <Literal xml:lang="english">value</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
