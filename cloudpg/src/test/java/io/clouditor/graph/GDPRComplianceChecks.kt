@@ -240,7 +240,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]-(hr2:HttpRequest)-[:CALL]-()-[:ARGUMENTS]-()--(l1:Literal) WHERE (l1.name CONTAINS \".com\") AND NOT (hr2)-[:TO]-(:HttpEndpoint) WITH COLLECT(DISTINCT l1) as dataRecipients, l1 MATCH p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-()--(l2:Literal), p3=(l1)--() WHERE ANY(recipient IN dataRecipients WHERE NOT l2.value CONTAINS recipient.name) RETURN p3"
+                "MATCH p1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]-(hr2:HttpRequest)-[:CALL]-()-[:ARGUMENTS]-()--(l1:Literal) WHERE (l1.name =~ '.*\\\\b.(com|org|net|edu|gov|biz|info|io|tv|me|co|us|ca|uk|au|in|de)\\\\b.*') AND NOT (hr2)-[:TO]-(:HttpEndpoint) WITH COLLECT(DISTINCT l1) as dataRecipients, l1 MATCH p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-()--(l2:Literal), p3=(l1)--() WHERE ANY(recipient IN dataRecipients WHERE NOT l2.value CONTAINS recipient.name) RETURN p3"
             )
         // create a list for all personal data recipients, which are not mentioned in the
         // information about the data recipients
@@ -308,7 +308,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]-(hr2:HttpRequest)-[:CALL]-()-[:ARGUMENTS]-()--(l1:Literal) WHERE (l1.name CONTAINS \".com\") AND NOT (hr2)-[:TO]-(:HttpEndpoint) WITH COLLECT(DISTINCT l1) as dataRecipients, l1 MATCH p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-()--(l2:Literal), p3=(l1)--() WHERE ANY(recipient IN dataRecipients WHERE NOT l2.value CONTAINS recipient.name) RETURN p3"
+                "MATCH p1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]-(hr2:HttpRequest)-[:CALL]-()-[:ARGUMENTS]-()--(l1:Literal) WHERE (l1.name =~ '.*\\\\b.(com|org|net|edu|gov|biz|info|io|tv|me|co|us|ca|uk|au|in|de)\\\\b.*') AND NOT (hr2)-[:TO]-(:HttpEndpoint) WITH COLLECT(DISTINCT l1) as dataRecipients, l1 MATCH p2=(m:MemberCallExpression {name:\"write\"})-[:ARGUMENTS]-()--(l2:Literal), p3=(l1)--() WHERE ANY(recipient IN dataRecipients WHERE NOT l2.value CONTAINS recipient.name) RETURN p3"
             )
         // create a list for all personal data recipients, which are not mentioned in the
         // information about the data recipients
