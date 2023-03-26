@@ -23,7 +23,7 @@ def parse_data():
         # VALIDATION: no external advertising server is informed about the deletion and no deletion is performed
         return "OK", 200
 
-@app.route("/data", methods=['PUT'])
+@app.route("/store_data", methods=['PUT'])
 def parse_data():
     req = request.json
     data = {

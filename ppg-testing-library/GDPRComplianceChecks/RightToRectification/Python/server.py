@@ -23,5 +23,20 @@ def parse_data():
         user_db_collection.update_one({"name": data['name']})
         return "Created", 201
 
+@app.route("/store_data", methods=['PUT'])
+def parse_data():
+    req = request.json
+    data = {
+        "username": req['username'],
+        "name": req['name'],
+        "notes": req['notes']
+    }
+    if user_db_collection.find( { "name": data['name'] } ).count() > 0:
+        return "Conflict", 409
+    else:
+        # save data to database
+        user_db_collection.insert_one(data)
+        return "OK", 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)

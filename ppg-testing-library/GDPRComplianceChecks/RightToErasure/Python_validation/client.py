@@ -6,9 +6,9 @@ def delete_own_data(personal_data):
     url = 'test-online-notepad.com/data'
     requests.delete(url, json = personal_data)
 
-def send_data_to_external_advertising_server(personal_data):
-    url = 'test-online-notepad.com/data'
-    requests.post(url, json = personal_data)
+def store_personal_data_on_server(personal_data):
+    url = 'test-online-notepad.com/store_data'
+    requests.put(url, json = personal_data)
 
 
 if __name__ == '__main__':
@@ -17,6 +17,6 @@ if __name__ == '__main__':
         "username": "testuser",
         "notes": ["note1", "note2", "note3"]
     }
-    send_data_to_external_advertising_server(personal_data)
+    store_personal_data_on_server(personal_data)
     delete_own_data(personal_data)
 

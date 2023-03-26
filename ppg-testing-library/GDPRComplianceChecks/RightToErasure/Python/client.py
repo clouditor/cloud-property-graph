@@ -2,14 +2,19 @@
 
 import requests
 
-def delete_own_data():
+def delete_own_data(personal_data):
     url = 'test-online-notepad.com/data'
+    requests.delete(url, json = personal_data)
+
+def store_personal_data_on_server(personal_data):
+    url = 'test-online-notepad.com/store_data'
+    requests.put(url, json = personal_data)
+
+if __name__ == '__main__':
     #@PseudoIdentifier
     personal_data = {
         "username": "testuser",
         "notes": ["note1", "note2", "note3"]
     }
-    requests.delete(url, json = personal_data)
-
-if __name__ == '__main__':
-    delete_own_data()
+    store_personal_data_on_server(personal_data)
+    delete_own_data(personal_data)
