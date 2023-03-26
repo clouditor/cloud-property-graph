@@ -20,7 +20,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToRectification/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]-(he1:HttpEndpoint)--()-[:DFG*]-(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'PUT'})-[:TO]->(he3:HttpEndpoint {method: 'PUT'})--()-[:DFG*]-(d2:DatabaseQuery) WHERE (d2.type='UPDATE') } RETURN path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(d1:DatabaseQuery {type: 'CREATE'}) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest {name: 'PUT'})-[:TO]->(he3:HttpEndpoint {method: 'PUT'})--()-[:DFG*]->(d2:DatabaseQuery) WHERE (d2.type='UPDATE') } RETURN path1"
             )
 
         // create a list for all pseudoidentifiers with no update call connected to them via a data
@@ -51,7 +51,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToRectification/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]-(he1:HttpEndpoint)--()-[:DFG*]-(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'PUT'})-[:TO]->(he3:HttpEndpoint {method: 'PUT'})--()-[:DFG*]-(d2:DatabaseQuery) WHERE (d2.type='UPDATE') } RETURN path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(d1:DatabaseQuery {type: 'CREATE'}) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest {name: 'PUT'})-[:TO]->(he3:HttpEndpoint {method: 'PUT'})--()-[:DFG*]->(d2:DatabaseQuery) WHERE (d2.type='UPDATE') } RETURN path1"
             )
 
         // create a list for all pseudoidentifiers with no update call connected to them via a data
@@ -82,7 +82,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToErasure/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]-(he1:HttpEndpoint)--()-[:DFG*]-(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]-(d2:DatabaseQuery) WHERE (d2.type='DELETE') } RETURN path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]->(d2:DatabaseQuery) WHERE (d2.type='DELETE') } RETURN path1"
             )
         // create a list for all pseudoidentifiers with no delete call connected to them via a data
         // flow
@@ -112,7 +112,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToErasure/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]-(he1:HttpEndpoint)--()-[:DFG*]-(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]-(d2:DatabaseQuery) WHERE (d2.type='DELETE') } RETURN path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(d1:DatabaseQuery) WHERE NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]->(d2:DatabaseQuery) WHERE (d2.type='DELETE') } RETURN path1"
             )
         // create a list for all pseudoidentifiers with no delete call connected to them via a data
         // flow
@@ -142,7 +142,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToErasure/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH (hr1:HttpRequest), path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1) WHERE NOT (hr1)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]-(hr1) WHERE (hr1.name='DELETE') } RETURN path1"
+                "MATCH (hr1:HttpRequest), path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1) WHERE NOT (hr1)-[:TO]-(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr2:HttpRequest {name: 'DELETE'})-[:TO]-(he2:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]->(hr3:HttpRequest) WHERE (hr3.name='DELETE') } RETURN path1"
             )
         // create a list for all pseudoidentifiers, which are communicated to extern with no delete
         // call to extern connected to them via a data flow
@@ -175,7 +175,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/RightToErasure/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH (hr1:HttpRequest), path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1) WHERE NOT (hr1)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest {name: 'DELETE'})-[:TO]->(he3:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]-(hr1) WHERE (hr1.name='DELETE') } RETURN path1"
+                "MATCH (hr1:HttpRequest), path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1) WHERE NOT (hr1)-[:TO]-(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr2:HttpRequest {name: 'DELETE'})-[:TO]-(he2:HttpEndpoint {method: 'DELETE'})--()-[:DFG*]->(hr3:HttpRequest) WHERE (hr3.name='DELETE') } RETURN path1"
             )
         // create a list for all pseudoidentifiers, which are communicated to extern with no delete
         // call to extern connected to them via a data flow
@@ -208,7 +208,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest) WHERE NOT (hr2)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest)-[:TO]->(he3:HttpEndpoint)--()-[:DFG*]->(hr4:HttpRequest) WHERE NOT (hr4)-[:TO]->(:HttpEndpoint) AND (hr4.name='DELETE') OR (hr4.name='PUT')} return path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest) WHERE NOT (hr2)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest)-[:TO]->(he3:HttpEndpoint)--()-[:DFG*]->(hr4:HttpRequest) WHERE NOT (hr4)-[:TO]->(:HttpEndpoint) AND (hr4.name='DELETE') OR (hr4.name='PUT')} return path1"
             )
         // create a list for all pseudoidentifiers, which are communicated to extern with no delete
         // or update call to extern connected to them via a data flow
@@ -276,7 +276,7 @@ open class GDPRComplianceChecks {
                         "/../ppg-testing-library/GDPRComplianceChecks/NotificationObligation/Python_validation"
                 ),
                 listOf(Path(".")),
-                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]-(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest) WHERE NOT (hr2)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]-(hr3:HttpRequest)-[:TO]->(he3:HttpEndpoint)--()-[:DFG*]->(hr4:HttpRequest) WHERE NOT (hr4)-[:TO]->(:HttpEndpoint) AND (hr4.name='DELETE') OR (hr4.name='PUT')} return path1"
+                "MATCH path1=(ps1:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:TO]->(he1:HttpEndpoint)--()-[:DFG*]->(hr2:HttpRequest) WHERE NOT (hr2)-[:TO]->(:HttpEndpoint) AND NOT EXISTS { MATCH path2=(ps1)--()-[:DFG*]->(hr3:HttpRequest)-[:TO]->(he3:HttpEndpoint)--()-[:DFG*]->(hr4:HttpRequest) WHERE NOT (hr4)-[:TO]->(:HttpEndpoint) AND (hr4.name='DELETE') OR (hr4.name='PUT')} return path1"
             )
         // create a list for all pseudoidentifiers, which are communicated to extern with no delete
         // or update call to extern connected to them via a data flow
