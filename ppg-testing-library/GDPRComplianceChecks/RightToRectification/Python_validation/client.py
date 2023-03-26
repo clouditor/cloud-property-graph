@@ -2,10 +2,10 @@
 
 import requests
 
-def rectify(personal_data, changed_name):
+def rectify(personal_data):
     url = 'test-online-notepad.com/data'
 
-    personal_data["name"] = changed_name
+    personal_data["name"] = "new name"
     requests.put(url, json = personal_data)
 
 def store_personal_data_on_server(personal_data):
@@ -20,5 +20,5 @@ if __name__ == '__main__':
         "notes": ["note1", "note2", "note3"]
     }
     store_personal_data_on_server(personal_data)
-    rectify(personal_data, "New Name")
+    rectify(personal_data)
 
