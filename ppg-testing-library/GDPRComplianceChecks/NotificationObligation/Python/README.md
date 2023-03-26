@@ -1,1 +1,4 @@
-TODO: Description
+# Test Case: Article 19 - Notification Obligation
+- Test case description: The client sends personal data to the server. The server processes the data, saves it in a Mongo database and communicates parts of the personal data to a third party (external advertising server). The client offers a function for the deletion and rectification of his personal data. The server peforms these requests and notifies the external advertising server about the deletion and rectification of the personal data. The client also offers a function to retrieve information about the data recipients. 
+- Expected outcome:
+  - No data flow is detected which does not fulfill the code properties of GDPR article 19.

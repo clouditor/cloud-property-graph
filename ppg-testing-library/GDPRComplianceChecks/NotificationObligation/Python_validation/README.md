@@ -1,1 +1,5 @@
-TODO: Description
+# Test Case: Article 19 Validation - Notification Obligation
+- Test case description: The client sends personal data to the server. The server processes the data, saves it in a Mongo database and communicates parts of the personal data to a third party (external advertising server). The client offers a function for the deletion and rectification of his personal data. The server peforms these requests and does not notify the external advertising server about the deletion and rectification of the personal data. The client also offers a function to retrieve information about the data recipients but does not hand out information to the user.
+- Expected outcome:
+    - The server is not informing the external advertising server about the deletion and rectification of the personal data is detected.
+    - The client does not hand out information about the data recipients to the user is detected.

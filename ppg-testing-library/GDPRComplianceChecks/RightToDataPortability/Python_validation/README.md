@@ -1,1 +1,4 @@
-TODO: Description
+# Test Case: Article 20 Validation - Right to Data Portability
+- Test case description: The client sends personal data to the server. The server processes the data, saves it in a Mongo database. The client offers a function for the retrieval of his personal data in a machine-readable format, but does not store the personal data. Also a function for the transfer of the personal data to another data controller is integrated in the client. The server does not transfer the personal data to the client or to another data controller in a machine-readable format.
+- Expected outcome:
+    - The server does not transfer the personal data to the client or to another data controller in a machine-readable format is detected.
