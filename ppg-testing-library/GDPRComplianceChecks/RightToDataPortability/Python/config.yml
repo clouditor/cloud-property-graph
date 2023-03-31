@@ -10,8 +10,6 @@ services:
       - userdata
       - otherdata
   - type: db
-    directory: server
     name: mongo
     storages:
       - userdata
-      - otherdata

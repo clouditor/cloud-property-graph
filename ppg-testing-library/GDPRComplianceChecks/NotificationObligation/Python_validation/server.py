@@ -4,6 +4,7 @@ from flask import Flask, request
 from pymongo import MongoClient, database
 import requests
 
+mongo_host = "mongo"
 user_db_client = MongoClient("mongodb://mongo:27017/")
 user_db = user_db_client.userdata
 user_db_collection = user_db.records
