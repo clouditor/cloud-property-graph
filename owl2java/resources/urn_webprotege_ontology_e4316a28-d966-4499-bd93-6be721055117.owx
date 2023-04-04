@@ -1126,6 +1126,13 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/HttpRequest"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/properties/url"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/HttpRequest"/>
         <DataHasValue>
             <DataProperty IRI="http://graph.clouditor.io/classes/reqBody"/>
             <Literal>xsd:de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression</Literal>

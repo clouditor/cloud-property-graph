@@ -4,3 +4,8 @@ services:
     host: test-online-notepad.com
   - type: client
     name: client
+  - type: db
+    name: mongo
+    storages:
+      - userdata
+      - otherdata

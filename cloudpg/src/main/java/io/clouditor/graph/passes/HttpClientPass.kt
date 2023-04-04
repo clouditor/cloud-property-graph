@@ -16,7 +16,7 @@ abstract class HttpClientPass : Pass() {
         app: Application?
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
-        val request = HttpRequest(call, body, endpoints)
+        val request = HttpRequest(call, body, endpoints, url)
         request.name = method
         request.location = call.location
 
