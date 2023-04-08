@@ -306,6 +306,9 @@
         <Class IRI="http://graph.clouditor.io/classes/Workflow"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#FileCreate"/>
+    </Declaration>
+    <Declaration>
         <ObjectProperty IRI="http://graph.clouditor.io/classes/bootLog"/>
     </Declaration>
     <Declaration>
@@ -1816,6 +1819,17 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Workflow"/>
         <Class IRI="http://graph.clouditor.io/classes/CICDService"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FileCreate"/>
+        <Class IRI="http://graph.clouditor.io/classes/Operation"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FileCreate"/>
+        <DataHasValue>
+            <DataProperty IRI="http://graph.clouditor.io/classes/calls"/>
+            <Literal>xsd:de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression</Literal>
+        </DataHasValue>
     </SubClassOf>
     <ClassAssertion>
         <Class IRI="http://graph.clouditor.io/classes/CICDService"/>
@@ -3452,6 +3466,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>xsd:de.fraunhofer.aisec.cpg.graph.Node</AbbreviatedIRI>
         <Literal xml:lang="english">xsd:de.fraunhofer.aisec.cpg.graph.Node</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#FileCreate</IRI>
+        <Literal>FileWrite</Literal>
     </AnnotationAssertion>
 </Ontology>
 
