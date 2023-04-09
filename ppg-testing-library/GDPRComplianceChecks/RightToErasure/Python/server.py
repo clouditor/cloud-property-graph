@@ -26,7 +26,7 @@ def parse_data():
         requests.delete("ext-ad-server.com/data", json = data)
         return "Created", 201
 
-@app.route("/store_data", methods=['PUT'])
+@app.route("/store_data", methods=['POST'])
 def parse_data():
     req = request.json
     data = {

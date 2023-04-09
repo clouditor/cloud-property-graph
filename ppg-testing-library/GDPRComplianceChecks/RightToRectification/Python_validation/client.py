@@ -10,7 +10,7 @@ def rectify(personal_data):
 
 def store_personal_data_on_server(personal_data):
     url = 'test-online-notepad.com/store_data'
-    requests.put(url, json = personal_data)
+    requests.post(url, json = personal_data)
 
 if __name__ == '__main__':
     #@PseudoIdentifier

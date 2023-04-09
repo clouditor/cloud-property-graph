@@ -174,6 +174,7 @@ object App : Callable<Int> {
                 .registerPass(GormDatabasePass())
                 .registerPass(PyMongoPass())
                 .registerPass(Psycopg2Pass())
+                .registerPass(PythonFileWritePass())
                 .processAnnotations(true)
 
         if (labelsEnabled) {

@@ -40,7 +40,7 @@ def transfer_data_to_another_service():
         # VALIDATION: Personal data is not transferred to a third party
         return "OK", 200
 
-@app.route("/store_data", methods=['PUT'])
+@app.route("/store_data", methods=['POST'])
 def parse_data():
     req = request.json
     data = {

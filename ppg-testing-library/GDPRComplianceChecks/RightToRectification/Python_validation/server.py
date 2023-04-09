@@ -24,7 +24,7 @@ def parse_data():
         # VALIDATION: no rectification is performed => No update call to the database
         return "Created", 201
 
-@app.route("/store_data", methods=['PUT'])
+@app.route("/store_data", methods=['POST'])
 def parse_data():
     req = request.json
     data = {

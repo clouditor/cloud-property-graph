@@ -23,7 +23,7 @@ def parse_data():
         user_db_collection.update_one({"name": data['name']})
         return "Created", 201
 
-@app.route("/store_data", methods=['PUT'])
+@app.route("/store_data", methods=['POST'])
 def parse_data():
     req = request.json
     data = {

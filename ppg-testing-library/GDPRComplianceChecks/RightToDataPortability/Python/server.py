@@ -43,7 +43,7 @@ def transfer_data_to_another_service():
         else:
             return "Internal Server Error", 500
 
-@app.route("/store_data", methods=['PUT'])
+@app.route("/store_data", methods=['POST'])
 def parse_data():
     req = request.json
     data = {
