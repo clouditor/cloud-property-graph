@@ -1,0 +1,13 @@
+services:
+  - type: server
+    name: server
+    host: test-online-notepad.com
+  - type: client
+    name: client
+  - type: external-advertising-server
+    name: external-advertising-server
+    host: ext-ad-server.com
+  - type: db
+    name: mongo
+    storages:
+      - userdata

@@ -1,0 +1,4 @@
+# Test Case: Article 17 - Right to Erasure - Same Personal Data, Different Location
+- Test case description: A user is registered in the "client_signup" page and his personal data is sent to a server. The server processes the data, saves it in a Mongo database and sends parts of it to third parties. On another page ("client_edit") the user can request deletion of his personal data, which was initially stored via signup. The server performs this request, deletes the personal data and informs other data recipients about the deletion request.
+- Expected outcome:
+    - No data flow is detected which does not fulfill the code properties of GDPR article 17.
