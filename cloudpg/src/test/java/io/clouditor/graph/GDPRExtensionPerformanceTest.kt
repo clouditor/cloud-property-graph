@@ -31,7 +31,7 @@ open class GDPRExtensionPerformanceTest {
                 executePPG(
                     Path(
                         System.getProperty("user.dir") +
-                                "/../ppg-testing-library/GDPRComplianceChecks/RightToRectification/Python"
+                                "/../ppg-testing-library/GDPRComplianceChecks/RightToDataPortability/Python"
                     ),
                     listOf(Path("."))
                 )
