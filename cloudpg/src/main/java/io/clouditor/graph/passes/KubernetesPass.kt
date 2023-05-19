@@ -313,7 +313,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         null,
                         ArrayList(),
                         ArrayList(),
-                        null,
+                        ArrayList(),
                         null,
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         mapOf()

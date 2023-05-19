@@ -78,7 +78,7 @@ dependencies {
     implementation("de.fraunhofer.aisec:cpg-language-go:$version")
     implementation("de.fraunhofer.aisec:cpg-language-python:$version")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")
     implementation("org.xmlunit:xmlunit-matchers:2.9.0")
 
