@@ -97,7 +97,7 @@ dependencies {
     implementation("com.azure.resourcemanager:azure-resourcemanager-loganalytics:1.0.0-beta.2")
     implementation("com.azure:azure-identity:1.2.0")
 
-    implementation("io.kubernetes:client-java:10.0.0")
+    implementation("io.kubernetes:client-java:17.0.2")
     implementation("com.microsoft.azure:adal4j:1.6.6")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.2")
