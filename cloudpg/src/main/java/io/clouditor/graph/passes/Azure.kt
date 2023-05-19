@@ -291,7 +291,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                         }
 
                     // model data export as ObjectStorageRequest
-                    val request = ObjectStorageRequest(log, listOf(storage), "append")
+                    val request = ObjectStorageRequest(log, listOfNotNull(storage), "append")
                     storage?.let { request.addNextDFG(it) }
 
                     // add DFG from the source to the sink

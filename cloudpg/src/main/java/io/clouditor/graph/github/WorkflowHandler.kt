@@ -71,7 +71,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         result += compute
 
                         val mapper = ObjectMapper(YAMLFactory())
-                        mapper.registerModule(KotlinModule())
+                        mapper.registerModule(KotlinModule.Builder().build())
 
                         Files.newBufferedReader(rootPath.resolve(composePath)).use { reader ->
                             val compose = mapper.readValue(reader, DockerCompose::class.java)

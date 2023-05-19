@@ -6,14 +6,13 @@ import io.clouditor.graph.nodes.isInSelector
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
-import io.kubernetes.client.openapi.apis.ExtensionsV1beta1Api
-import io.kubernetes.client.openapi.models.ExtensionsV1beta1Ingress
+import io.kubernetes.client.openapi.apis.NetworkingV1Api
+import io.kubernetes.client.openapi.models.V1Ingress
 import io.kubernetes.client.openapi.models.V1Pod
 import io.kubernetes.client.openapi.models.V1Service
 import io.kubernetes.client.util.ClientBuilder
 import io.kubernetes.client.util.KubeConfig
 import java.io.FileReader
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
@@ -49,7 +48,8 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
 
         // the CoreV1Api loads default api-client from global configuration.
         val api = CoreV1Api()
-        val extensionsApi = ExtensionsV1beta1Api()
+        // val extensionsApi = ExtensionsV1beta1Api()
+        val extensionsApi = NetworkingV1Api()
 
         val namespace = App.kubernetesNamespace
 
@@ -61,7 +61,19 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
 
         // invokes the CoreV1Api client
         val pods =
-            api.listNamespacedPod(namespace, null, null, null, null, null, null, null, null, null)
+            api.listNamespacedPod(
+                namespace,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false
+            )
         for (pod in pods.items) {
             val container = handlePod(t, pod, cluster)
 
@@ -82,6 +94,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 null,
                 null,
                 null,
+                null,
                 false
             )
         for (item in services.items) {
@@ -93,6 +106,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val endpoints =
             api.listNamespacedEndpoints(
                 namespace,
+                null,
                 null,
                 null,
                 null,
@@ -130,6 +144,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val list =
             extensionsApi.listNamespacedIngress(
                 namespace,
+                null,
                 null,
                 null,
                 null,
@@ -262,7 +277,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
 
     private fun handleIngress(
         t: TranslationResult,
-        ingress: ExtensionsV1beta1Ingress,
+        ingress: V1Ingress,
         cluster: ContainerOrchestration?
     ): List<LoadBalancer> {
         val list = mutableListOf<LoadBalancer>()
@@ -274,7 +289,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 // look for the service (TODO: add namespace to filter)
                 val service =
                     t.additionalNodes.filterIsInstance(NetworkService::class.java).firstOrNull {
-                        it.name == path.backend?.serviceName
+                        it.name == path.backend?.service?.name
                     }
 
                 val hasTLS = ingress.spec?.tls?.isEmpty() ?: false
@@ -298,7 +313,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         null,
                         ArrayList(),
                         ArrayList(),
-                        null,
+                        ArrayList(),
                         null,
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         mapOf()
