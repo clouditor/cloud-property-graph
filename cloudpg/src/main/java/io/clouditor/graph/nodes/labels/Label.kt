@@ -10,7 +10,7 @@ open class Label constructor(labeledNode: Node) : Node() {
      * In the future on label will be used to label multiple nodes, with the purpose of havein one
      * unique label of the same type and properties.
      */
-    @field:Relationship(value = "LABELEDNODE", direction = "OUTGOING")
+    @field:Relationship(value = "LABELEDNODE", direction = Relationship.Direction.OUTGOING)
     var labeledNodes: MutableList<Node> = mutableListOf(labeledNode)
 
     open fun areMergeable(l: Label): Boolean {

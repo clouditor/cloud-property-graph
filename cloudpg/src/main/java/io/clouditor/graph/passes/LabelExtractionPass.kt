@@ -218,15 +218,15 @@ class LabelExtractionPass : Pass() {
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
-                .map { member -> member.value }
+                .mapNotNull { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in
         // TypeScript that are
         // more of meta calls to functions
-        if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members.get(0).value)
+        if (values.isEmpty() && annotation.members.isNotEmpty()) {
+            annotation.members.get(0).value?.let { values.add(it) }
         }
-        if (!values.isEmpty()) {
+        if (values.isNotEmpty()) {
             val param: Node? = values.get(0) as? Node
             param?.let {
                 val label = labelCreationDispatcher<PrivacyLabel>(annotationParent)
@@ -246,16 +246,16 @@ class LabelExtractionPass : Pass() {
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
-                .map { member -> member.value }
+                .mapNotNull { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in
         // TypeScript that are
         // more of meta calls to functions
         if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members.get(0).value)
+            annotation.members.getOrNull(0)?.value?.let { values.add(it) }
         }
-        if (!values.isEmpty()) {
-            val param: Node? = values.get(0) as? Node
+        if (values.isNotEmpty()) {
+            val param: Node? = values.getOrNull(0)
             param?.let {
                 val label: AnonLabel = labelCreationDispatcher<AnonLabel>(annotationParent)
                 val anonymizedDummyLabel = initLabel<PrivacyLabel>(annotationParent)
@@ -313,7 +313,7 @@ class LabelExtractionPass : Pass() {
 
     /** Adds a newly created Label to the DFG-Border nodes, */
     fun addLabelToDFGBorderEdges(n: Node, label: Label) {
-        val dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
+        val dfgExitNodes = getDFGPathEdges(n)!!.exits
 
         label.labeledNodes.addAll(dfgExitNodes)
     }

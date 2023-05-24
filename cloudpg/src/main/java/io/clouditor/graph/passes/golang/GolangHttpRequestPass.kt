@@ -42,7 +42,7 @@ class GolangHttpRequestPass : HttpClientPass() {
             createHttpRequest(
                 result,
                 // TODO this should be resolved if it targets a variable
-                (c.arguments[0] as Literal<String>).value,
+                (c.arguments[0] as Literal<String>).value ?: "",
                 c,
                 "POST",
                 // TODO request body: the default value is not correctly set, so we use the
@@ -54,7 +54,7 @@ class GolangHttpRequestPass : HttpClientPass() {
         } else if (c.name.localName == "PutForm") {
             createHttpRequest(
                 result,
-                (c.arguments[0] as Literal<String>).value,
+                (c.arguments[0] as Literal<String>).value ?: "",
                 c,
                 "PUT",
                 requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
@@ -63,7 +63,7 @@ class GolangHttpRequestPass : HttpClientPass() {
         } else if (c.name.toString() == "http.Get") {
             createHttpRequest(
                 result,
-                (c.arguments[0] as Literal<String>).value,
+                (c.arguments[0] as Literal<String>).value ?: "",
                 c,
                 "GET",
                 null,
@@ -72,7 +72,7 @@ class GolangHttpRequestPass : HttpClientPass() {
         } else if (c.name.localName == "NewRequest" && c.arguments.first().code == "\"POST\"") {
             createHttpRequest(
                 result,
-                (c.arguments[1] as Literal<String>).value,
+                (c.arguments[1] as Literal<String>).value ?: "",
                 c,
                 "POST",
                 requestFunction.parameters[2].prevDFG.first() as Expression,

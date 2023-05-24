@@ -184,13 +184,13 @@ class Psycopg2Pass : DatabaseOperationPass() {
         // resolve the connection details
         val host =
             resolver.resolve(
-                call.argumentsEdges.firstOrNull { it.getProperty(Properties.NAME) == "host" }?.end
+                call.argumentEdges.firstOrNull { it.getProperty(Properties.NAME) == "host" }?.end
             ) as?
                 String
 
         val db =
             resolver.resolve(
-                call.argumentsEdges
+                call.argumentEdges
                     .firstOrNull { it.getProperty(Properties.NAME) == "database" }
                     ?.end
             ) as?

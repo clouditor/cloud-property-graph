@@ -49,7 +49,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             )
 
         binOp.lhs = expr
-        binOp.rhs = this.handle(node.argsNode) as? Expression
+        (this.handle(node.argsNode) as? Expression)?.let { binOp.rhs = it }
 
         return expr
     }
@@ -111,7 +111,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         val binOp = newBinaryOperator("=", frontend.getCodeFromRawNode(node))
         binOp.lhs = lhs
-        binOp.rhs = rhs
+        rhs?.let { binOp.rhs = it }
 
         return binOp
     }
@@ -159,10 +159,10 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         frontend.scopeManager.leaveScope(func)
 
-        var def = newDeclarationStatement(frontend.getCodeFromRawNode(node))
+        val def = newDeclarationStatement(frontend.getCodeFromRawNode(node))
         def.singleDeclaration = func
 
-        var cse = newCompoundStatementExpression(frontend.getCodeFromRawNode(node).toString())
+        val cse = newCompoundStatementExpression(frontend.getCodeFromRawNode(node).toString())
         cse.statement = def
 
         return cse

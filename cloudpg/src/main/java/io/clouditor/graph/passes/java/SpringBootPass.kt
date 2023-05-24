@@ -24,25 +24,23 @@ class SpringBootPass : Pass() {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: RecordDeclaration) {
-                            handleAnnotations(result, tu, r, r.annotations)
-                        }
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(r: RecordDeclaration) {
+                        handleAnnotations(result, tu, r, r.annotations)
                     }
-                )
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(e: MemberExpression) {
-                            handleExpression(e)
-                        }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node?>() {
+                    fun visit(e: MemberExpression) {
+                        handleExpression(e)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -116,7 +114,7 @@ class SpringBootPass : Pass() {
             endpoint.name = Name(endpoint.path)
 
             // if it's a mapping and has a simple return statement, it is an HttpStatus.OK
-            val ret = methodDeclaration.prevDFG
+            val ret = methodDeclaration.prevDFG.firstOrNull()
             if (ret is ReturnStatement) {
                 ret.name = methodDeclaration.parseName("HttpStatus.OK")
             }
