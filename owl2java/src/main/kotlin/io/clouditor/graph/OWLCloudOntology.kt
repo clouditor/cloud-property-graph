@@ -444,7 +444,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                         property.propertyName = decapitalizeString(formatString(getClassName(superClass, ontology)))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
-                    "hasMultiple" -> {
+                    "hasMultiple", "offersMultiple" -> {
                         property.propertyName = getPlural(decapitalizeString(formatString(getClassName(superClass, ontology))))
                         property.propertyType = formatString(getClassName(superClass, ontology))
                     }
@@ -495,12 +495,12 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
                         formatString(getClassName(superClass, ontology)),
                         decapitalizeString(formatString(getClassName(superClass, ontology)))
                     )
-                    "hasMultiple" -> javaClass.addProperty(
+                    "hasMultiple", "offersMultiple" -> javaClass.addProperty(
                         formatString(getArrayClassName(superClass, ontology)),
                         decapitalizeString(formatString(getPlural(getClassName(superClass, ontology))))
                     )
-                    else ->                         // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
-                        javaClass.addProperty(
+                    // TODO: store this information in the property itself, i.e. if it is an array or not. for now all are arrays
+                    else -> javaClass.addProperty(
                             formatString(getArrayClassName(superClass, ontology)),
                             classRelationshipPropertyName
                         )
@@ -681,7 +681,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
     private fun getClassObjectPropertyName(nce: OWLClassExpression): String {
         for (elem in nce.objectPropertiesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
-                if (item != null) {
+                if (item != null && item.property.iri.remainder.get() == "label"){
                     return item.value.toString().split("\"").toTypedArray()[1]
                 }
             }
