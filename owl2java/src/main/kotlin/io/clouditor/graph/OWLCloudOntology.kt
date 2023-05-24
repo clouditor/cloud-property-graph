@@ -643,7 +643,7 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return ""
     }
 
-    // Get description from a data property, e.g., interval
+    // Get description from a DATA property, e.g., interval
     private fun getDataPropertyDescription(ontology: OWLOntology?, props: MutableSet<OWLDataProperty>): String {
         val description: String
 
@@ -669,15 +669,19 @@ class OWLCloudOntology(filepath: String, private val resourceNameFromOwlFile: St
         return nce.filler.toString().split(":").toTypedArray()[1]
     }
 
-    // Get class data property name (realtionship in OWL)
+    // Get class DATA property name (realtionship in OWL)
     private fun getClassDataPropertyName(nce: OWLClassExpression): String {
         for (elem in nce.dataPropertiesInSignature) {
-            return elem.iri.fragment
+            for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
+                if (item != null && item.property.iri.remainder.get() == "label"){
+                    return item.value.toString().split("\"").toTypedArray()[1]
+                }
+            }
         }
         return ""
     }
 
-    // Get class object property name (realtionship in owl)
+    // Get class OBJECT property name (realtionship in owl)
     private fun getClassObjectPropertyName(nce: OWLClassExpression): String {
         for (elem in nce.objectPropertiesInSignature) {
             for (item in EntitySearcher.getAnnotationObjects(elem, ontology!!)) {
