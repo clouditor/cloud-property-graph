@@ -6,6 +6,9 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.LocalDateTime.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.stream.Collectors
 
@@ -333,8 +336,11 @@ object SemanticNodeGenerator {
     }
 
     private fun clouditorCopyright():String {
+        var formatter = DateTimeFormatter.ofPattern("yyyy")
+        val current = LocalDateTime.now().format(formatter)
+
        return """
-// Copyright 2022 Fraunhofer AISEC
+// Copyright """ + current + """ Fraunhofer AISEC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
