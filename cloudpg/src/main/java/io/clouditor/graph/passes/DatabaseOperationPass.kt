@@ -64,7 +64,7 @@ abstract class DatabaseOperationPass : Pass() {
         log.info("Looking for databases hosted at {}", host)
 
         return t.additionalNodes.filterIsInstance(DatabaseService::class.java).filter {
-            it.name == host
+            it.name.toString() == host
         }
     }
 
