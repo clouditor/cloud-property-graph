@@ -4,13 +4,9 @@
 package io.clouditor.graph
 
 import de.fraunhofer.aisec.cpg.*
-import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
