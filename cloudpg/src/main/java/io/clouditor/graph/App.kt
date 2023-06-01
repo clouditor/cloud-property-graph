@@ -9,7 +9,6 @@ import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.graph
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
 import io.clouditor.graph.nodes.Builder
@@ -35,12 +34,7 @@ import picocli.CommandLine
     mixinStandardHelpOptions = true,
     description = ["Builds the Cloud Property Graph and persists it into a graph database."]
 )
-@OptIn(
-    ExperimentalTypeScript::class,
-    ExperimentalPython::class,
-    ExperimentalGolang::class,
-    ExperimentalGraph::class
-)
+
 object App : Callable<Int> {
     @CommandLine.Option(
         names = ["-k8s-n", "--kubernetes-namespaces"],
@@ -93,7 +87,8 @@ object App : Callable<Int> {
         val result = doTranslate()
 
         val nodes = mutableListOf<Node>()
-        nodes.addAll(result.graph.nodes)
+        // FIXME: how to get all nodes of a TranslationResult?
+        // nodes.addAll(result.graph.nodes)
         nodes.addAll(result.translationUnits)
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
@@ -125,6 +120,8 @@ object App : Callable<Int> {
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
                 .defaultLanguages()
+                // FIXME: languages are registered differently now!
+                /*
                 .registerLanguage(
                     RubyLanguageFrontend::class.java,
                     RubyLanguageFrontend.RUBY_EXTENSIONS
@@ -142,6 +139,7 @@ object App : Callable<Int> {
                     GoLanguageFrontend::class.java,
                     GoLanguageFrontend.GOLANG_EXTENSIONS
                 )
+                */
                 .debugParser(true)
                 .registerPass(GitHubWorkflowPass())
                 .registerPass(SpringBootPass())
@@ -196,7 +194,6 @@ object App : Callable<Int> {
     }
 }
 
-@OptIn(ExperimentalPython::class, ExperimentalTypeScript::class, ExperimentalGolang::class)
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(App).execute(*args))
 
 val TranslationResult.images: MutableList<Image>
@@ -223,6 +220,7 @@ fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Appli
     }
 }
 
+// FIXME: we cannot just append nodes anymore -> make mutableSet or stop appending
 operator fun TranslationResult.plusAssign(node: Node) {
-    this.additionalNodes += node
+    // this.additionalNodes += node
 }
