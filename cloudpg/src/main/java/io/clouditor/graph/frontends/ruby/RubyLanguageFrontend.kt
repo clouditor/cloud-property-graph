@@ -4,7 +4,7 @@ import de.fraunhofer.aisec.cpg.TranslationConfiguration
 import de.fraunhofer.aisec.cpg.frontends.LanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.NodeBuilder
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.passes.scopes.ScopeManager
+import de.fraunhofer.aisec.cpg.ScopeManager
 import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation
 import java.io.File
 import org.checkerframework.checker.nullness.qual.NonNull
@@ -14,6 +14,7 @@ import org.jruby.ast.RootNode
 import org.jruby.parser.Parser
 import org.jruby.parser.ParserConfiguration
 
+// FIXME: inheritance from LanguageFrontend
 class RubyLanguageFrontend(config: @NonNull TranslationConfiguration, scopeManager: ScopeManager?) :
     LanguageFrontend(config, scopeManager, "::") {
 
@@ -43,6 +44,7 @@ class RubyLanguageFrontend(config: @NonNull TranslationConfiguration, scopeManag
     }
 
     private fun handleRootNode(node: RootNode, file: File): TranslationUnitDeclaration {
+        // FIXME: NodeBuilder
         val tu = NodeBuilder.newTranslationUnitDeclaration(node.file, getCodeFromRawNode(node))
 
         scopeManager.resetToGlobal(tu)

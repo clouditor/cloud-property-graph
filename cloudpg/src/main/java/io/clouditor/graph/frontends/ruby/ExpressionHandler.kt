@@ -35,8 +35,10 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
+        // FIXME: how do we create a new binary operator?
         var binOp = NodeBuilder.newBinaryOperator("=", lang.getCodeFromRawNode(node))
 
+        // FIXME: where do we get the Statement from?
         var base = this.handle(node.receiverNode) as? Expression
         var expr =
             NodeBuilder.newMemberExpression(
@@ -58,6 +60,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
+        // FIXME: where do we get the Statement from?
         val ref =
             NodeBuilder.newDeclaredReferenceExpression(
                 node.name.idString(),
@@ -80,6 +83,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
                 (node as LocalAsgnNode).name
             }
 
+        // FIXME: more NodeBuilder questions
         // either a binary operator or a variable declaration
         val lhs =
             NodeBuilder.newDeclaredReferenceExpression(
@@ -123,6 +127,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         val base = handle(node.receiverNode) as? Expression
         val member = null
 
+        // FIXME: where do we get the Expression from?
         val mce =
             NodeBuilder.newMemberCallExpression(
                 node.name.asJavaString(),
@@ -148,6 +153,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
+        // FIXME: the hack broke and we need a new solution
         // a complete hack, to handle iter nodes, which is sort of a lambda expression
         // so we create an anonymous function declaration out of the bodyNode and varNode
         // and a declared reference expressions to that anonymous function
@@ -179,6 +185,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
+        // FIXME: where do we get the Expression from?
         val literal =
             NodeBuilder.newLiteral(
                 String(node.value.bytes()),

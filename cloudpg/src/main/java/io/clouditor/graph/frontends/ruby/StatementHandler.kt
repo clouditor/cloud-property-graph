@@ -22,6 +22,7 @@ class StatementHandler(lang: RubyLanguageFrontend) :
         }
 
         blockNode.containsVariableAssignment()
+        // FIXME: NodeBuilder
         val compoundStatement = NodeBuilder.newCompoundStatement(lang.getCodeFromRawNode(blockNode))
 
         for (node in blockNode) {
