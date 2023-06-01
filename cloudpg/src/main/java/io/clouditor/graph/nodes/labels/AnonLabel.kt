@@ -14,7 +14,7 @@ class AnonLabel(labeledNode: Node) : Label(labeledNode) {
     // labels that are not mergeable between each other
 
     override fun areMergeable(l: Label): Boolean {
-        if (!(l::class == AnonLabel::class)) {
+        if (l::class != AnonLabel::class) {
             return false
         }
         (l as AnonLabel).anonymizes?.let {
