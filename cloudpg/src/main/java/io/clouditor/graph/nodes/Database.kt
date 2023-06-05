@@ -5,7 +5,8 @@ import io.clouditor.graph.DatabaseService
 import io.clouditor.graph.DatabaseStorage
 
 fun DatabaseService.getStorageOrCreate(name: String, parentName: String? = null): DatabaseStorage {
-    var storage = this.storage.filterIsInstance<DatabaseStorage>().firstOrNull { it.name.localName == name }
+    var storage =
+        this.storage.filterIsInstance<DatabaseStorage>().firstOrNull { it.name.localName == name }
 
     if (storage == null) {
         storage = DatabaseStorage(mutableListOf(), null, listOf(), this.geoLocation, mutableMapOf())

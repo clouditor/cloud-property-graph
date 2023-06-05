@@ -1,8 +1,8 @@
 package io.clouditor.graph.passes.python
 
-import de.fraunhofer.aisec.cpg.ExperimentalPython
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -14,7 +14,6 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-@OptIn(ExperimentalPython::class)
 class FlaskPass : Pass() {
     // for now, assume, that we have one Flask application per analysis
     // this might not be the case everytime
@@ -57,7 +56,7 @@ class FlaskPass : Pass() {
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if ((v.initializer as? CallExpression)?.name == "Flask") {
+        if ((v.initializer as? CallExpression)?.name?.localName == "Flask") {
             // handle it as a request handler
             val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
@@ -85,7 +84,7 @@ class FlaskPass : Pass() {
     }
 
     private fun handleMapping(func: FunctionDeclaration): HttpEndpoint? {
-        val mapping = func.annotations.firstOrNull { it.name == "route" }
+        val mapping = func.annotations.firstOrNull { it.name.localName == "route" }
         if (mapping != null) {
             // TE is not really interesting for us here, but we need to fill it. maybe make it
             // optional later
@@ -101,7 +100,7 @@ class FlaskPass : Pass() {
                     te,
                     null
                 )
-            endpoint.name = endpoint.path
+            endpoint.name = Name(endpoint.path)
 
             // get the endpoint's handler and look for assignments of the request's JSON body
             func.accept(
@@ -129,7 +128,7 @@ class FlaskPass : Pass() {
     }
 
     private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
-        if (me.name == "json" && me.base.name == "request") {
+        if (me.name.localName == "json" && me.base.name.localName == "request") {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
 
@@ -141,7 +140,8 @@ class FlaskPass : Pass() {
 
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
-        (mapping.members.firstOrNull { it.name == "methods" }?.value as? InitializerListExpression)
+        (mapping.members.firstOrNull { it.name.localName == "methods" }?.value as?
+                InitializerListExpression)
             ?.initializers?.firstOrNull()
             .let { (it as? Literal<*>)?.let { method = it.value.toString() } }
 
@@ -164,7 +164,7 @@ class FlaskPass : Pass() {
         var returnValue = rs.returnValue as InitializerListExpression
         // set the correct http status code by looking through the initializers
         returnValue.initializers.first { it.name in httpMap }.let {
-            returnValue.name = httpMap.get(it.name).toString()
+            returnValue.name = Name(httpMap.get(it.name).toString())
         }
     }
 }

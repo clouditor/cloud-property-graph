@@ -50,7 +50,7 @@ class FetchPass : HttpClientPass() {
         tu: TranslationUnitDeclaration,
         call: CallExpression
     ) {
-        if (call.name == "fetch") {
+        if (call.name.localName == "fetch") {
             handleFetch(t, tu, call)
         }
     }
@@ -80,7 +80,7 @@ class FetchPass : HttpClientPass() {
         ValueResolver()
             .resolve(
                 options?.initializers?.firstOrNull {
-                    it is KeyValueExpression && it.key?.name == "method"
+                    it is KeyValueExpression && it.key?.name?.localName == "method"
                 }
             )
             ?.let { method = it as String }
@@ -91,7 +91,7 @@ class FetchPass : HttpClientPass() {
     private fun getBody(options: InitializerListExpression?): Expression? {
         var body =
             (options?.initializers?.firstOrNull() {
-                    it is KeyValueExpression && it.key?.name == "body"
+                    it is KeyValueExpression && it.key?.name?.localName == "body"
                 } as
                     KeyValueExpression)
                 .value

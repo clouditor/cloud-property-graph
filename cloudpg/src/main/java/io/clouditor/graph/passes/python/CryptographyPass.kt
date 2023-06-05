@@ -1,6 +1,5 @@
 package io.clouditor.graph.passes.python
 
-import de.fraunhofer.aisec.cpg.ExperimentalPython
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -12,7 +11,6 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
 
-@ExperimentalPython
 class CryptographyPass : Pass() {
 
     override fun cleanup() {
@@ -27,10 +25,10 @@ class CryptographyPass : Pass() {
                 object : IVisitor<Node?>() {
                     fun visit(r: MemberCallExpression) {
                         // look for key.sign()
-                        if (r.name == "sign") {
+                        if (r.name.localName == "sign") {
                             val private_key = r.base as DeclaredReferenceExpression
                             val generator = private_key.prevDFG.first() as MemberCallExpression
-                            if (generator.name == "generate_private_key") {
+                            if (generator.name.localName == "generate_private_key") {
                                 handleSignature(tu, t, r)
                             }
                         }

@@ -24,7 +24,9 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 // work
                 object : IVisitor<Node?>() {
                     fun visit(call: MemberCallExpression) {
-                        if (call.name == "connect" && call.base.name == "psycopg2") {
+                        if (call.name.localName == "connect" &&
+                                call.base?.name?.localName == "psycopg2"
+                        ) {
                             handleConnect(t, call, app)
                         }
                     }
@@ -45,7 +47,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 object : IVisitor<Node?>() {
                     fun visit(call: MemberCallExpression) {
                         clients[call.base]?.let {
-                            if (call.name == "cursor") {
+                            if (call.name.localName == "cursor") {
                                 handleCursor(call, it)
                             }
                         }
@@ -59,7 +61,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 object : IVisitor<Node?>() {
                     fun visit(call: MemberCallExpression) {
                         clients[call.base]?.let {
-                            if (call.name == "execute") {
+                            if (call.name.localName == "execute") {
                                 handleExecute(t, call, app, it)
                             }
                         }
@@ -73,7 +75,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
                 object : IVisitor<Node?>() {
                     fun visit(call: MemberCallExpression) {
                         clients[call.base]?.let {
-                            if (call.name == "fetchall") {
+                            if (call.name.localName == "fetchall") {
                                 handleFetchAll(t, call, app, it)
                             }
                         }
@@ -146,7 +148,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
         something?.let { matchResult ->
             val table = matchResult.groups[2]?.value
             val dbName = dbStorage.firstOrNull()?.name
-            val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName) }
+            val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName?.localName) }
 
             val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app)
             op.name = call.name

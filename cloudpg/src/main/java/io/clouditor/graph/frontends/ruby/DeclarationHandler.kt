@@ -27,6 +27,8 @@ class DeclarationHandler(lang: RubyLanguageFrontend) :
                 false,
                 lang.getCodeFromRawNode(node)
             )
+        // Something like this? How do I actually access the builder methods?
+        // val param = DeclarationBuilder.newMethodDeclaration(node.name.idString())
 
         return param
     }

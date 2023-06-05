@@ -1,6 +1,5 @@
 package io.clouditor.graph.passes.python
 
-import de.fraunhofer.aisec.cpg.ExperimentalPython
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -10,7 +9,6 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
 
-@ExperimentalPython
 class RequestsPass : HttpClientPass() {
 
     override fun cleanup() {
@@ -25,9 +23,10 @@ class RequestsPass : HttpClientPass() {
                 object : IVisitor<Node?>() {
                     fun visit(r: MemberCallExpression) {
                         // look for requests.get()
-                        if (r.name == "get" && r.base.name == "requests") {
+                        if (r.name.localName == "get" && r.base.name.localName == "requests") {
                             handleClientRequest(tu, t, r, "GET")
-                        } else if (r.name == "post" && r.base.name == "requests") {
+                        } else if (r.name.localName == "post" && r.base.name.localName == "requests"
+                        ) {
                             handleClientRequest(tu, t, r, "POST")
                         }
                     }

@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.Pass
 import io.clouditor.graph.*
@@ -17,7 +18,7 @@ abstract class HttpClientPass : Pass() {
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, body, endpoints)
-        request.name = method
+        request.name = Name(method)
         request.location = call.location
 
         endpoints.forEach { request.addNextDFG(it) }

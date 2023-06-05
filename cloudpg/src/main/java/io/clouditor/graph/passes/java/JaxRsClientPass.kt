@@ -60,7 +60,7 @@ class JaxRsClientPass : HttpClientPass() {
 
         val buildCall =
             builder
-                ?.followEOG { it.end is MemberCallExpression && it.end.name == "build" }
+                ?.followEOG { it.end is MemberCallExpression && it.end.name.localName == "build" }
                 ?.lastOrNull()
 
         (buildCall?.end as? MemberCallExpression)?.let { handleClient(t, it, tu) }
@@ -89,7 +89,9 @@ class JaxRsClientPass : HttpClientPass() {
         }
 
         val edges =
-            creationCall.followEOG { it.end is MemberCallExpression && it.end.name == "target" }
+            creationCall.followEOG {
+                it.end is MemberCallExpression && it.end.name.localName == "target"
+            }
         edges?.let { it ->
             val last = it.last()
 
@@ -119,7 +121,7 @@ class JaxRsClientPass : HttpClientPass() {
                     when (node) {
                         is StaticCallExpression -> {
                             // support for some special calls, i.e. format
-                            if (node.name == "getenv") {
+                            if (node?.name?.localName == "getenv") {
                                 // environment lookup on Java
                                 val key = resolver.resolve(node.arguments.firstOrNull())
 
@@ -127,7 +129,7 @@ class JaxRsClientPass : HttpClientPass() {
                             }
 
                             // return placeholder
-                            return@ValueResolver "{${node.name}()}"
+                            return@ValueResolver "{${node?.name}()}"
                         }
                         else -> return@ValueResolver "{${node?.name}}"
                     }
@@ -140,7 +142,7 @@ class JaxRsClientPass : HttpClientPass() {
                 fun visit(mce: MemberCallExpression) {
                     // just look for a "get"
                     // TODO: actually look for client/builder... Hacky for now
-                    if (mce.name == "get") {
+                    if (mce.name.localName == "get") {
                         handleGetCall(t, url.toString(), mce, app)
                     }
                 }

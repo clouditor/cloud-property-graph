@@ -20,7 +20,9 @@ class Holder(
 
 fun TranslationResult.location(locationName: String): GeoLocation {
     var location =
-        this.additionalNodes.firstOrNull { it is GeoLocation && it.name.localName == locationName } as?
+        this.additionalNodes.firstOrNull {
+            it is GeoLocation && it.name.localName == locationName
+        } as?
             GeoLocation
     if (location == null) {
         location = GeoLocation(locationName)

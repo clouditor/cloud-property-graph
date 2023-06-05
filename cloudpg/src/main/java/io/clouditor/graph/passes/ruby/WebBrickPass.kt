@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes.ruby
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -50,7 +51,7 @@ class WebBrickPass : Pass() {
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if (mce.name == "mount_proc") {
+        if (mce.name.localName == "mount_proc") {
             var path: String = (mce.arguments.first() as? Literal<*>)?.value as? String ?: "/"
 
             val func =
@@ -70,7 +71,7 @@ class WebBrickPass : Pass() {
                 ) {
                     val init = (statement.singleDeclaration as VariableDeclaration).initializer
 
-                    if (init is MemberCallExpression && init.name == "split") {
+                    if (init is MemberCallExpression && init.name.localName == "split") {
                         if (init.base is MemberCallExpression &&
                                 (init.base as MemberCallExpression).base is
                                     DeclaredReferenceExpression
@@ -87,7 +88,7 @@ class WebBrickPass : Pass() {
             }
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, "GET", path, null, null)
-            endpoint.name = path
+            endpoint.name = Name(path)
 
             handler.httpEndpoints.plusAssign(endpoint)
             app?.functionalities?.plusAssign(endpoint)

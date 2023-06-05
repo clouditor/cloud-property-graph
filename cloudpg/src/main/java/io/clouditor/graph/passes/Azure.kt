@@ -111,7 +111,8 @@ class AzureClientSDKPass : Pass() {
                 path =
                     eog.followEOG {
                         it.end is CallExpression &&
-                            it.end.name.localName == "buildClient" /*&& (it.end as CallExpression).base == c*/
+                            it.end.name.localName ==
+                                "buildClient" /*&& (it.end as CallExpression).base == c*/
                     }
                 path?.let {
                     val call = it.last().end as CallExpression

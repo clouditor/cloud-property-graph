@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes.golang
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -71,7 +72,7 @@ class GolangHttpPass : HttpClientPass() {
                     )
                 endpoint.name = endpoint.path
                 funcDeclaration?.parameters?.forEach {
-                    if (it.type is PointerType && it.type.name == "http.Request*" ||
+                    if (it.type is PointerType && it.type.name.localName == "http.Request*" ||
                             it.type is HttpRequest
                     ) {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
@@ -98,7 +99,7 @@ class GolangHttpPass : HttpClientPass() {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
-            requestHandler.name = requestHandler.path
+            requestHandler.name = Name(requestHandler.path)
 
             clients[r] = requestHandler
 

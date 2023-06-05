@@ -29,7 +29,7 @@ class PyMongoPass : DatabaseOperationPass() {
                     fun visit(call: CallExpression) {
                         // TODO: actually, this should be a ConstructExpression, but currently, it
                         // is parsed as a CallExpression in the CPG
-                        if (call.name == "MongoClient") {
+                        if (call.name.localName == "MongoClient") {
                             handleClientCreate(t, call, app)
                         }
                     }
@@ -119,7 +119,8 @@ class PyMongoPass : DatabaseOperationPass() {
         // the services are reachable by proxies, or are clustered. Thus technically, we have
         // multiple database storage nodes (one per service)
         val storages =
-            connect.to?.map { it.getStorageOrCreate(memberExpression.name) } ?: emptyList()
+            connect.to?.map { it.getStorageOrCreate(memberExpression.name.localName) }
+                ?: emptyList()
 
         // the DFG target of this member expression is the DB object, we are interested in
         val target = memberExpression.nextDFG.iterator().next()
@@ -146,7 +147,7 @@ class PyMongoPass : DatabaseOperationPass() {
                 // the services
                 var parentName = pair?.second?.firstOrNull()?.name
 
-                it.getStorageOrCreate(memberExpression.name, parentName)
+                it.getStorageOrCreate(memberExpression.name.localName, parentName?.localName)
             }
                 ?: emptyList()
 
@@ -167,14 +168,14 @@ class PyMongoPass : DatabaseOperationPass() {
     ) {
         var (connect, storage) = pair
         var op: DatabaseQuery? = null
-        if (mce.name == "insert_one") {
+        if (mce.name.localName == "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
 
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)
         }
 
-        if (mce.name == "find" || mce.name == "find_one") {
+        if (mce.name.localName == "find" || mce.name.localName == "find_one") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
             // data flows from first argument to op
             mce.arguments.firstOrNull()?.addNextDFG(op)

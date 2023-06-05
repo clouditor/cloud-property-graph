@@ -1,6 +1,7 @@
 package io.clouditor.graph.passes.js
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -35,11 +36,13 @@ class JSHttpPass : Pass() {
         tu: TranslationUnitDeclaration,
         v: VariableDeclaration
     ) {
-        if (v.name == "dispatcher" || (v.initializer as? CallExpression)?.name == "express") {
+        if (v.name.localName == "dispatcher" ||
+                (v.initializer as? CallExpression)?.name?.localName == "express"
+        ) {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
-            requestHandler.name = requestHandler.path
+            requestHandler.name = Name(requestHandler.path)
 
             tu.accept(
                 Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
@@ -68,17 +71,18 @@ class JSHttpPass : Pass() {
         mce: MemberCallExpression,
         v: VariableDeclaration
     ): HttpEndpoint? {
-        return if ((mce.name == "onPost" ||
-                mce.name == "onGet" ||
-                mce.name == "post" ||
-                mce.name == "get") && (mce.base as? DeclaredReferenceExpression)?.refersTo == v
+        return if ((mce.name.localName == "onPost" ||
+                mce.name.localName == "onGet" ||
+                mce.name.localName == "post" ||
+                mce.name.localName == "get") &&
+                (mce.base as? DeclaredReferenceExpression)?.refersTo == v
         ) {
             val path: String =
                 unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
             val func = (mce.arguments[mce.arguments.size - 1] as? LambdaExpression)?.function
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, getMethod(mce), path, null, null)
-            endpoint.name = path
+            endpoint.name = Name(path)
 
             // get the endpoint's handler and look for assignments of the request's JSON body
             func?.accept(
@@ -101,7 +105,7 @@ class JSHttpPass : Pass() {
         me: MemberExpression,
         e: HttpEndpoint
     ) {
-        if (me.name == "body" &&
+        if (me.name.localName == "body" &&
                 fd.parameters.first() == (me.base as? DeclaredReferenceExpression)?.refersTo
         ) {
             // set the DFG target of this call to the DFG target of our http endpoints
@@ -124,7 +128,7 @@ class JSHttpPass : Pass() {
     }
 
     private fun getMethod(mce: MemberCallExpression): String {
-        return if (mce.name == "onPost" || mce.name == "post") {
+        return if (mce.name.localName == "onPost" || mce.name.localName == "post") {
             "POST"
         } else {
             "GET"
