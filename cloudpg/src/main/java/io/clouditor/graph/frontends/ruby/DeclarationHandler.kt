@@ -1,10 +1,9 @@
 package io.clouditor.graph.frontends.ruby
 
 import de.fraunhofer.aisec.cpg.frontends.Handler
-import de.fraunhofer.aisec.cpg.graph.NodeBuilder
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.ProblemDeclaration
-import de.fraunhofer.aisec.cpg.graph.types.UnknownType
+import de.fraunhofer.aisec.cpg.graph.newMethodDeclaration
 import org.jruby.ast.*
 
 class DeclarationHandler(lang: RubyLanguageFrontend) :
@@ -19,17 +18,6 @@ class DeclarationHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        // FIXME: where do we get our Declaration from?
-        val param =
-            NodeBuilder.newMethodParameterIn(
-                node.name.idString(),
-                UnknownType.getUnknownType(),
-                false,
-                lang.getCodeFromRawNode(node)
-            )
-        // Something like this? How do I actually access the builder methods?
-        // val param = DeclarationBuilder.newMethodDeclaration(node.name.idString())
-
-        return param
+        return newMethodDeclaration(node.name.idString(), language.code, false)
     }
 }
