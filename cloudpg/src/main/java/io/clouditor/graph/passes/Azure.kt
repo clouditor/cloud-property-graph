@@ -61,7 +61,6 @@ class AzureClientSDKPass : Pass() {
         app: Application?
     ) {
         try {
-            // FIXME: Name and String
             // FIXME: CallExpression.base unresolved
             if (c.type.name.toString() == "com.azure.storage.blob.BlobContainerClientBuilder") {
                 // we need to follow the EOG until we have proper support for querying outgoing
@@ -82,7 +81,7 @@ class AzureClientSDKPass : Pass() {
                     eog.followEOG {
                         it.end is CallExpression &&
                             it.end.name.localName == "endpoint" &&
-                            (it.end as CallExpression).base == c
+                            (it.end as CallExpression).callee == c
                     }
                 path?.let {
                     val call = it.last().end as CallExpression
@@ -143,9 +142,10 @@ class AzureClientSDKPass : Pass() {
                         eog.followEOG {
                             it.end is CallExpression &&
                                 it.end.name.localName == "getAppendBlobClient" &&
-                                (it.end as CallExpression).base is CallExpression &&
-                                (it.end as CallExpression).base.name.localName == "getBlobClient" &&
-                                (((it.end as CallExpression).base as CallExpression).base as
+                                (it.end as CallExpression).callee is CallExpression &&
+                                (it.end as CallExpression).callee?.name?.localName ==
+                                    "getBlobClient" &&
+                                (((it.end as CallExpression).callee as CallExpression).callee as
                                         DeclaredReferenceExpression)
                                     .refersTo == client
                         }
