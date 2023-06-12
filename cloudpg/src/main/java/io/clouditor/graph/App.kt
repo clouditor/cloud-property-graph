@@ -30,7 +30,6 @@ import picocli.CommandLine
     mixinStandardHelpOptions = true,
     description = ["Builds the Cloud Property Graph and persists it into a graph database."]
 )
-
 object App : Callable<Int> {
     @CommandLine.Option(
         names = ["-k8s-n", "--kubernetes-namespaces"],

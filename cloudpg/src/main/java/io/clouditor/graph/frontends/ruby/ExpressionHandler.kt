@@ -36,19 +36,17 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        val binOp = newBinaryOperator(
-            "=",
-            language.code
-        )
+        val binOp = newBinaryOperator("=", language.code)
 
         val base = this.handle(node.receiverNode) as Expression
-        val expr = newMemberExpression(
-            node.name.idString(),
-            base,
-            UnknownType.getUnknownType(),
-            "=",
-            language.code
-        )
+        val expr =
+            newMemberExpression(
+                node.name.idString(),
+                base,
+                UnknownType.getUnknownType(),
+                "=",
+                language.code
+            )
 
         binOp.lhs = expr
         binOp.rhs = this.handle(node.argsNode) as Expression
@@ -81,11 +79,12 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             }
 
         // either a binary operator or a variable declaration
-        val lhs = newDeclaredReferenceExpression(
-            name.idString(),
-            UnknownType.getUnknownType(),
-            language.code
-        )
+        val lhs =
+            newDeclaredReferenceExpression(
+                name.idString(),
+                UnknownType.getUnknownType(),
+                language.code
+            )
         val rhs = this.handle((node as AssignableNode).valueNode) as? Expression
 
         // can we resolve it?
@@ -94,12 +93,8 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         if (decl == null) {
             val stmt = newDeclarationStatement(language.code)
-            decl = newVariableDeclaration(
-                lhs.name,
-                UnknownType.getUnknownType(),
-                language.code,
-                false
-            )
+            decl =
+                newVariableDeclaration(lhs.name, UnknownType.getUnknownType(), language.code, false)
             decl.initializer = rhs
 
             stmt.singleDeclaration = decl
@@ -121,11 +116,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         val base = handle(node.receiverNode) as? Expression
 
-        val mce = newMemberCallExpression(
-            base,
-            false,
-            language.code
-        )
+        val mce = newMemberCallExpression(base, false, language.code)
 
         for (arg in node.argsNode?.childNodes() ?: emptyList()) {
             mce.addArgument(handle(arg) as Expression)
