@@ -116,7 +116,6 @@ object App : Callable<Int> {
                 .defaultPasses()
                 .defaultLanguages()
                 // FIXME: languages are registered differently now!
-                /*
                 .registerLanguage(
                     RubyLanguageFrontend::class.java,
                     RubyLanguageFrontend.RUBY_EXTENSIONS
@@ -134,49 +133,45 @@ object App : Callable<Int> {
                     GoLanguageFrontend::class.java,
                     GoLanguageFrontend.GOLANG_EXTENSIONS
                 )
-                */
                 .debugParser(true)
-                .registerPass(GitHubWorkflowPass())
-                .registerPass(SpringBootPass())
-                .registerPass(JaxRsPass())
-                .registerPass(GolangHttpPass())
-                .registerPass(GinGonicPass())
-                .registerPass(WebBrickPass())
-                .registerPass(JSHttpPass())
-                .registerPass(FlaskPass())
+                .registerPass(GitHubWorkflowPass::class)
+                .registerPass(SpringBootPass::class)
+                .registerPass(JaxRsPass::class)
+                .registerPass(GolangHttpPass::class)
+                .registerPass(GinGonicPass::class)
+                .registerPass(WebBrickPass::class)
+                .registerPass(JSHttpPass::class)
+                .registerPass(FlaskPass::class)
                 .apply {
                     if (localMode) {
                         // register the localTestingPass after the HTTP Passes since it needs HTTP
                         // request handlers
-                        registerPass(LocalTestingPass())
-                        registerPass(GolangHttpRequestPass())
+                        registerPass(LocalTestingPass::class)
+                        registerPass(GolangHttpRequestPass::class)
                     } else {
-                        registerPass(AzurePass())
-                        registerPass(AzureClientSDKPass())
-                        registerPass(KubernetesPass())
-                        registerPass(IngressInvocationPass())
+                        registerPass(AzurePass::class)
+                        registerPass(AzureClientSDKPass::class)
+                        registerPass(KubernetesPass::class)
+                        registerPass(IngressInvocationPass::class)
                     }
                 }
-                .registerPass(CryptographyPass())
-                .registerPass(GoCryptoPass())
-                .registerPass(JaxRsClientPass())
-                .registerPass(FetchPass())
-                .registerPass(RequestsPass())
-                .registerPass(PythonLogPass())
-                .registerPass(GolangLogPass())
-                .registerPass(GormDatabasePass())
-                .registerPass(PyMongoPass())
-                .registerPass(Psycopg2Pass())
+                .registerPass(CryptographyPass::class)
+                .registerPass(GoCryptoPass::class)
+                .registerPass(JaxRsClientPass::class)
+                .registerPass(FetchPass::class)
+                .registerPass(RequestsPass::class)
+                .registerPass(PythonLogPass::class)
+                .registerPass(GolangLogPass::class)
+                .registerPass(GormDatabasePass::class)
+                .registerPass(PyMongoPass::class)
+                .registerPass(Psycopg2Pass::class)
                 .processAnnotations(true)
 
         if (labelsEnabled) {
-            val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
-            val labelPass: LabelExtractionPass = LabelExtractionPass()
-            labelPass.edgesCachePass = edgesCache
             builder
-                .registerPass(DFGExtensionPass())
-                .registerPass(edgesCache)
-                .registerPass(labelPass)
+                .registerPass(DFGExtensionPass::class)
+                .registerPass(BidirectionalEdgesCachePass::class)
+                .registerPass(LabelExtractionPass::class)
                 .matchCommentsToNodes(true)
         }
 

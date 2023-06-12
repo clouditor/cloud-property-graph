@@ -21,9 +21,9 @@ import java.util.stream.Collectors
 
 class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
-    val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
+    private val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
 
-    var edgesCachePass: BidirectionalEdgesCachePass? = null
+    private var edgesCachePass: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass(ctx)
 
     init {
         // Todo Here you can add other predicates to add labels
@@ -321,7 +321,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
      */
     fun addLabelToInstantiations(n: Node, label: Label) {
         if (n is Declaration) {
-            edgesCachePass?.getEdgeSourceOf(n, BidirectionalEdgesCachePass.EdgeLabel.INSTANTIATES)
+            edgesCachePass.getEdgeSourceOf(n, BidirectionalEdgesCachePass.EdgeLabel.INSTANTIATES)
                 ?.forEach { addLabelToDFGBorderEdges(it, label) }
         }
     }
