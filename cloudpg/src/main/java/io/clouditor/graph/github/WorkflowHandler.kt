@@ -131,7 +131,6 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                     )
                 application.name = Name(Path.of(path).fileName.toString(), null)
 
-                // FIXME: val cannot tbe reassigned
                 result.additionalNodes += application
 
                 // we need to assume, that GH stores its images in the US

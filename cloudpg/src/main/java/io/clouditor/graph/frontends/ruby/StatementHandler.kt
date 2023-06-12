@@ -26,9 +26,7 @@ class StatementHandler(lang: RubyLanguageFrontend) :
         val compoundStatement = newCompoundStatement(language.code)
 
         for (node in blockNode) {
-            // FIXME
-            val statement = lang.expressionHandler.handle(node)
-
+            val statement = frontend.expressionHandler.handle(node)
             statement?.let { compoundStatement.addStatement(it) }
         }
 

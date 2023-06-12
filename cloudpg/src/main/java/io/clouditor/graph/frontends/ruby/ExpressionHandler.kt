@@ -85,11 +85,10 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
                 UnknownType.getUnknownType(),
                 language.code
             )
-        val rhs = this.handle((node as AssignableNode).valueNode) as? Expression
+        val rhs = this.handle((node as AssignableNode).valueNode) as Expression
 
         // can we resolve it?
-        // FIXME
-        var decl = this.lang.scopeManager.resolveReference(lhs)
+        var decl = frontend.scopeManager.resolveReference(lhs)
 
         if (decl == null) {
             val stmt = newDeclarationStatement(language.code)
@@ -138,18 +137,16 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         // and a declared reference expressions to that anonymous function
         val func = newFunctionDeclaration("", language.code)
 
-        // FIXME
-        lang.scopeManager.enterScope(func)
+        this.frontend.scopeManager.enterScope(func)
 
-        // FIXME (maybe use handle methods implemented in "this"?)
         for (arg in node.argsNode.args) {
-            val param = lang.declarationHandler.handle(arg)
-            lang.scopeManager.addDeclaration(param)
+            val param = frontend.declarationHandler.handle(arg)
+            frontend.scopeManager.addDeclaration(param)
         }
 
-        func.body = lang.statementHandler.handle(node.bodyNode)
+        func.body = frontend.statementHandler.handle(node.bodyNode)
 
-        lang.scopeManager.leaveScope(func)
+        frontend.scopeManager.leaveScope(func)
 
         val def = newDeclarationStatement(language.code)
         def.singleDeclaration = func
