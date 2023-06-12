@@ -1,7 +1,6 @@
 package io.clouditor.graph.frontends.ruby
 
-import de.fraunhofer.aisec.cpg.ScopeManager
-import de.fraunhofer.aisec.cpg.TranslationConfiguration
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.frontends.Language
 import de.fraunhofer.aisec.cpg.frontends.LanguageFrontend
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -18,9 +17,8 @@ import org.jruby.parser.ParserConfiguration
 
 class RubyLanguageFrontend(
     language: Language<RubyLanguageFrontend>,
-    config: @NonNull TranslationConfiguration,
-    scopeManager: ScopeManager
-) : LanguageFrontend(language, config, scopeManager) {
+    ctx: @NonNull TranslationContext
+) : LanguageFrontend(language, ctx) {
 
     companion object {
         @kotlin.jvm.JvmField var RUBY_EXTENSIONS: List<String> = listOf(".rb")

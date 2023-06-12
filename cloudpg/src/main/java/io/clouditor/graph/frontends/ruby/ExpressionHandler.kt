@@ -43,7 +43,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             newMemberExpression(
                 node.name.idString(),
                 base,
-                UnknownType.getUnknownType(),
+                UnknownType.getUnknownType(language),
                 "=",
                 language.code
             )
@@ -61,7 +61,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         return newDeclaredReferenceExpression(
             node.name.idString(),
-            UnknownType.getUnknownType(),
+            UnknownType.getUnknownType(language),
             language.code
         )
     }
@@ -82,7 +82,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         val lhs =
             newDeclaredReferenceExpression(
                 name.idString(),
-                UnknownType.getUnknownType(),
+                UnknownType.getUnknownType(language),
                 language.code
             )
         val rhs = this.handle((node as AssignableNode).valueNode) as Expression
@@ -93,7 +93,12 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         if (decl == null) {
             val stmt = newDeclarationStatement(language.code)
             decl =
-                newVariableDeclaration(lhs.name, UnknownType.getUnknownType(), language.code, false)
+                newVariableDeclaration(
+                    lhs.name,
+                    UnknownType.getUnknownType(language),
+                    language.code,
+                    false
+                )
             decl.initializer = rhs
 
             stmt.singleDeclaration = decl
@@ -164,7 +169,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         return newLiteral(
             String(node.value.bytes()),
-            TypeParser.createFrom("string", language),
+            TypeParser.createFrom("string", false, frontend),
             language.code
         )
     }
