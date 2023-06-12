@@ -32,7 +32,8 @@ class PythonValueResolver(
                         }
 
                         base
-                    } else if (node.base.name.localName == "environ" && node.name.localName == "get"
+                    } else if (node.base?.name?.localName == "environ" &&
+                            node.name.localName == "get"
                     ) {
                         // environment lookup on python
                         val key = resolver.resolve(node.arguments.firstOrNull())

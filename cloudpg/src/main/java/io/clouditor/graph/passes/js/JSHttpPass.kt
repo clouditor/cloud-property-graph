@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.js
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
@@ -7,27 +8,25 @@ import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-class JSHttpPass : Pass() {
+class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(v: VariableDeclaration) {
-                            handleVariableDeclaration(result, tu, v)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(v: VariableDeclaration) {
+                        handleVariableDeclaration(result, tu, v)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -47,7 +46,7 @@ class JSHttpPass : Pass() {
             tu.accept(
                 Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
                 // level statements
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(mce: MemberCallExpression) {
                         val endpoint = handleEndpoint(result, tu, mce, v)
 
@@ -87,7 +86,7 @@ class JSHttpPass : Pass() {
             // get the endpoint's handler and look for assignments of the request's JSON body
             func?.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(me: MemberExpression) {
                         handleRequestUnpacking(func, me, endpoint)
                     }

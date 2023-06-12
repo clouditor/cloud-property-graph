@@ -1,17 +1,18 @@
 package io.clouditor.graph.passes.python
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
 
-class CryptographyPass : Pass() {
+class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {
         // nothing to do
@@ -22,7 +23,7 @@ class CryptographyPass : Pass() {
         for (tu in t.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(r: MemberCallExpression) {
                         // look for key.sign()
                         if (r.name.localName == "sign") {

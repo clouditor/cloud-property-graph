@@ -16,6 +16,7 @@ import com.azure.resourcemanager.loganalytics.LogAnalyticsManager
 import com.azure.resourcemanager.loganalytics.models.Workspace
 import com.azure.resourcemanager.storage.models.PublicAccess
 import com.azure.resourcemanager.storage.models.StorageAccount
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
@@ -24,7 +25,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.ValueDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
@@ -35,14 +36,14 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
 
-class AzureClientSDKPass : Pass() {
+class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
             val app = t.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     /*fun visit(c: MemberCallExpression) {
                         handleCall(t, tu, c)
                     }*/
@@ -61,7 +62,6 @@ class AzureClientSDKPass : Pass() {
         app: Application?
     ) {
         try {
-            // FIXME: CallExpression.base unresolved
             if (c.type.name.toString() == "com.azure.storage.blob.BlobContainerClientBuilder") {
                 // we need to follow the EOG until we have proper support for querying outgoing
                 // edges in the graph because
@@ -244,7 +244,7 @@ class AzureClientSDKPass : Pass() {
     }
 }
 
-class AzurePass : CloudResourceDiscoveryPass() {
+class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(t: TranslationResult) {
@@ -267,7 +267,6 @@ class AzurePass : CloudResourceDiscoveryPass() {
             )
 
         // first, storage accounts
-        // FIXME additional nodes is val
         try {
             val storages = azure.storageAccounts().listByResourceGroup(App.azureResourceGroup)
             for (storage in storages) {

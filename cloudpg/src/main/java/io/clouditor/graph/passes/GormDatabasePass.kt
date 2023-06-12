@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -14,7 +15,7 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 
-class GormDatabasePass : DatabaseOperationPass() {
+class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
             val app = t.findApplicationByTU(tu)
@@ -22,7 +23,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             // we need to find the connect first
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: CallExpression) {
                         findConnect(t, tu, call, app)
                     }
@@ -35,7 +36,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: MemberCallExpression) {
                         findQuery(t, tu, call, app)
                     }
@@ -50,7 +51,7 @@ class GormDatabasePass : DatabaseOperationPass() {
         call: CallExpression,
         app: Application?
     ) {
-        if (call.fqn == "postgres.Open") {
+        if (call.name.toString() == "postgres.Open") {
             call.arguments.firstOrNull()?.let { expr ->
                 val dsn = resolveDSN(expr, app) as? String
 
@@ -249,8 +250,8 @@ class GormDatabasePass : DatabaseOperationPass() {
     private fun handleUpdate(call: CallExpression, op: DatabaseQuery) {
         var target = call.arguments.firstOrNull()
         // for update calls, a model condition may be specified which has the actual target
-        if (call.base.name == "Model") {
-            target = (call.base as CallExpression).arguments.first()
+        if (call.callee?.name?.localName == "Model") {
+            target = (call.callee as CallExpression).arguments.first()
         }
 
         // add a DFG edge towards our target

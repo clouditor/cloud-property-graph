@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.python
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
@@ -12,7 +13,7 @@ import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
 import java.net.URI
 
-class PyMongoPass : DatabaseOperationPass() {
+class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     val clients: MutableMap<Node, DatabaseConnect> = mutableMapOf()
     val dbs: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
@@ -25,7 +26,7 @@ class PyMongoPass : DatabaseOperationPass() {
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: CallExpression) {
                         // TODO: actually, this should be a ConstructExpression, but currently, it
                         // is parsed as a CallExpression in the CPG
@@ -45,7 +46,7 @@ class PyMongoPass : DatabaseOperationPass() {
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(memberExpression: MemberExpression) {
                         // We are interested in member expression to a base that is in our clients
                         // map. This means that
@@ -60,7 +61,7 @@ class PyMongoPass : DatabaseOperationPass() {
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(memberExpression: MemberExpression) {
                         // The process is then repeated for a database object, to create a
                         // collections object.
@@ -79,9 +80,9 @@ class PyMongoPass : DatabaseOperationPass() {
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(mce: MemberCallExpression) {
-                        collections[mce.base]?.let { handleQuery(t, mce, app, it) }
+                        collections[mce.base!!]?.let { handleQuery(t, mce, app, it) }
                     }
                 }
             )

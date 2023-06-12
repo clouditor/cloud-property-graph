@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.golang
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
@@ -8,12 +9,12 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.passes.LogPass
 
-class GolangLogPass : LogPass() {
+class GolangLogPass(ctx: TranslationContext) : LogPass(ctx) {
     override fun accept(t: TranslationResult) {
         for (tu in t.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(m: MemberCallExpression) {
                         val logMethods =
                             arrayOf(
@@ -27,7 +28,7 @@ class GolangLogPass : LogPass() {
                         // logging
                         // specifiers above, e.g. log.Info().Msg("Hello")
                         if ((m.name.localName == "Msg" || m.name.localName == "Msgf") &&
-                                (m.base as? CallExpression)?.fqn in logMethods
+                                (m.base as? CallExpression)?.toString() in logMethods
                         ) {
                             // the base name specifies the log severity, so we use this one as the
                             // "name" of the log operation

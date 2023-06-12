@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import io.clouditor.graph.*
@@ -33,7 +34,7 @@ import kotlin.collections.plusAssign
 import kotlin.collections.toCollection
 import kotlin.collections.toMap
 
-class KubernetesPass : CloudResourceDiscoveryPass() {
+class KubernetesPass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
 
     override fun cleanup() {}
 
@@ -193,7 +194,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val image: Image =
             t.getImageByName(name)
                 ?: Image(null, null, mapOf()).let {
-                    name?.let { n -> it.name = n }
+                    name?.let { n -> it.name = Name(n) }
                     t += it
                     it
                 }

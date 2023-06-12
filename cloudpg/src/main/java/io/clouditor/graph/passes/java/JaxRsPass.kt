@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.java
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
 import de.fraunhofer.aisec.cpg.graph.Name
@@ -8,29 +9,27 @@ import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-class JaxRsPass : Pass() {
+class JaxRsPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     // for now, assume, that we have one JAX-RS Application per analysis
     // this might not be the case everytime
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: RecordDeclaration) {
-                            handleAnnotations(result, tu, r, r.annotations)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(r: RecordDeclaration) {
+                        handleAnnotations(result, tu, r, r.annotations)
                     }
-                )
-            }
+                }
+            )
         }
     }
 

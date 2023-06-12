@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.python
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.edge.Properties
@@ -10,7 +11,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
 
-class Psycopg2Pass : DatabaseOperationPass() {
+class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     val clients: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
     private val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
@@ -22,7 +23,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
             t.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: MemberCallExpression) {
                         if (call.name.localName == "connect" &&
                                 call.base?.name?.localName == "psycopg2"
@@ -44,9 +45,9 @@ class Psycopg2Pass : DatabaseOperationPass() {
             t.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
+                        clients[call.base!!]?.let {
                             if (call.name.localName == "cursor") {
                                 handleCursor(call, it)
                             }
@@ -58,9 +59,9 @@ class Psycopg2Pass : DatabaseOperationPass() {
             t.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
+                        clients[call.base!!]?.let {
                             if (call.name.localName == "execute") {
                                 handleExecute(t, call, app, it)
                             }
@@ -72,9 +73,9 @@ class Psycopg2Pass : DatabaseOperationPass() {
             t.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
+                        clients[call.base!!]?.let {
                             if (call.name.localName == "fetchall") {
                                 handleFetchAll(t, call, app, it)
                             }
@@ -184,15 +185,13 @@ class Psycopg2Pass : DatabaseOperationPass() {
         // resolve the connection details
         val host =
             resolver.resolve(
-                call.argumentsPropertyEdge
-                    .firstOrNull { it.getProperty(Properties.NAME) == "host" }
-                    ?.end
+                call.argumentEdges.firstOrNull { it.getProperty(Properties.NAME) == "host" }?.end
             ) as?
                 String
 
         val db =
             resolver.resolve(
-                call.argumentsPropertyEdge
+                call.argumentEdges
                     .firstOrNull { it.getProperty(Properties.NAME) == "database" }
                     ?.end
             ) as?

@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
 import de.fraunhofer.aisec.cpg.graph.Node
@@ -10,7 +11,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.additionalNodes
 import io.clouditor.graph.nodes.labels.*
 import io.clouditor.graph.plusAssign
@@ -18,7 +19,7 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
-class LabelExtractionPass : Pass() {
+class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
 
@@ -113,7 +114,7 @@ class LabelExtractionPass : Pass() {
     }
 
     inline fun <reified T : Label> anonLabelCreationDispatcher(node: Node): AnonLabel {
-        var anonLabel = labelCreationDispatcher<AnonLabel>(node)
+        val anonLabel = labelCreationDispatcher<AnonLabel>(node)
         val anonymizedDummyLabel = initLabel<T>(node)
         anonymizedDummyLabel.labeledNodes.clear() // To mark it as Dummy
 
@@ -128,7 +129,7 @@ class LabelExtractionPass : Pass() {
      * Sub-AST
      */
     private fun handleComment(t: TranslationResult, nodeWComment: Node) {
-        var regexes =
+        val regexes =
             mutableMapOf(
                 Regex("@Identifier($|\\s)") to
                     { node, _ ->
@@ -152,10 +153,10 @@ class LabelExtractionPass : Pass() {
                     this::handleAnonPrivacyLabelComments,
             )
 
-        regexes.entries.forEach {
+        regexes.entries.forEach { it ->
             val matches = it.key.findAll(nodeWComment.comment!!)
             if (matches.toList().isNotEmpty()) {
-                var labels = it.value(nodeWComment, matches)
+                val labels = it.value(nodeWComment, matches)
                 labels.forEach {
                     t += it // Adding Labels to the supplementary nodes of a translation unit
                 }
@@ -163,8 +164,10 @@ class LabelExtractionPass : Pass() {
         }
     }
 
-    inline fun <reified T : Label> anonCommentLabelCreationDispatcher(node: Node): List<AnonLabel> {
-        var anonLabel = labelCreationDispatcher<AnonLabel>(node)
+    private inline fun <reified T : Label> anonCommentLabelCreationDispatcher(
+        node: Node
+    ): List<AnonLabel> {
+        val anonLabel = labelCreationDispatcher<AnonLabel>(node)
         val anonymizedDummyLabel = initLabel<T>(node)
         anonymizedDummyLabel.labeledNodes.clear() // To mark it as Dummy
 
@@ -176,7 +179,7 @@ class LabelExtractionPass : Pass() {
         node: Node,
         matches: Sequence<MatchResult>
     ): List<Label> {
-        var labels: MutableList<Label> = mutableListOf()
+        val labels: MutableList<Label> = mutableListOf()
         matches.forEach {
             val thisLevel: Int? = it.destructured.toList().first().toIntOrNull()
             thisLevel?.let {
@@ -197,7 +200,7 @@ class LabelExtractionPass : Pass() {
         node: Node,
         matches: Sequence<MatchResult>
     ): List<Label> {
-        var labels: MutableList<Label> = mutableListOf()
+        val labels: MutableList<Label> = mutableListOf()
         matches.forEach {
             val thisLevel: Int? = it.destructured.toList().first().toIntOrNull()
             thisLevel?.let {
@@ -213,7 +216,7 @@ class LabelExtractionPass : Pass() {
         annotationParent: Node,
         annotation: Annotation
     ): Label? {
-        val values: MutableList<Expression> =
+        val values: MutableList<Expression?> =
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
@@ -223,10 +226,10 @@ class LabelExtractionPass : Pass() {
         // TypeScript that are
         // more of meta calls to functions
         if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members.get(0).value)
+            values.add(annotation.members[0].value)
         }
-        if (!values.isEmpty()) {
-            val param: Node? = values.get(0) as? Node
+        if (values.isNotEmpty()) {
+            val param: Node? = values[0]
             param?.let {
                 val label = labelCreationDispatcher<PrivacyLabel>(annotationParent)
 
@@ -241,7 +244,7 @@ class LabelExtractionPass : Pass() {
         annotationParent: Node,
         annotation: Annotation
     ): Label? {
-        val values: MutableList<Expression> =
+        val values: MutableList<Expression?> =
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
@@ -251,10 +254,10 @@ class LabelExtractionPass : Pass() {
         // TypeScript that are
         // more of meta calls to functions
         if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members.get(0).value)
+            values.add(annotation.members[0].value)
         }
-        if (!values.isEmpty()) {
-            val param: Node? = values.get(0) as? Node
+        if (values.isNotEmpty()) {
+            val param: Node? = values[0]
             param?.let {
                 val label: AnonLabel = labelCreationDispatcher<AnonLabel>(annotationParent)
                 val anonymizedDummyLabel = initLabel<PrivacyLabel>(annotationParent)
@@ -270,7 +273,7 @@ class LabelExtractionPass : Pass() {
     }
 
     inline fun <reified T : Label> labelCreationDispatcher(node: Node): T {
-        var label: T = initLabel<T>(node)
+        val label: T = initLabel<T>(node)
         when (node) {
             is FunctionDeclaration -> {
                 addLabelToDFGBorderEdges(node, label)
@@ -299,7 +302,7 @@ class LabelExtractionPass : Pass() {
      * have an outgoing DFG-edge to another node not in the annotated nodes Sub-AST.
      */
     inline fun <reified T : Label> addLabelToAnnotatedNode(n: Node): T {
-        var label: T = T::class.constructors.first().call(n)
+        val label: T = T::class.constructors.first().call(n)
         label.labeledNodes.add(n)
         return label
     }
@@ -307,7 +310,7 @@ class LabelExtractionPass : Pass() {
     /** Adds a newly created Label to the DFG-Border nodes, */
     fun addLabelToDFGBorderEdges(n: Node, label: Label) {
 
-        var dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
+        val dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
 
         label.labeledNodes.addAll(dfgExitNodes)
     }
@@ -346,13 +349,13 @@ class LabelExtractionPass : Pass() {
      * - root of the subgraph.
      * @return Two lists, list 1 contains all dfg entries and list 2 contains all exits.
      */
-    fun getDFGPathEdges(n: Node?): SubgraphWalker.Border? {
-        var border = SubgraphWalker.Border()
-        var flattedASTTree = SubgraphWalker.flattenAST(n)
-        var dfgNodes =
+    private fun getDFGPathEdges(n: Node?): SubgraphWalker.Border? {
+        val border = SubgraphWalker.Border()
+        val flattedASTTree = SubgraphWalker.flattenAST(n)
+        val dfgNodes =
             flattedASTTree
                 .stream()
-                .filter { node: Node -> !node.prevDFG.isEmpty() || !node.nextDFG.isEmpty() }
+                .filter { node: Node -> node.prevDFG.isNotEmpty() || node.nextDFG.isNotEmpty() }
                 .collect(Collectors.toList())
         // Nodes that are incoming edges, no other node
         border.entries.addAll(

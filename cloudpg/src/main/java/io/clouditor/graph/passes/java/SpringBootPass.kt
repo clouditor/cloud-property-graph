@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.java
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
 import de.fraunhofer.aisec.cpg.graph.Name
@@ -9,7 +10,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
@@ -18,29 +19,27 @@ import io.clouditor.graph.*
  * This pass parses an application for spring boot annotations and creates services and end-points
  * from it.
  */
-class SpringBootPass : Pass() {
+class SpringBootPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: RecordDeclaration) {
-                            handleAnnotations(result, tu, r, r.annotations)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(r: RecordDeclaration) {
+                        handleAnnotations(result, tu, r, r.annotations)
                     }
-                )
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(e: MemberExpression) {
-                            handleExpression(e)
-                        }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(e: MemberExpression) {
+                        handleExpression(e)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -114,7 +113,7 @@ class SpringBootPass : Pass() {
             endpoint.name = Name(endpoint.path)
 
             // if it's a mapping and has a simple return statement, it is an HttpStatus.OK
-            val ret = methodDeclaration.prevDFG
+            val ret = methodDeclaration.prevDFG.firstOrNull()
             if (ret is ReturnStatement) {
                 ret.name = Name("HttpStatus.OK")
             }

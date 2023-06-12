@@ -1,13 +1,14 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 
-abstract class LogPass : Pass() {
+abstract class LogPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     protected fun handleLog(

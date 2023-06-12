@@ -1,12 +1,13 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 
-abstract class HttpClientPass : Pass() {
+abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     protected fun createHttpRequest(
         t: TranslationResult,

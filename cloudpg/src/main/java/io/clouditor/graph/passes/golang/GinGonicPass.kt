@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.golang
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
@@ -8,12 +9,12 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-class GinGonicPass : Pass() {
+class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     private val httpMap: Map<String, String> =
@@ -61,27 +62,24 @@ class GinGonicPass : Pass() {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            // first, look for clients
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: VariableDeclaration) {
-                            handleVariable(result, tu, r)
-                        }
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(r: VariableDeclaration) {
+                        handleVariable(result, tu, r)
                     }
-                )
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: MemberCallExpression) {
-                            handleGinResponse(r)
-                        }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(r: MemberCallExpression) {
+                        handleGinResponse(r)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -91,7 +89,7 @@ class GinGonicPass : Pass() {
         ) {
             // replace the status code name with the harmonized naming
             m.arguments.firstOrNull()?.name =
-                Name(httpMap.get(m.arguments.firstOrNull()?.name).toString())
+                Name(httpMap[m.arguments.firstOrNull()?.name?.toString()].toString())
         }
     }
 
@@ -124,7 +122,7 @@ class GinGonicPass : Pass() {
                 // get the endpoint's handler and look through its mces
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
+                    object : IVisitor<Node>() {
                         fun visit(mce: MemberCallExpression) {
                             handleBind(mce, endpoint)
                         }
@@ -134,7 +132,7 @@ class GinGonicPass : Pass() {
                 // get the endpoint's handler and look through its mes
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
+                    object : IVisitor<Node>() {
                         fun visit(me: MemberExpression) {
                             handleForm(me, endpoint)
                         }
@@ -177,7 +175,7 @@ class GinGonicPass : Pass() {
 
     private fun handleBind(m: MemberCallExpression, e: HttpEndpoint) {
         if (m.name.localName == "BindJSON" || m.name.localName == "Bind") {
-            var obj = (m.arguments.firstOrNull() as UnaryOperator).input
+            val obj = (m.arguments.firstOrNull() as UnaryOperator).input
             if (obj is DeclaredReferenceExpression) {
                 obj.refersTo?.let { e.addNextDFG(it) }
             } else {
@@ -249,8 +247,8 @@ class GinGonicPass : Pass() {
         r: VariableDeclaration
     ) {
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).fqn == "gin.Default" ||
-                (r.initializer as CallExpression).fqn == "gin.New"
+                (r.initializer as CallExpression).toString() == "gin.Default" ||
+                (r.initializer as CallExpression).toString() == "gin.New"
         ) {
             val app = result.findApplicationByTU(tu)
 
@@ -266,7 +264,7 @@ class GinGonicPass : Pass() {
             // look for calls to that client
             r.accept(
                 Strategy::EOG_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(m: MemberCallExpression) {
                         handleMemberCall(result, tu, m)
                     }

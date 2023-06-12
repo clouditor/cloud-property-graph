@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.js
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -12,7 +13,7 @@ import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
 import java.nio.file.Files
 
-class FetchPass : HttpClientPass() {
+class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     var map = mutableMapOf<String, String>()
 
     override fun accept(t: TranslationResult) {
@@ -36,7 +37,7 @@ class FetchPass : HttpClientPass() {
         for (tu in t.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
+                object : IVisitor<Node>() {
                     fun visit(call: CallExpression) {
                         handleCallExpression(t, tu, call)
                     }
