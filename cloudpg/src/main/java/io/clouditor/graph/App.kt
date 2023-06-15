@@ -4,7 +4,10 @@
 package io.clouditor.graph
 
 import de.fraunhofer.aisec.cpg.*
+import de.fraunhofer.aisec.cpg.frontends.cxx.CLanguage
+import de.fraunhofer.aisec.cpg.frontends.cxx.CPPLanguage
 import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguage
+import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
 import de.fraunhofer.aisec.cpg.graph.Node
@@ -118,10 +121,9 @@ object App : Callable<Int> {
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
-                .defaultLanguages()
-                // FIXME: languages are registered differently now!
-                // We need to change add Language classes for our language frontends
-                // We need to change to registerLanguage(RubyLanguage())
+                .registerLanguage(JavaLanguage())
+                .registerLanguage(CPPLanguage())
+                .registerLanguage(CLanguage())
                 .registerLanguage(RubyLanguage())
                 .registerLanguage(TypeScriptLanguage())
                 .registerLanguage(PythonLanguage())
