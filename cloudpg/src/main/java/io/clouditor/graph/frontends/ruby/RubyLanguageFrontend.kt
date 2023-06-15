@@ -19,17 +19,11 @@ class RubyLanguageFrontend(
     language: Language<RubyLanguageFrontend>,
     ctx: @NonNull TranslationContext
 ) : LanguageFrontend(language, ctx) {
-
-    companion object {
-        @kotlin.jvm.JvmField var RUBY_EXTENSIONS: List<String> = listOf(".rb")
-    }
-
     val declarationHandler: DeclarationHandler = DeclarationHandler(this)
     val expressionHandler: ExpressionHandler = ExpressionHandler(this)
     val statementHandler: StatementHandler = StatementHandler(this)
 
     override fun parse(file: File): TranslationUnitDeclaration {
-
         val ruby = Ruby.getGlobalRuntime()
         val parser = Parser(ruby)
 

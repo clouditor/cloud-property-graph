@@ -4,9 +4,13 @@
 package io.clouditor.graph
 
 import de.fraunhofer.aisec.cpg.*
+import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguage
+import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
+import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
+import io.clouditor.graph.frontends.ruby.RubyLanguage
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
@@ -116,23 +120,12 @@ object App : Callable<Int> {
                 .defaultPasses()
                 .defaultLanguages()
                 // FIXME: languages are registered differently now!
-                .registerLanguage(
-                    RubyLanguageFrontend::class.java,
-                    RubyLanguageFrontend.RUBY_EXTENSIONS
-                )
-                .registerLanguage(
-                    TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS +
-                        TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
-                )
-                .registerLanguage(
-                    PythonLanguageFrontend::class.java,
-                    PythonLanguageFrontend.PY_EXTENSIONS
-                )
-                .registerLanguage(
-                    GoLanguageFrontend::class.java,
-                    GoLanguageFrontend.GOLANG_EXTENSIONS
-                )
+                // We need to change add Language classes for our language frontends
+                // We need to change to registerLanguage(RubyLanguage())
+                .registerLanguage(RubyLanguage())
+                .registerLanguage(TypeScriptLanguage())
+                .registerLanguage(PythonLanguage())
+                .registerLanguage(GoLanguage())
                 .debugParser(true)
                 .registerPass(GitHubWorkflowPass::class)
                 .registerPass(SpringBootPass::class)
