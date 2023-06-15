@@ -83,9 +83,9 @@ dependencies {
     implementation ("org.xmlunit:xmlunit-core:2.9.0")
     implementation("org.xmlunit:xmlunit-matchers:2.9.0")
 
-    api("org.neo4j", "neo4j-ogm-core", "3.2.31")
-    api("org.neo4j", "neo4j-ogm", "3.2.21")
-    api("org.neo4j", "neo4j-ogm-bolt-driver", "3.2.21")
+    api("org.neo4j", "neo4j-ogm-core", "4.0.5")
+    api("org.neo4j", "neo4j-ogm", "4.0.5")
+    api("org.neo4j", "neo4j-ogm-bolt-driver", "4.0.5")
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
