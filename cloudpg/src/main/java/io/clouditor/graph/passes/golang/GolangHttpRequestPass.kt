@@ -38,6 +38,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
+        // FIXME: list is often empty! was not a problem in 4.6.0
         var requestFunction = c.invokes.first()
         // should also have c.base.name == "http" but this is not parsed correctly atm
         if (c.name.localName == "PostForm") {

@@ -236,6 +236,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
+        // FIXME: r.initializer is often null -> was not a problem before!
         if (r.initializer is CallExpression &&
                 (r.initializer as CallExpression).toString() == "gin.Default" ||
                 (r.initializer as CallExpression).toString() == "gin.New"
