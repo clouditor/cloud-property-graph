@@ -21,15 +21,27 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     override fun accept(result: TranslationResult) {
 
+        // first, look for clients
         for (tu in result.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
                     override fun visit(t: Node) {
                         when (t) {
-                            // first, look for clients
                             is VariableDeclaration -> handleVariable(result, tu, t)
-                            // then for the member calls
+                        }
+                    }
+                }
+            )
+        }
+
+        // then for the member calls
+        for (tu in result.translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    override fun visit(t: Node) {
+                        when (t) {
                             is MemberCallExpression -> handleMemberCall(result, tu, t)
                         }
                     }
