@@ -41,7 +41,8 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 object : IVisitor<Node>() {
                     override fun visit(t: Node) {
                         when (t) {
-                            is VariableDeclaration -> handleVariableDeclarations(result, tu, t, t.annotations)
+                            is VariableDeclaration ->
+                                handleVariableDeclarations(result, tu, t, t.annotations)
                         }
                     }
                 }

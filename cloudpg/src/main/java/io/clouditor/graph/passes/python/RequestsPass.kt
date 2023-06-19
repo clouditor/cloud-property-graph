@@ -26,10 +26,12 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                         when (t) {
                             is MemberCallExpression -> {
                                 // look for requests.get()
-                                if (t.name.localName == "get" && t.base?.name?.localName == "requests") {
+                                if (t.name.localName == "get" &&
+                                        t.base?.name?.localName == "requests"
+                                ) {
                                     handleClientRequest(tu, result, t, "GET")
                                 } else if (t.name.localName == "post" &&
-                                    t.base?.name?.localName == "requests"
+                                        t.base?.name?.localName == "requests"
                                 ) {
                                     handleClientRequest(tu, result, t, "POST")
                                 }

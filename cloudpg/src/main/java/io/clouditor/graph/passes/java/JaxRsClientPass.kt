@@ -25,18 +25,23 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     override fun visit(t: Node) {
                         when (t) {
                             is MemberCallExpression -> {
-                                // Original (4.6.0) code had "StaticCodeExpression", which is why we ignore all non-static calls
+                                // Original (4.6.0) code had "StaticCodeExpression", which is why we
+                                // ignore all non-static calls
                                 if (!t.isStatic) return
                                 try {
                                     // look for ClientBuilder.newClient (Jersey 3.x and 2.x)
-                                    if (t.toString() == "jakarta.ws.rs.client.ClientBuilder.newClient" ||
-                                        t.toString() == "javax.ws.rs.client.ClientBuilder.newClient"
+                                    if (t.toString() ==
+                                            "jakarta.ws.rs.client.ClientBuilder.newClient" ||
+                                            t.toString() ==
+                                                "javax.ws.rs.client.ClientBuilder.newClient"
                                     ) {
                                         handleClient(result, t, tu)
                                     }
 
                                     // or ClientBuilder.newBuilder
-                                    if (t.toString() == "javax.ws.rs.client.ClientBuilder.newBuilder") {
+                                    if (t.toString() ==
+                                            "javax.ws.rs.client.ClientBuilder.newBuilder"
+                                    ) {
                                         handleBuilder(result, t, tu)
                                     }
                                 } catch (t: Throwable) {

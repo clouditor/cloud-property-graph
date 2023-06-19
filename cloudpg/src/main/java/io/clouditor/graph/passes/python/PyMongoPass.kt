@@ -58,9 +58,7 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                         // a database object is created from this client.
                         when (t) {
                             is MemberExpression -> {
-                                clients[t.base]?.let {
-                                    handleDBObjectCreate(result, t, app, it)
-                                }
+                                clients[t.base]?.let { handleDBObjectCreate(result, t, app, it) }
                             }
                         }
                     }
@@ -96,7 +94,8 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 object : IVisitor<Node>() {
                     override fun visit(t: Node) {
                         when (t) {
-                            is MemberCallExpression ->  collections[t.base!!]?.let { handleQuery(result, t, app, it) }
+                            is MemberCallExpression ->
+                                collections[t.base!!]?.let { handleQuery(result, t, app, it) }
                         }
                     }
                 }

@@ -30,7 +30,8 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                                 // look for key.sign()
                                 if (t.name.localName == "sign") {
                                     val private_key = t.base as DeclaredReferenceExpression
-                                    val generator = private_key.prevDFG.first() as MemberCallExpression
+                                    val generator =
+                                        private_key.prevDFG.first() as MemberCallExpression
                                     if (generator.name.localName == "generate_private_key") {
                                         handleSignature(tu, result, t)
                                     }

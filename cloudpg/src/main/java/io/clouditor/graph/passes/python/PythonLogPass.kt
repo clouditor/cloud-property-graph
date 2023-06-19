@@ -19,7 +19,9 @@ class PythonLogPass(ctx: TranslationContext) : LogPass(ctx) {
                     override fun visit(t: Node) {
                         when (t) {
                             is MemberCallExpression -> {
-                                if (t.name.localName == "info" && t.base?.name?.localName == "logging") {
+                                if (t.name.localName == "info" &&
+                                        t.base?.name?.localName == "logging"
+                                ) {
                                     handleLog(result, t, t.name.localName, tu)
                                 }
                             }

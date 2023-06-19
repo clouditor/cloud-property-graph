@@ -28,7 +28,7 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                         when (t) {
                             is MemberCallExpression -> {
                                 if (t.name.localName == "connect" &&
-                                    t.base?.name?.localName == "psycopg2"
+                                        t.base?.name?.localName == "psycopg2"
                                 ) {
                                     handleConnect(result, t, app)
                                 }
