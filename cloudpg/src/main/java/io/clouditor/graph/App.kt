@@ -11,6 +11,7 @@ import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
 import de.fraunhofer.aisec.cpg.graph.Node
+import de.fraunhofer.aisec.cpg.graph.ast
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguage
@@ -91,7 +92,7 @@ object App : Callable<Int> {
         val nodes = mutableListOf<Node>()
         // FIXME: how to get all nodes of a TranslationResult?
         // nodes.addAll(result.graph.nodes)
-        nodes.addAll(result.translationUnits)
+        nodes.addAll(result.ast())
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
         nodes.addAll(result.computes)
@@ -194,18 +195,12 @@ val TranslationResult.computes: MutableList<Compute>
         this.scratch.computeIfAbsent("computes") { mutableListOf<Compute>() } as
             MutableList<Compute>
 
-val TranslationResult.additionalNodes: MutableList<Node>
-    get() =
-        this.scratch.computeIfAbsent("additionalNodes") { mutableListOf<Node>() } as
-            MutableList<Node>
-
 fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Application? {
     return this.additionalNodes.filterIsInstance(Application::class.java).firstOrNull {
         it.translationUnits.contains(tu)
     }
 }
 
-// FIXME: we cannot just append nodes anymore -> make mutableSet or stop appending
 operator fun TranslationResult.plusAssign(node: Node) {
-    // this.additionalNodes += node
+    this.additionalNodes += node
 }

@@ -6,7 +6,6 @@ import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.HttpEndpoint
-import io.clouditor.graph.additionalNodes
 
 class HttpStatusCodesPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 

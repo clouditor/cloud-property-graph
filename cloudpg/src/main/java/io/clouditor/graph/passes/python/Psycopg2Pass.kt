@@ -16,19 +16,23 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     val clients: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
     private val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
 
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(call: MemberCallExpression) {
-                        if (call.name.localName == "connect" &&
-                                call.base?.name?.localName == "psycopg2"
-                        ) {
-                            handleConnect(t, call, app)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                if (t.name.localName == "connect" &&
+                                    t.base?.name?.localName == "psycopg2"
+                                ) {
+                                    handleConnect(result, t, app)
+                                }
+                            }
                         }
                     }
                 }
@@ -42,42 +46,54 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
             // in order to avoid ordering problems, we need to do this one step at a time, so first
             // looking for a cursor.
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base!!]?.let {
-                            if (call.name.localName == "cursor") {
-                                handleCursor(call, it)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                clients[t.base!!]?.let {
+                                    if (t.name.localName == "cursor") {
+                                        handleCursor(t, it)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             )
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base!!]?.let {
-                            if (call.name.localName == "execute") {
-                                handleExecute(t, call, app, it)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                clients[t.base!!]?.let {
+                                    if (t.name.localName == "execute") {
+                                        handleExecute(result, t, app, it)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             )
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base!!]?.let {
-                            if (call.name.localName == "fetchall") {
-                                handleFetchAll(t, call, app, it)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                clients[t.base!!]?.let {
+                                    if (t.name.localName == "fetchall") {
+                                        handleFetchAll(result, t, app, it)
+                                    }
+                                }
                             }
                         }
                     }

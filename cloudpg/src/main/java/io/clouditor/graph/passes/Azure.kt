@@ -37,18 +37,17 @@ import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
 
 class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    /*fun visit(c: MemberCallExpression) {
-                        handleCall(t, tu, c)
-                    }*/
-                    fun visit(c: NewExpression) {
-                        handleNewClient(t, tu, c, app)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is NewExpression -> handleNewClient(result, tu, t, app)
+                        }
                     }
                 }
             )

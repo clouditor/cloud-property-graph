@@ -18,19 +18,23 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         // nothing to do
     }
 
-    override fun accept(t: TranslationResult) {
+    override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in t.translationUnits) {
+        for (tu in result.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(r: MemberCallExpression) {
-                        // look for key.sign()
-                        if (r.name.localName == "sign") {
-                            val private_key = r.base as DeclaredReferenceExpression
-                            val generator = private_key.prevDFG.first() as MemberCallExpression
-                            if (generator.name.localName == "generate_private_key") {
-                                handleSignature(tu, t, r)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                // look for key.sign()
+                                if (t.name.localName == "sign") {
+                                    val private_key = t.base as DeclaredReferenceExpression
+                                    val generator = private_key.prevDFG.first() as MemberCallExpression
+                                    if (generator.name.localName == "generate_private_key") {
+                                        handleSignature(tu, result, t)
+                                    }
+                                }
                             }
                         }
                     }

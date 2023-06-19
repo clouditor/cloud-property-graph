@@ -19,19 +19,24 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     val dbs: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
     val collections: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
 
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(call: CallExpression) {
+                    override fun visit(t: Node) {
                         // TODO: actually, this should be a ConstructExpression, but currently, it
                         // is parsed as a CallExpression in the CPG
-                        if (call.name.localName == "MongoClient") {
-                            handleClientCreate(t, call, app)
+                        // FIXME: is this sill the case with CPG 7.0.0?
+                        when (t) {
+                            is CallExpression -> {
+                                if (t.name.localName == "MongoClient") {
+                                    handleClientCreate(result, t, app)
+                                }
+                            }
                         }
                     }
                 }
@@ -47,12 +52,16 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(memberExpression: MemberExpression) {
+                    override fun visit(t: Node) {
                         // We are interested in member expression to a base that is in our clients
                         // map. This means that
                         // a database object is created from this client.
-                        clients[memberExpression.base]?.let {
-                            handleDBObjectCreate(t, memberExpression, app, it)
+                        when (t) {
+                            is MemberExpression -> {
+                                clients[t.base]?.let {
+                                    handleDBObjectCreate(result, t, app, it)
+                                }
+                            }
                         }
                     }
                 }
@@ -62,11 +71,15 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(memberExpression: MemberExpression) {
+                    override fun visit(t: Node) {
                         // The process is then repeated for a database object, to create a
                         // collections object.
-                        dbs[memberExpression.base]?.let {
-                            handleCollectionsObjectCreate(t, memberExpression, app, it)
+                        when (t) {
+                            is MemberExpression -> {
+                                dbs[t.base]?.let {
+                                    handleCollectionsObjectCreate(result, t, app, it)
+                                }
+                            }
                         }
                     }
                 }
@@ -81,8 +94,10 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    fun visit(mce: MemberCallExpression) {
-                        collections[mce.base!!]?.let { handleQuery(t, mce, app, it) }
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression ->  collections[t.base!!]?.let { handleQuery(result, t, app, it) }
+                        }
                     }
                 }
             )

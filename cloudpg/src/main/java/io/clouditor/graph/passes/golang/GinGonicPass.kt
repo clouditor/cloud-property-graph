@@ -67,16 +67,11 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(r: VariableDeclaration) {
-                        handleVariable(result, tu, r)
-                    }
-                }
-            )
-            tu.accept(
-                Strategy::AST_FORWARD,
-                object : IVisitor<Node>() {
-                    fun visit(r: MemberCallExpression) {
-                        handleGinResponse(r)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is VariableDeclaration -> handleVariable(result, tu, t)
+                            is MemberCallExpression -> handleGinResponse(t)
+                        }
                     }
                 }
             )
@@ -119,22 +114,17 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                     )
                 endpoint.name = Name(endpoint.path)
 
-                // get the endpoint's handler and look through its mces
+                // get the endpoint's handler
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
                     object : IVisitor<Node>() {
-                        fun visit(mce: MemberCallExpression) {
-                            handleBind(mce, endpoint)
-                        }
-                    }
-                )
-
-                // get the endpoint's handler and look through its mes
-                funcDeclaration?.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node>() {
-                        fun visit(me: MemberExpression) {
-                            handleForm(me, endpoint)
+                        override fun visit(t: Node) {
+                            when (t) {
+                                // look through its mces
+                                is MemberCallExpression -> handleBind(t, endpoint)
+                                // look through its mes
+                                is MemberExpression -> handleForm(t, endpoint)
+                            }
                         }
                     }
                 )
@@ -265,8 +255,10 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             r.accept(
                 Strategy::EOG_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(m: MemberCallExpression) {
-                        handleMemberCall(result, tu, m)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> handleMemberCall(result, tu, t)
+                        }
                     }
                 }
             )

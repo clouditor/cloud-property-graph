@@ -10,15 +10,19 @@ import io.clouditor.graph.*
 import io.clouditor.graph.passes.LogPass
 
 class PythonLogPass(ctx: TranslationContext) : LogPass(ctx) {
-    override fun accept(t: TranslationResult) {
+    override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in t.translationUnits) {
+        for (tu in result.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(m: MemberCallExpression) {
-                        if (m.name.localName == "info" && m.base?.name?.localName == "logging") {
-                            handleLog(t, m, m.name.localName, tu)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                if (t.name.localName == "info" && t.base?.name?.localName == "logging") {
+                                    handleLog(result, t, t.name.localName, tu)
+                                }
+                            }
                         }
                     }
                 }

@@ -16,20 +16,24 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         // nothing to do
     }
 
-    override fun accept(t: TranslationResult) {
+    override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in t.translationUnits) {
+        for (tu in result.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(r: MemberCallExpression) {
-                        // look for requests.get()
-                        if (r.name.localName == "get" && r.base?.name?.localName == "requests") {
-                            handleClientRequest(tu, t, r, "GET")
-                        } else if (r.name.localName == "post" &&
-                                r.base?.name?.localName == "requests"
-                        ) {
-                            handleClientRequest(tu, t, r, "POST")
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> {
+                                // look for requests.get()
+                                if (t.name.localName == "get" && t.base?.name?.localName == "requests") {
+                                    handleClientRequest(tu, result, t, "GET")
+                                } else if (t.name.localName == "post" &&
+                                    t.base?.name?.localName == "requests"
+                                ) {
+                                    handleClientRequest(tu, result, t, "POST")
+                                }
+                            }
                         }
                     }
                 }

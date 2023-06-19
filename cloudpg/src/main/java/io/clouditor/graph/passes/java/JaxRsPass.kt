@@ -25,8 +25,10 @@ class JaxRsPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(r: RecordDeclaration) {
-                        handleAnnotations(result, tu, r, r.annotations)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is RecordDeclaration -> handleAnnotations(result, tu, t, t.annotations)
+                        }
                     }
                 }
             )

@@ -23,8 +23,10 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(m: CallExpression) {
-                        handleCallExpression(result, tu, m)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is CallExpression -> handleCallExpression(result, tu, t)
+                        }
                     }
                 }
             )
@@ -37,7 +39,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        var requestFunction = c.invokes.first() as FunctionDeclaration
+        var requestFunction = c.invokes.first()
         // should also have c.base.name == "http" but this is not parsed correctly atm
         if (c.name.localName == "PostForm") {
             createHttpRequest(
@@ -76,7 +78,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[1] as Literal<String>).value!!,
                 c,
                 "POST",
-                requestFunction.parameters[2].prevDFG.first() as Expression,
+                requestFunction?.parameters?.get(2)?.prevDFG?.first() as? Expression,
                 app
             )
         }

@@ -16,7 +16,7 @@ import java.nio.file.Files
 class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     var map = mutableMapOf<String, String>()
 
-    override fun accept(t: TranslationResult) {
+    override fun accept(result: TranslationResult) {
         val applications = listOf(App.rootPath)
 
         for (rootPath in applications) {
@@ -34,12 +34,14 @@ class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             }
         }
 
-        for (tu in t.translationUnits) {
+        for (tu in result.translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(call: CallExpression) {
-                        handleCallExpression(t, tu, call)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is CallExpression -> handleCallExpression(result, tu, t)
+                        }
                     }
                 }
             )

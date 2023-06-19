@@ -30,8 +30,10 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(mce: MemberCallExpression) {
-                        handleMemberCall(result, tu, mce, handler)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> handleMemberCall(result, tu, t, handler)
+                        }
                     }
                 }
             )

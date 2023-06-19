@@ -16,29 +16,35 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 
 class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        for (tu in result.translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             // we need to find the connect first
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(call: CallExpression) {
-                        findConnect(t, tu, call, app)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is CallExpression -> {
+                                findConnect(result, tu, t, app)
+                            }
+                        }
                     }
                 }
             )
         }
 
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+        for (tu in result.translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(call: MemberCallExpression) {
-                        findQuery(t, tu, call, app)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is MemberCallExpression -> findQuery(result, tu, t, app)
+                        }
                     }
                 }
             )

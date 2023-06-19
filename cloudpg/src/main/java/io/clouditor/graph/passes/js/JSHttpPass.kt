@@ -22,8 +22,10 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(v: VariableDeclaration) {
-                        handleVariableDeclaration(result, tu, v)
+                    override fun visit(t: Node) {
+                        when (t) {
+                            is VariableDeclaration -> handleVariableDeclaration(result, tu, t)
+                        }
                     }
                 }
             )
