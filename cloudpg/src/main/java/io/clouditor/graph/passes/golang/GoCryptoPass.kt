@@ -12,6 +12,7 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
 
+@Suppress("UNUSED_PARAMETER")
 class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {}

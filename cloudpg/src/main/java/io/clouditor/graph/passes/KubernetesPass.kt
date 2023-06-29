@@ -15,7 +15,6 @@ import io.kubernetes.client.openapi.models.V1Service
 import io.kubernetes.client.util.ClientBuilder
 import io.kubernetes.client.util.KubeConfig
 import java.io.FileReader
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
@@ -34,6 +33,7 @@ import kotlin.collections.plusAssign
 import kotlin.collections.toCollection
 import kotlin.collections.toMap
 
+@Suppress("UNUSED_PARAMETER")
 class KubernetesPass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
 
     override fun cleanup() {}
@@ -311,14 +311,5 @@ class KubernetesPass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) 
         }
 
         return list
-    }
-
-    private fun selectContainers(
-        t: TranslationResult,
-        selector: Map<String, String>
-    ): List<Container> {
-        return t.computes.filter { it is Container && it.isInSelector(selector) }.map {
-            it as Container
-        }
     }
 }

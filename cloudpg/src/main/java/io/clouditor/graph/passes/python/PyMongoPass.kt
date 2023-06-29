@@ -13,6 +13,7 @@ import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
 import java.net.URI
 
+@Suppress("UNUSED_PARAMETER")
 class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     val clients: MutableMap<Node, DatabaseConnect> = mutableMapOf()
@@ -163,10 +164,10 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         // again, multiple services, multiple storages
         val storages =
             connect.to?.map {
-                val pair = dbs[memberExpression.base]
+                val clPair = dbs[memberExpression.base]
                 // name should be the same in all storages of all the dbs of all the clients of all
                 // the services
-                val parentName = pair?.second?.firstOrNull()?.name
+                val parentName = clPair?.second?.firstOrNull()?.name
 
                 it.getStorageOrCreate(memberExpression.name.localName, parentName?.localName)
             }
@@ -187,7 +188,7 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         app: Application?,
         pair: Pair<DatabaseConnect, List<DatabaseStorage>>
     ) {
-        var (connect, storage) = pair
+        val (connect, storage) = pair
         var op: DatabaseQuery? = null
         if (mce.name.localName == "insert_one") {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)

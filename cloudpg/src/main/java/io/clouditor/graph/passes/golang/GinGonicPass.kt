@@ -144,11 +144,11 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 result += endpoint
             } else if (m.name.localName == "Group") {
                 // add a new (sub) client
-                val app = result.findApplicationByTU(tu)
+                val application = result.findApplicationByTU(tu)
 
                 val requestHandler =
                     HttpRequestHandler(
-                        app,
+                        application,
                         mutableListOf(),
                         client?.path?.appendPath(getPath(m)) ?: "/"
                     )

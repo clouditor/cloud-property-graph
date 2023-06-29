@@ -16,7 +16,8 @@ import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class WorkflowHandler(private val result: TranslationResult, val rootPath: Path) {
+@Suppress("UNUSED_PARAMETER")
+class WorkflowHandler(private val result: TranslationResult, private val rootPath: Path) {
 
     fun handleWorkflow(workflow: Workflow) {
         workflow.jobs.values.forEach { handleJob(it, workflow) }

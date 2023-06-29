@@ -90,11 +90,13 @@ object App : Callable<Int> {
         val result = doTranslate()
 
         val nodes = mutableListOf<Node>()
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
         nodes.addAll(result.allChildren())
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
         nodes.addAll(result.computes)
-        nodes.addAll(result.translationUnits)
+        nodes.addAll(translationUnits)
         nodes.addAll(result.additionalNodes)
 
         session.beginTransaction().use { transaction ->

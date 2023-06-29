@@ -15,6 +15,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
+@Suppress("UNUSED_PARAMETER")
 class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     // for now, assume, that we have one Flask application per analysis
     // this might not be the case everytime

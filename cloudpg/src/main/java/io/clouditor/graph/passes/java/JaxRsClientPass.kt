@@ -18,7 +18,9 @@ import io.clouditor.graph.passes.HttpClientPass
 
 class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -84,18 +86,11 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         creationCall: CallExpression,
         tu: TranslationUnitDeclaration
     ) {
-        var client: VariableDeclaration? = null
         val clientRefs = mutableListOf<DeclaredReferenceExpression>()
-        var target: VariableDeclaration? = null
-        val targetRefs = mutableListOf<DeclaredReferenceExpression>()
-        var targetToClient = mutableMapOf<VariableDeclaration, VariableDeclaration>()
 
         // look for the client itself, probably it is the DFG target
         val pair = followDFGTargetToDeclaration(creationCall)
-        pair?.let {
-            client = it.second as VariableDeclaration
-            clientRefs += it.first
-        }
+        pair?.let { clientRefs += it.first }
 
         val edges =
             creationCall.followEOG {

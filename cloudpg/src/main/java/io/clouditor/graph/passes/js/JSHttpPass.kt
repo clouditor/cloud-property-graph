@@ -13,12 +13,15 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
+@Suppress("UNUSED_PARAMETER")
 class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {

@@ -21,7 +21,9 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             // one handler per file

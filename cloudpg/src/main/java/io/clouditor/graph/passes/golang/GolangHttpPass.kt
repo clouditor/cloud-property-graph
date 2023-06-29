@@ -14,15 +14,18 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
 
+@Suppress("UNUSED_PARAMETER")
 class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
 
         // first, look for clients
-        for (tu in result.translationUnits) {
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -36,7 +39,7 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         }
 
         // then for the member calls
-        for (tu in result.translationUnits) {
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -75,9 +78,7 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     )
                 endpoint.name = Name(endpoint.path)
                 funcDeclaration?.parameters?.forEach {
-                    if (it.type is PointerType && it.type.root.name.toString() == "http.Request" ||
-                            it.type is HttpRequest
-                    ) {
+                    if (it.type is PointerType && it.type.root.name.toString() == "http.Request") {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
                         // stored in
                         endpoint.addNextDFG(it)

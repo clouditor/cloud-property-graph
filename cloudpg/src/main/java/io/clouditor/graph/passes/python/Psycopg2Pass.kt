@@ -11,13 +11,16 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
 
+@Suppress("UNUSED_PARAMETER")
 class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     val clients: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
     private val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             result.accept(

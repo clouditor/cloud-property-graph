@@ -34,7 +34,9 @@ class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             }
         }
 
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {

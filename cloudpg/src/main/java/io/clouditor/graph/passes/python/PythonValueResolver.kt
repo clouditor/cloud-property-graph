@@ -1,7 +1,6 @@
 package io.clouditor.graph.passes.python
 
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import io.clouditor.graph.Application
 import io.clouditor.graph.ValueResolver
@@ -19,7 +18,7 @@ class PythonValueResolver(
 
         when (node) {
             is MemberCallExpression -> {
-                var base = resolver.resolve(node.base as Expression?).toString()
+                var base = resolver.resolve(node.base).toString()
 
                 // support for some special calls, i.e. format
                 val s =

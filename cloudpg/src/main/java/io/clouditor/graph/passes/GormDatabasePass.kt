@@ -15,9 +15,12 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 
+@Suppress("UNUSED_PARAMETER")
 class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             // we need to find the connect first
@@ -35,7 +38,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             )
         }
 
-        for (tu in result.translationUnits) {
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             tu.accept(
@@ -68,7 +71,6 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                     }
 
                 val host = map?.get("host")
-                var port = map?.get("port")?.toShortOrNull() ?: 5432
 
                 if (host != null) {
                     createDatabaseConnect(result, host, call, app)
@@ -237,7 +239,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     private fun handleCreate(call: CallExpression, op: DatabaseQuery) {
         // create should have one argument, that specifies the object which is stored
-        var target = call.arguments.firstOrNull()
+        val target = call.arguments.firstOrNull()
 
         // add a DFG edge towards our target
         if (target != null) {

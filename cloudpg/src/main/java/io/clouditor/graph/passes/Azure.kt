@@ -36,9 +36,12 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
 
+@Suppress("UNUSED_PARAMETER")
 class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             tu.accept(
@@ -72,7 +75,6 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 var containerName: String
                 var url = ""
                 var client: ValueDeclaration? = null
-                var appendClient: ValueDeclaration
 
                 var eog: Node = c
 
@@ -315,10 +317,9 @@ class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
                 val compute = handleVirtualMachine(t, vm)
 
                 // look for the image tag to connect services
-                val name = vm.tags().getOrDefault("image", null)
 
-                val image = t.getImageByName(name)
-
+                // val name = vm.tags().getOrDefault("image", null)
+                // val image = t.getImageByName(name)
                 // image?.implements?.forEach { it.deployedOn.add(compute) }
                 t.computes += compute
             }
@@ -454,7 +455,7 @@ class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
         // loop through the containers (for our use case this is ok, for larger ones, probably not)
         val paged =
             azure.storageBlobContainers().listAsync(account.resourceGroupName(), account.name())
-        for (blob in paged.collectList().block()) {
+        for (blob in paged.collectList().block() ?: listOf()) {
 
             // TODO: also include other endpoints
 
@@ -462,15 +463,12 @@ class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
             // accepts more methods
             // TODO: make methods an array?
 
-            val auth =
-                if (blob.publicAccess() == PublicAccess.NONE) {
-                    SingleSignOn(
-                        true
-                    ) // this is closest to how auth works in Azure. TokenBased would
-                    // be better
-                } else {
-                    NoAuthentication()
-                }
+            if (blob.publicAccess() == PublicAccess.NONE) {
+                SingleSignOn(true) // this is closest to how auth works in Azure. TokenBased would
+                // be better
+            } else {
+                NoAuthentication()
+            }
 
             // at rest seems to be default anyway now
             val storage =
@@ -540,6 +538,7 @@ fun TranslationResult.getImageByName(name: String?): Image? {
     return this.images.firstOrNull { it.name.localName == name }
 }
 
+@Suppress("UNUSED_PARAMETER")
 fun TranslationResult.getObjectStorageByUrl(url: String?): ObjectStorage? {
     //    return this.additionalNodes.firstOrNull {
     //        // TODO(all): How to check that?
