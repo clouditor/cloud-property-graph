@@ -3,7 +3,8 @@ package io.clouditor.graph.frontends.ruby
 import de.fraunhofer.aisec.cpg.frontends.Handler
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.ProblemDeclaration
-import de.fraunhofer.aisec.cpg.graph.newMethodDeclaration
+import de.fraunhofer.aisec.cpg.graph.newParamVariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.types.UnknownType
 import org.jruby.ast.*
 
 class DeclarationHandler(lang: RubyLanguageFrontend) :
@@ -18,6 +19,11 @@ class DeclarationHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        return newMethodDeclaration(node.name.idString(), language.code, false)
+        return newParamVariableDeclaration(
+            node.name.idString(),
+            UnknownType.getUnknownType(frontend.language),
+            false,
+            frontend.getCodeFromRawNode(node)
+        )
     }
 }

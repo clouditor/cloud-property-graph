@@ -50,6 +50,7 @@ publishing {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 
     maven { setUrl("https://jitpack.io") }

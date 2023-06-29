@@ -5,7 +5,6 @@ import de.fraunhofer.aisec.cpg.graph.*
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.ProblemExpression
-import de.fraunhofer.aisec.cpg.graph.types.TypeParser
 import de.fraunhofer.aisec.cpg.graph.types.UnknownType
 import org.jruby.ast.*
 import org.jruby.ast.Node
@@ -36,20 +35,22 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        val binOp = newBinaryOperator("=", language.code)
+        val binOp = newBinaryOperator("=", frontend.getCodeFromRawNode(node))
 
-        val base = this.handle(node.receiverNode) as Expression
+        val base =
+            this.handle(node.receiverNode) as? Expression
+                ?: return ProblemExpression("could not parse base")
         val expr =
             newMemberExpression(
                 node.name.idString(),
                 base,
-                UnknownType.getUnknownType(language),
+                UnknownType.getUnknownType(frontend.language),
                 "=",
-                language.code
+                frontend.getCodeFromRawNode(base)
             )
 
         binOp.lhs = expr
-        binOp.rhs = this.handle(node.argsNode) as Expression
+        (this.handle(node.argsNode) as? Expression)?.let { binOp.rhs = it }
 
         return expr
     }
@@ -62,7 +63,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         return newDeclaredReferenceExpression(
             node.name.idString(),
             UnknownType.getUnknownType(language),
-            language.code
+            frontend.getCodeFromRawNode(node)
         )
     }
 
@@ -83,20 +84,20 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             newDeclaredReferenceExpression(
                 name.idString(),
                 UnknownType.getUnknownType(language),
-                language.code
+                frontend.getCodeFromRawNode(node)
             )
-        val rhs = this.handle((node as AssignableNode).valueNode) as Expression
+        val rhs = this.handle((node as AssignableNode).valueNode) as? Expression
 
         // can we resolve it?
         var decl = frontend.scopeManager.resolveReference(lhs)
 
         if (decl == null) {
-            val stmt = newDeclarationStatement(language.code)
+            val stmt = newDeclarationStatement(frontend.getCodeFromRawNode(node))
             decl =
                 newVariableDeclaration(
                     lhs.name,
                     UnknownType.getUnknownType(language),
-                    language.code,
+                    frontend.getCodeFromRawNode(node),
                     false
                 )
             decl.initializer = rhs
@@ -106,9 +107,9 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return stmt
         }
 
-        val binOp = newBinaryOperator("=", language.code)
+        val binOp = newBinaryOperator("=", frontend.getCodeFromRawNode(node))
         binOp.lhs = lhs
-        binOp.rhs = rhs
+        rhs?.let { binOp.rhs = it }
 
         return binOp
     }
@@ -118,9 +119,12 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        val base = handle(node.receiverNode) as? Expression
+        val base =
+            handle(node.receiverNode) as? Expression
+                ?: return ProblemExpression("could not parse base")
+        val callee = newMemberExpression(node.name.asJavaString(), base)
 
-        val mce = newMemberCallExpression(base, false, language.code)
+        val mce = newMemberCallExpression(callee, false, frontend.getCodeFromRawNode(node))
 
         for (arg in node.argsNode?.childNodes() ?: emptyList()) {
             mce.addArgument(handle(arg) as Expression)
@@ -140,9 +144,9 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         // a complete hack, to handle iter nodes, which is sort of a lambda expression
         // so we create an anonymous function declaration out of the bodyNode and varNode
         // and a declared reference expressions to that anonymous function
-        val func = newFunctionDeclaration("", language.code)
+        val func = newFunctionDeclaration("", frontend.getCodeFromRawNode(node))
 
-        this.frontend.scopeManager.enterScope(func)
+        frontend.scopeManager.enterScope(func)
 
         for (arg in node.argsNode.args) {
             val param = frontend.declarationHandler.handle(arg)
@@ -153,10 +157,10 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         frontend.scopeManager.leaveScope(func)
 
-        val def = newDeclarationStatement(language.code)
+        val def = newDeclarationStatement(frontend.getCodeFromRawNode(node))
         def.singleDeclaration = func
 
-        val cse = newCompoundStatementExpression(language.code)
+        val cse = newCompoundStatementExpression(frontend.getCodeFromRawNode(node))
         cse.statement = def
 
         return cse
@@ -169,8 +173,8 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         return newLiteral(
             String(node.value.bytes()),
-            TypeParser.createFrom("string", false, frontend),
-            language.code
+            parseType("string"),
+            frontend.getCodeFromRawNode(node)
         )
     }
 }

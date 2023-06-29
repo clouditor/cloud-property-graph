@@ -11,7 +11,7 @@ import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.ast
+import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
 import io.clouditor.graph.frontends.ruby.RubyLanguage
@@ -90,9 +90,7 @@ object App : Callable<Int> {
         val result = doTranslate()
 
         val nodes = mutableListOf<Node>()
-        // FIXME: how to get all nodes of a TranslationResult?
-        // nodes.addAll(result.graph.nodes)
-        nodes.addAll(result.ast())
+        nodes.addAll(result.allChildren())
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
         nodes.addAll(result.computes)
@@ -122,10 +120,10 @@ object App : Callable<Int> {
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
                 .defaultPasses()
+                .registerLanguage(RubyLanguage())
                 .registerLanguage(JavaLanguage())
                 .registerLanguage(CPPLanguage())
                 .registerLanguage(CLanguage())
-                .registerLanguage(RubyLanguage())
                 .registerLanguage(TypeScriptLanguage())
                 .registerLanguage(PythonLanguage())
                 .registerLanguage(GoLanguage())

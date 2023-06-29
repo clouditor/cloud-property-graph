@@ -8,6 +8,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
@@ -42,7 +43,7 @@ class SpringBootPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         if (e.base.name.localName == "HttpStatus") {
             // use the code, e.g. "HttpStatus.CONFLICT", as we are using this Spring syntax across
             // languages
-            e.name = Name(e.code.toString())
+            e.name = e.parseName(e.code.toString())
         }
     }
 
@@ -110,7 +111,7 @@ class SpringBootPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             // if it's a mapping and has a simple return statement, it is an HttpStatus.OK
             val ret = methodDeclaration.prevDFG.firstOrNull()
             if (ret is ReturnStatement) {
-                ret.name = Name("HttpStatus.OK")
+                ret.name = methodDeclaration.parseName("HttpStatus.OK")
             }
 
             return endpoint

@@ -7,6 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
@@ -219,16 +220,16 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
-                .map { member -> member.value }
+                .mapNotNull { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in
         // TypeScript that are
         // more of meta calls to functions
-        if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members[0].value)
+        if (values.isEmpty() && annotation.members.isNotEmpty()) {
+            annotation.members.getOrNull(0)?.value?.let { values.add(it) }
         }
         if (values.isNotEmpty()) {
-            val param: Node? = values[0]
+            val param: Node? = values.getOrNull(0)
             param?.let {
                 val label = labelCreationDispatcher<PrivacyLabel>(annotationParent)
 
@@ -247,16 +248,16 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             annotation
                 .members
                 .filter { member -> member.name.localName == "level" }
-                .map { member -> member.value }
+                .mapNotNull { member -> member.value }
                 .toMutableList()
         // This is to handle annotation that don't use named attributes, e.g. decorators in
         // TypeScript that are
         // more of meta calls to functions
-        if (values.isEmpty() && !annotation.members.isEmpty()) {
-            values.add(annotation.members[0].value)
+        if (values.isEmpty() && annotation.members.isNotEmpty()) {
+            annotation.members.getOrNull(0)?.value?.let { values.add(it) }
         }
         if (values.isNotEmpty()) {
-            val param: Node? = values[0]
+            val param: Node? = values.getOrNull(0)
             param?.let {
                 val label: AnonLabel = labelCreationDispatcher<AnonLabel>(annotationParent)
                 val anonymizedDummyLabel = initLabel<PrivacyLabel>(annotationParent)
@@ -286,7 +287,13 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                 addLabelToInstantiations(node, label)
             }
             is DeclarationStatement -> {
-                addLabelToDFGBorderEdges(node, label)
+                // To connect to all border edges, we first need to iterate through all declared
+                // variables and find their USAGEs
+                val usages =
+                    node.declarations.filterIsInstance<VariableDeclaration>().flatMap {
+                        it.usageEdges
+                    }
+                usages.forEach { addLabelToDFGBorderEdges(it.end, label) }
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)
@@ -308,7 +315,6 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
 
     /** Adds a newly created Label to the DFG-Border nodes, */
     fun addLabelToDFGBorderEdges(n: Node, label: Label) {
-
         val dfgExitNodes: MutableList<Node> = getDFGPathEdges(n)!!.exits
 
         label.labeledNodes.addAll(dfgExitNodes)

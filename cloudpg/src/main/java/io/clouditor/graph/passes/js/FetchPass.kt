@@ -92,7 +92,7 @@ class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     }
 
     private fun getBody(options: InitializerListExpression?): Expression? {
-        var body =
+        val body =
             (options?.initializers?.firstOrNull() {
                     it is KeyValueExpression && it.key?.name?.localName == "body"
                 } as

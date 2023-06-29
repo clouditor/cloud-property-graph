@@ -43,11 +43,11 @@ class GolangLogPass(ctx: TranslationContext) : LogPass(ctx) {
         // logging
         // specifiers above, e.g. log.Info().Msg("Hello")
         if ((m.name.localName == "Msg" || m.name.localName == "Msgf") &&
-                (m.base as? CallExpression)?.toString() in logMethods
+                (m.base as? CallExpression)?.name?.toString() in logMethods
         ) {
             // the base name specifies the log severity, so we use this one as the
             // "name" of the log operation
-            handleLog(result, m, m.base?.name?.localName ?: "missing", tu)
+            handleLog(result, m, m.base?.name?.toString() ?: "missing", tu)
         }
     }
 }

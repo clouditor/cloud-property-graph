@@ -39,13 +39,13 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     ) {
         val app = result.findApplicationByTU(tu)
         // FIXME: list is often empty! was not a problem in 4.6.0
-        var requestFunction = c.invokes.first()
+        val requestFunction = c.invokes.first()
         // should also have c.base.name == "http" but this is not parsed correctly atm
         if (c.name.localName == "PostForm") {
             createHttpRequest(
                 result,
                 // TODO this should be resolved if it targets a variable
-                (c.arguments[0] as Literal<String>).value!!,
+                (c.arguments[0] as Literal<String>).value ?: "",
                 c,
                 "POST",
                 // TODO request body: the default value is not correctly set, so we use the
@@ -57,7 +57,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         } else if (c.name.localName == "PutForm") {
             createHttpRequest(
                 result,
-                (c.arguments[0] as Literal<String>).value!!,
+                (c.arguments[0] as Literal<String>).value ?: "",
                 c,
                 "PUT",
                 requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
@@ -75,7 +75,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         } else if (c.name.localName == "NewRequest" && c.arguments.first().code == "\"POST\"") {
             createHttpRequest(
                 result,
-                (c.arguments[1] as Literal<String>).value!!,
+                (c.arguments[1] as Literal<String>).value ?: "",
                 c,
                 "POST",
                 requestFunction?.parameters?.get(2)?.prevDFG?.first() as? Expression,

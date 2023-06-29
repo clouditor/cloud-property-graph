@@ -29,9 +29,9 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                             is MemberCallExpression -> {
                                 // look for key.sign()
                                 if (t.name.localName == "sign") {
-                                    val private_key = t.base as DeclaredReferenceExpression
+                                    val privateKey = t.base as DeclaredReferenceExpression
                                     val generator =
-                                        private_key.prevDFG.first() as MemberCallExpression
+                                        privateKey.prevDFG.first() as MemberCallExpression
                                     if (generator.name.localName == "generate_private_key") {
                                         handleSignature(tu, result, t)
                                     }
@@ -51,9 +51,9 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         mce: MemberCallExpression
     ) {
         // TODO check if it is always the first one
-        val text_to_be_signed_expression = mce.arguments.first() as DeclaredReferenceExpression
-        val plain_text = text_to_be_signed_expression.refersTo as VariableDeclaration
-        val signature = Signature(plain_text, mce.nextDFG.first() as VariableDeclaration)
+        val textToBeSignedExpression = mce.arguments.first() as DeclaredReferenceExpression
+        val plainText = textToBeSignedExpression.refersTo as VariableDeclaration
+        val signature = Signature(plainText, mce.nextDFG.first() as VariableDeclaration)
         t += signature
     }
 }

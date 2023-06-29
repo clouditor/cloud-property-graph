@@ -75,7 +75,7 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     )
                 endpoint.name = Name(endpoint.path)
                 funcDeclaration?.parameters?.forEach {
-                    if (it.type is PointerType && it.type.name.localName == "http.Request*" ||
+                    if (it.type is PointerType && it.type.root.name.toString() == "http.Request" ||
                             it.type is HttpRequest
                     ) {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
@@ -97,7 +97,7 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         // actually check for return types - but that does not work (yet) with the standard library
 
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).toString() == "http.NewServeMux"
+                (r.initializer as CallExpression).name.toString() == "http.NewServeMux"
         ) {
             val app = result.findApplicationByTU(tu)
 

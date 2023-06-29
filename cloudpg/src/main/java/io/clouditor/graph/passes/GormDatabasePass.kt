@@ -103,7 +103,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
                     // check, if its base is already of our database type
                     if (memberCall.base?.type is PointerType &&
-                            memberCall.base?.type?.name?.localName == "gorm.DB*"
+                            memberCall.base!!.type.name.localName == "gorm.DB*"
                     ) {
                         // found it, yay!
                         found = true
@@ -253,10 +253,10 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         }
     }
 
-    private fun handleUpdate(call: CallExpression, op: DatabaseQuery) {
+    private fun handleUpdate(call: MemberCallExpression, op: DatabaseQuery) {
         var target = call.arguments.firstOrNull()
         // for update calls, a model condition may be specified which has the actual target
-        if (call.callee?.name?.localName == "Model") {
+        if (call.base?.name?.localName == "Model") {
             target = (call.callee as CallExpression).arguments.first()
         }
 
@@ -276,10 +276,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     }
 
     private fun deriveName(type: Type): String {
-        // short name
-        val shortName = type.name.toString().substringAfterLast(".").substringBefore("*")
-
-        return shortName.toLowerCase() + "s"
+        return type.name.localName
     }
 
     override fun cleanup() {}

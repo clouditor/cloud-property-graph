@@ -10,13 +10,12 @@ fun DatabaseService.getStorageOrCreate(name: String, parentName: String? = null)
 
     if (storage == null) {
         storage = DatabaseStorage(mutableListOf(), null, listOf(), this.geoLocation, mutableMapOf())
-        val storageName = if (parentName != null) Name(name, Name(parentName, null)) else Name(name)
-        storage.name = storageName
+        storage.name = Name(name)
 
         // if the parent name was specified, try to look it up and set the parent(s)
         // TODO: why exactly is parents a list? FIX in the ontology?
         if (parentName != null) {
-            storage.parent = this.storage.filter { it.name.parent?.localName == parentName }
+            storage.parent = this.storage.filter { it.name.localName == parentName }
         }
 
         this.storage.add(storage)

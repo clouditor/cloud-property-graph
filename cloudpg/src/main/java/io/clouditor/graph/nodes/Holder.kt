@@ -26,7 +26,7 @@ fun TranslationResult.location(locationName: String): GeoLocation {
             GeoLocation
     if (location == null) {
         location = GeoLocation(locationName)
-        location.name = Name(location.region, null)
+        location.name = Name(location.region)
 
         this += location
     }

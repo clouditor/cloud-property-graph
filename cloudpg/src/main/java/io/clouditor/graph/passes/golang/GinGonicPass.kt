@@ -7,6 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
@@ -84,7 +85,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         ) {
             // replace the status code name with the harmonized naming
             m.arguments.firstOrNull()?.name =
-                Name(httpMap[m.arguments.firstOrNull()?.name?.toString()].toString())
+                m.parseName(httpMap[m.arguments.firstOrNull()?.name?.toString()].toString())
         }
     }
 
@@ -182,7 +183,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
                 // check, if its base is already of our gin type
                 if (memberCall.base.type is PointerType &&
-                        memberCall.base.type.name.localName == "gin.Context*"
+                        memberCall.base.type.root.name.localName == "gin.Context"
                 ) {
                     // we can break immediately
                     break
@@ -238,8 +239,8 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     ) {
         // FIXME: r.initializer is often null -> was not a problem before!
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).toString() == "gin.Default" ||
-                (r.initializer as CallExpression).toString() == "gin.New"
+                (r.initializer as CallExpression).name.toString() == "gin.Default" ||
+                (r.initializer as CallExpression).name.toString() == "gin.New"
         ) {
             val app = result.findApplicationByTU(tu)
 

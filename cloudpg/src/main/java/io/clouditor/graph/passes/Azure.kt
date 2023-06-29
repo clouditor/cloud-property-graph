@@ -80,7 +80,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                     eog.followEOG {
                         it.end is CallExpression &&
                             it.end.name.localName == "endpoint" &&
-                            (it.end as CallExpression).callee == c
+                            (it.end as MemberCallExpression).base == c
                     }
                 path?.let {
                     val call = it.last().end as CallExpression
@@ -139,12 +139,12 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                     // AppendBlobClient
                     path =
                         eog.followEOG {
-                            it.end is CallExpression &&
+                            it.end is MemberCallExpression &&
                                 it.end.name.localName == "getAppendBlobClient" &&
-                                (it.end as CallExpression).callee is CallExpression &&
-                                (it.end as CallExpression).callee?.name?.localName ==
+                                (it.end as MemberCallExpression).base is CallExpression &&
+                                (it.end as MemberCallExpression).base?.name?.localName ==
                                     "getBlobClient" &&
-                                (((it.end as CallExpression).callee as CallExpression).callee as
+                                (((it.end as CallExpression).callee as MemberCallExpression).base as
                                         DeclaredReferenceExpression)
                                     .refersTo == client
                         }

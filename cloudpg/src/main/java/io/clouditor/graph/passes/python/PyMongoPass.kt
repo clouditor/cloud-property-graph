@@ -160,7 +160,7 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 val pair = dbs[memberExpression.base]
                 // name should be the same in all storages of all the dbs of all the clients of all
                 // the services
-                var parentName = pair?.second?.firstOrNull()?.name
+                val parentName = pair?.second?.firstOrNull()?.name
 
                 it.getStorageOrCreate(memberExpression.name.localName, parentName?.localName)
             }

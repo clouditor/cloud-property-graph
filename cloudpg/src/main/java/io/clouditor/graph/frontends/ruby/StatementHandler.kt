@@ -23,7 +23,7 @@ class StatementHandler(lang: RubyLanguageFrontend) :
         }
 
         blockNode.containsVariableAssignment()
-        val compoundStatement = newCompoundStatement(language.code)
+        val compoundStatement = newCompoundStatement(frontend.getCodeFromRawNode(blockNode))
 
         for (node in blockNode) {
             val statement = frontend.expressionHandler.handle(node)
@@ -40,7 +40,7 @@ class StatementHandler(lang: RubyLanguageFrontend) :
 
         // add an implicit return statement, if there is none
         if (lastStatement !is ReturnStatement) {
-            val returnStatement = newReturnStatement(language.code)
+            val returnStatement = newReturnStatement("return")
             returnStatement.isImplicit = true
             compoundStatement.addStatement(returnStatement)
         }

@@ -3,6 +3,7 @@ package io.clouditor.graph.github
 import com.azure.core.management.Region
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
@@ -66,13 +67,22 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                 result.locationForRegion(Region.US_EAST),
                                 mutableMapOf()
                             )
-                        compute.name = Name(host, null)
+                        compute.name = Name(host)
                         application?.runsOn?.plusAssign(compute)
 
                         result += compute
 
                         val mapper = ObjectMapper(YAMLFactory())
-                        mapper.registerModule(KotlinModule())
+                        mapper.registerModule(
+                            KotlinModule.Builder()
+                                .withReflectionCacheSize(512)
+                                .configure(KotlinFeature.NullToEmptyCollection, false)
+                                .configure(KotlinFeature.NullToEmptyMap, false)
+                                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                                .configure(KotlinFeature.SingletonSupport, false)
+                                .configure(KotlinFeature.StrictNullChecks, false)
+                                .build()
+                        )
 
                         Files.newBufferedReader(rootPath.resolve(composePath)).use { reader ->
                             val compose = mapper.readValue(reader, DockerCompose::class.java)
@@ -90,7 +100,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                                             compute.geoLocation,
                                             mutableMapOf()
                                         )
-                                    networkService.name = Name(host, null)
+                                    networkService.name = Name(host)
 
                                     result += networkService
                                 }
@@ -122,6 +132,7 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                     }
 
                 // create a new application based on the path
+                // TODO: Use component from the new CPG API
                 val application =
                     Application(
                         mutableListOf(),
@@ -129,18 +140,18 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                         mutableListOf(),
                         tus,
                     )
-                application.name = Name(Path.of(path).fileName.toString(), null)
+                application.name = Name(Path.of(path).fileName.toString())
 
                 result.additionalNodes += application
 
                 // we need to assume, that GH stores its images in the US
                 val image = Image(application, result.location("US"), mapOf())
-                image.name = Name(name, null)
+                image.name = Name(name)
 
                 result.images += image
 
                 val builder = Builder(mutableListOf(image))
-                step.name?.let { builder.name = Name(it, null) }
+                step.name?.let { builder.name = Name(it) }
 
                 result.builders += builder
 
