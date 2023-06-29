@@ -64,7 +64,9 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -238,8 +240,10 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         r: VariableDeclaration
     ) {
         if (r.initializer is CallExpression &&
-            // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
-            // FIXME: This can mean that the expected value differs from before (not null/empty).
+                // FIXME: Safety measures added later; they were not necessary with the previous CPG
+                // version.
+                // FIXME: This can mean that the expected value differs from before (not
+                // null/empty).
                 ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
                     (r.initializer as CallExpression).name.toString() == "gin.New")
         ) {

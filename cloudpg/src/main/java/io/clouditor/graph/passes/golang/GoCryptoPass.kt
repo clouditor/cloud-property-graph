@@ -17,7 +17,9 @@ class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -39,7 +41,8 @@ class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         if (c.name.toString() == "ed25519.Sign") {
             // the text that is signed is the second argument
             val textToBeSigned = c.arguments[1] as DeclaredReferenceExpression
-            // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+            // FIXME: Safety measures added later; they were not necessary with the previous CPG
+            // version.
             // FIXME: This can mean that the expected value differs from before (not null/empty).
             val plainText = textToBeSigned.refersTo as? VariableDeclaration
             val signature = Signature(plainText, c.nextDFG.firstOrNull() as? VariableDeclaration)

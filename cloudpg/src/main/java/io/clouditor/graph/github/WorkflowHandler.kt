@@ -15,7 +15,6 @@ import io.clouditor.graph.passes.locationForRegion
 import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.name
 
 class WorkflowHandler(private val result: TranslationResult, val rootPath: Path) {
 
@@ -119,8 +118,10 @@ class WorkflowHandler(private val result: TranslationResult, val rootPath: Path)
                 // filter out the translation units belonging to these applications, until cpg#341
                 // is
                 // solved
+                val translationUnits =
+                    result.components.stream().flatMap { it.translationUnits.stream() }.toList()
                 val tus =
-                    result.translationUnits.filter {
+                    translationUnits.filter {
                         val tuPath = Path.of(it.name.localName)
 
                         try {

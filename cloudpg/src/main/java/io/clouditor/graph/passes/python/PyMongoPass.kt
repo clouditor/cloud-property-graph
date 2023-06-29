@@ -20,7 +20,9 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     val collections: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
 
     override fun accept(result: TranslationResult) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             val app = result.findApplicationByTU(tu)
 
             tu.accept(
@@ -119,7 +121,8 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         val connect = createDatabaseConnect(result, uri?.host ?: "", call, app)
 
         // the DFG target of this call expression is the client, we are interested in
-        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG
+        // version.
         // FIXME: This can mean that the expected value differs from before (not null/empty).
         if (call.nextDFG.iterator().hasNext()) {
             val target = call.nextDFG.iterator().next()

@@ -35,7 +35,9 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -163,7 +165,8 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private fun handleReturnStatement(rs: ReturnStatement) {
         val returnValue = rs.returnValue as InitializerListExpression
         // set the correct http status code by looking through the initializers
-        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG
+        // version.
         // FIXME: This can mean that the expected value differs from before (not null/empty).
         returnValue.initializers.firstOrNull { it.name.toString() in httpMap }.let {
             returnValue.name = Name(httpMap[it?.name.toString()].toString())

@@ -18,7 +18,9 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     override fun accept(result: TranslationResult) {
         // look for http call expressions in the client code
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
@@ -38,7 +40,8 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG
+        // version.
         // FIXME: This can mean that the expected value differs from before (not null/empty).
         val requestFunction = c.invokes.firstOrNull()
         // should also have c.base.name == "http" but this is not parsed correctly atm
