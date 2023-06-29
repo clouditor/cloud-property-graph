@@ -98,7 +98,7 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 object : IVisitor<Node>() {
                     override fun visit(t: Node) {
                         when (t) {
-                            is MemberCallExpression -> {
+                            is MemberExpression -> {
                                 handleRequestUnpacking(func, t, endpoint)
                             }
                         }
