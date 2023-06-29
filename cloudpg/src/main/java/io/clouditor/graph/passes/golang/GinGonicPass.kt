@@ -239,8 +239,8 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     ) {
         // FIXME: r.initializer is often null -> was not a problem before!
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).name.toString() == "gin.Default" ||
-                (r.initializer as CallExpression).name.toString() == "gin.New"
+            ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
+                (r.initializer as CallExpression).name.toString() == "gin.New")
         ) {
             val app = result.findApplicationByTU(tu)
 
