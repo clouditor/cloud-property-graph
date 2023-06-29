@@ -4,7 +4,6 @@ import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import io.clouditor.graph.*
-import io.clouditor.graph.nodes.isInSelector
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
@@ -18,9 +17,7 @@ import java.io.FileReader
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
-import kotlin.collections.Map
 import kotlin.collections.emptyList
-import kotlin.collections.filter
 import kotlin.collections.filterIsInstance
 import kotlin.collections.first
 import kotlin.collections.firstOrNull

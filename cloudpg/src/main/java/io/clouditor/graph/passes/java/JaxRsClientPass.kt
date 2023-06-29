@@ -107,10 +107,10 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     private fun handleTargetCall(
         targetCall: MemberCallExpression,
-        t: TranslationResult,
+        result: TranslationResult,
         tu: TranslationUnitDeclaration
     ) {
-        val app = t.findApplicationByTU(tu)
+        val app = result.findApplicationByTU(tu)
 
         // assume that we are only on one client
         val env =
@@ -143,11 +143,14 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         targetCall.accept(
             Strategy::EOG_FORWARD,
             object : IVisitor<Node>() {
-                fun visit(mce: MemberCallExpression) {
-                    // just look for a "get"
-                    // TODO: actually look for client/builder... Hacky for now
-                    if (mce.name.localName == "get") {
-                        handleGetCall(t, url.toString(), mce, app)
+                override fun visit(t: Node) {
+                    when (t) {
+                        is MemberCallExpression -> {
+                            // just look for a "get"
+                            // TODO: actually look for client/builder... Hacky for now
+                            if (t.name.localName == "get") {
+                                handleGetCall(result, url.toString(), t, app)
+                            }}
                     }
                 }
             }
