@@ -119,9 +119,12 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         val connect = createDatabaseConnect(result, uri?.host ?: "", call, app)
 
         // the DFG target of this call expression is the client, we are interested in
-        val target = call.nextDFG.iterator().next()
-
-        storeDeclarationOrReference(clients, target, connect)
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        if (call.nextDFG.iterator().hasNext()) {
+            val target = call.nextDFG.iterator().next()
+            storeDeclarationOrReference(clients, target, connect)
+        }
     }
 
     private fun handleDBObjectCreate(

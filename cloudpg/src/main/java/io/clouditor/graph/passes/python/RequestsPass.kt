@@ -54,6 +54,8 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
         val url = PythonValueResolver(app).resolve(r.arguments.first())
 
-        createHttpRequest(t, url as String, r, method, r.arguments[1], app)
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        createHttpRequest(t, url as String, r, method, r.arguments.getOrNull(1), app)
     }
 }

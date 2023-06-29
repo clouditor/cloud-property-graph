@@ -30,9 +30,11 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                                 // look for key.sign()
                                 if (t.name.localName == "sign") {
                                     val privateKey = t.base as DeclaredReferenceExpression
+                                    // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+                                    // FIXME: This can mean that the expected value differs from before (not null/empty).
                                     val generator =
-                                        privateKey.prevDFG.first() as MemberCallExpression
-                                    if (generator.name.localName == "generate_private_key") {
+                                        privateKey.prevDFG.firstOrNull() as? MemberCallExpression
+                                    if (generator?.name?.localName == "generate_private_key") {
                                         handleSignature(tu, result, t)
                                     }
                                 }

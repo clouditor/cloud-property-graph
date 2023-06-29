@@ -38,35 +38,38 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        // FIXME: list is often empty! was not a problem in 4.6.0
-        val requestFunction = c.invokes.first()
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        val requestFunction = c.invokes.firstOrNull()
         // should also have c.base.name == "http" but this is not parsed correctly atm
         if (c.name.localName == "PostForm") {
             createHttpRequest(
                 result,
                 // TODO this should be resolved if it targets a variable
-                (c.arguments[0] as Literal<String>).value ?: "",
+                (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "POST",
                 // TODO request body: the default value is not correctly set, so we use the
                 // value that has a dfg edge to the request parameter
-                requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
+                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as?
+                    DeclaredReferenceExpression,
                 app
             )
             // should also have c.base.name == "http" but this is not parsed correctly atm
         } else if (c.name.localName == "PutForm") {
             createHttpRequest(
                 result,
-                (c.arguments[0] as Literal<String>).value ?: "",
+                (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "PUT",
-                requestFunction.parameters[1].prevDFG.first() as DeclaredReferenceExpression,
+                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as?
+                    DeclaredReferenceExpression,
                 app
             )
         } else if (c.toString() == "http.Get") {
             createHttpRequest(
                 result,
-                (c.arguments[0] as Literal<String>).value!!,
+                (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "GET",
                 null,
@@ -75,10 +78,10 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         } else if (c.name.localName == "NewRequest" && c.arguments.first().code == "\"POST\"") {
             createHttpRequest(
                 result,
-                (c.arguments[1] as Literal<String>).value ?: "",
+                (c.arguments[1] as? Literal<String>)?.value ?: "",
                 c,
                 "POST",
-                requestFunction?.parameters?.get(2)?.prevDFG?.first() as? Expression,
+                requestFunction?.parameters?.get(2)?.prevDFG?.firstOrNull() as? Expression,
                 app
             )
         }

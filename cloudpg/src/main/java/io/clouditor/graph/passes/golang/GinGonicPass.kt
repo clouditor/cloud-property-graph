@@ -237,10 +237,11 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
-        // FIXME: r.initializer is often null -> was not a problem before!
         if (r.initializer is CallExpression &&
-            ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
-                (r.initializer as CallExpression).name.toString() == "gin.New")
+            // FIXME: Safety measures added later; they were not necessary with the previous CPG version.
+            // FIXME: This can mean that the expected value differs from before (not null/empty).
+                ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
+                    (r.initializer as CallExpression).name.toString() == "gin.New")
         ) {
             val app = result.findApplicationByTU(tu)
 
