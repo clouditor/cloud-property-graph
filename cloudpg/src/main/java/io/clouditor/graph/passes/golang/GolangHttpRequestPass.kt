@@ -40,9 +40,9 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        // FIXME: Safety measures added later; they were not necessary with the previous CPG
-        // version.
-        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        // FIXME: There are invokes missing compared to the previous version! (However, there are
+        //  more CallExpressions (many of them being ConstructExpressions or MemberCallExpressions)
+        //  in total!)
         val requestFunction = c.invokes.firstOrNull()
         // should also have c.base.name == "http" but this is not parsed correctly atm
         if (c.name.localName == "PostForm") {

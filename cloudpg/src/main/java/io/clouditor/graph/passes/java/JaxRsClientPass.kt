@@ -150,7 +150,8 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                             // TODO: actually look for client/builder... Hacky for now
                             if (t.name.localName == "get") {
                                 handleGetCall(result, url.toString(), t, app)
-                            }}
+                            }
+                        }
                     }
                 }
             }

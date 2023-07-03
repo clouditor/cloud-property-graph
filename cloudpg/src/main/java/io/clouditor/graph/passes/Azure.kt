@@ -534,7 +534,6 @@ class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
 }
 
 fun TranslationResult.getImageByName(name: String?): Image? {
-    // FIXME: does the localName or fullName (toString) make more sense here?
     return this.images.firstOrNull { it.name.localName == name }
 }
 

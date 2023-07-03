@@ -167,8 +167,7 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         val returnValue = rs.returnValue as InitializerListExpression
         // set the correct http status code by looking through the initializers
         // FIXME: Safety measures added later; they were not necessary with the previous CPG
-        // version.
-        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        //  version. This can mean that the expected value differs from before (not null/empty).
         returnValue.initializers.firstOrNull { it.name.toString() in httpMap }.let {
             returnValue.name = Name(httpMap[it?.name.toString()].toString())
         }

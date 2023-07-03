@@ -33,7 +33,6 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                     override fun visit(t: Node) {
                         // TODO: actually, this should be a ConstructExpression, but currently, it
                         // is parsed as a CallExpression in the CPG
-                        // FIXME: is this sill the case with CPG 7.0.0?
                         when (t) {
                             is CallExpression -> {
                                 if (t.name.localName == "MongoClient") {
@@ -123,8 +122,7 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
         // the DFG target of this call expression is the client, we are interested in
         // FIXME: Safety measures added later; they were not necessary with the previous CPG
-        // version.
-        // FIXME: This can mean that the expected value differs from before (not null/empty).
+        //  version. This can mean that the expected value differs from before (not null/empty).
         if (call.nextDFG.iterator().hasNext()) {
             val target = call.nextDFG.iterator().next()
             storeDeclarationOrReference(clients, target, connect)

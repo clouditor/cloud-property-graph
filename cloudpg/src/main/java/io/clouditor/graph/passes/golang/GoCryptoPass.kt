@@ -43,8 +43,7 @@ class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             // the text that is signed is the second argument
             val textToBeSigned = c.arguments[1] as DeclaredReferenceExpression
             // FIXME: Safety measures added later; they were not necessary with the previous CPG
-            // version.
-            // FIXME: This can mean that the expected value differs from before (not null/empty).
+            //  version. This can mean that the expected value differs from before (not null/empty).
             val plainText = textToBeSigned.refersTo as? VariableDeclaration
             val signature = Signature(plainText, c.nextDFG.firstOrNull() as? VariableDeclaration)
             t += signature

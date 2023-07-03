@@ -27,6 +27,11 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     override fun visit(t: Node) {
                         when (t) {
                             is MemberCallExpression -> {
+                                // FIXME: first part of the name is UNKNOWN when it was previously
+                                //  not (e.g. UNKNOWN.Sprintf instead of fmt.Sprintf)
+                                //  this is not important for this check but still worth
+                                //  investigating
+                                // FIXME: it seems we are also missing some Expressions
                                 // look for requests.get()
                                 if (t.name.localName == "get" &&
                                         t.base?.name?.localName == "requests"
@@ -54,6 +59,8 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     ) {
         val app = t.findApplicationByTU(tu)
 
+        // FIXME: "refersTo" in DeclaredReferenceExpression is null when it should not be
+        // (testD2Python)
         val url = PythonValueResolver(app).resolve(r.arguments.first())
 
         // FIXME: Safety measures added later; they were not necessary with the previous CPG
