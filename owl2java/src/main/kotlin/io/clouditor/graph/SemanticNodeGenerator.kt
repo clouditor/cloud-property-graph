@@ -6,6 +6,9 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.LocalDateTime.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.stream.Collectors
 
@@ -186,7 +189,7 @@ object SemanticNodeGenerator {
         var propertiesStringSource = ""
         for (property in properties) {
             propertiesStringSource +=
-                if (!property.isRootClassNameResource && !property.isInterface && property.propertyProperty == "hasMultiple"){ // must be a slice
+                if (!property.isRootClassNameResource && !property.isInterface && property.propertyProperty == "hasMultiple" ){ // must be a slice
                     """
 	${StringUtils.capitalize(property.propertyName)}	""" + getAdjustedPropertyType("[]" + property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
         }else if (!property.isRootClassNameResource && !property.isInterface) { // nothing special
@@ -195,7 +198,7 @@ object SemanticNodeGenerator {
                 } else if (!property.isRootClassNameResource && property.isInterface) { // is an interface
                     """
 	${StringUtils.capitalize(property.propertyName)}	""" + StringUtils.capitalize(property.propertyType) + " \t`json:\"" + property.propertyName + "\"`"
-                } else if (property.propertyProperty == "hasMultiple") { // must be a []ResourceID
+                } else if (property.propertyProperty == "hasMultiple" || property.propertyProperty == "offersMultiple") { // must be a []ResourceID
                     """
 	${StringUtils.capitalize(property.propertyName)}	[]ResourceID""" + "\t" + """`json:"${property.propertyName}"`"""
         } else if (property.propertyProperty == "has") { // must be ResourceID
@@ -246,10 +249,21 @@ object SemanticNodeGenerator {
             "Authorization" -> "IsAuthorization"
             "[]Authorization" -> "[]IsAuthorization"
             "AtRestEncryption" -> "IsAtRestEncryption"
-            else -> "*$type"
+            else -> addPointer(type)
         }
 
+
         return propType
+    }
+
+    // Adds a pointer, e.g., []Backup -> []*Backup or Backup -> *Backup
+    private fun addPointer(elem: String): String {
+        if (elem.startsWith("[]")) {
+            var res = elem.drop(2)
+            return "[]*$res"
+        } else {
+            return "*$elem"
+        }
     }
 
     // Write Go source code to filesystem
@@ -322,8 +336,11 @@ object SemanticNodeGenerator {
     }
 
     private fun clouditorCopyright():String {
+        var formatter = DateTimeFormatter.ofPattern("yyyy")
+        val current = LocalDateTime.now().format(formatter)
+
        return """
-// Copyright 2022 Fraunhofer AISEC
+// Copyright """ + current + """ Fraunhofer AISEC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
