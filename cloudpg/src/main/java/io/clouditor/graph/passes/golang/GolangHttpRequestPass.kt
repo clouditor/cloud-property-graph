@@ -44,8 +44,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         //  more CallExpressions (many of them being ConstructExpressions or MemberCallExpressions)
         //  in total!)
         val requestFunction = c.invokes.firstOrNull()
-        // should also have c.base.name == "http" but this is not parsed correctly atm
-        if (c.name.localName == "PostForm") {
+        if (c.name.toString() == "http.PostForm") {
             createHttpRequest(
                 result,
                 // TODO this should be resolved if it targets a variable
@@ -58,8 +57,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     DeclaredReferenceExpression,
                 app
             )
-            // should also have c.base.name == "http" but this is not parsed correctly atm
-        } else if (c.name.localName == "PutForm") {
+        } else if (c.name.toString() == "http.PutForm") {
             createHttpRequest(
                 result,
                 (c.arguments[0] as? Literal<String>)?.value ?: "",
