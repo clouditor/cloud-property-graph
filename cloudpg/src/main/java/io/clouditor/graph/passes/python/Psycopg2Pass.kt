@@ -27,15 +27,10 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                if (t.name.localName == "connect" &&
-                                        t.base?.name?.localName == "psycopg2"
-                                ) {
-                                    handleConnect(result, t, app)
-                                }
-                            }
+                    fun visit(t: MemberCallExpression) {
+                        if (t.name.localName == "connect" && t.base?.name?.localName == "psycopg2"
+                        ) {
+                            handleConnect(result, t, app)
                         }
                     }
                 }
@@ -53,14 +48,10 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                clients[t.base!!]?.let {
-                                    if (t.name.localName == "cursor") {
-                                        handleCursor(t, it)
-                                    }
-                                }
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "cursor") {
+                                handleCursor(t, it)
                             }
                         }
                     }
@@ -71,14 +62,10 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                clients[t.base!!]?.let {
-                                    if (t.name.localName == "execute") {
-                                        handleExecute(result, t, app, it)
-                                    }
-                                }
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "execute") {
+                                handleExecute(result, t, app, it)
                             }
                         }
                     }
@@ -89,14 +76,10 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                clients[t.base!!]?.let {
-                                    if (t.name.localName == "fetchall") {
-                                        handleFetchAll(result, t, app, it)
-                                    }
-                                }
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "fetchall") {
+                                handleFetchAll(result, t, app, it)
                             }
                         }
                     }

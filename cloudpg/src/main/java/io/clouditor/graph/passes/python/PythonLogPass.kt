@@ -17,15 +17,9 @@ class PythonLogPass(ctx: TranslationContext) : LogPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                if (t.name.localName == "info" &&
-                                        t.base?.name?.localName == "logging"
-                                ) {
-                                    handleLog(result, t, t.name.localName, tu)
-                                }
-                            }
+                    fun visit(t: MemberCallExpression) {
+                        if (t.name.localName == "info" && t.base?.name?.localName == "logging") {
+                            handleLog(result, t, t.name.localName, tu)
                         }
                     }
                 }

@@ -67,17 +67,20 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         val translationUnits =
             result.components.stream().flatMap { it.translationUnits.stream() }.toList()
         for (tu in translationUnits) {
+
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            // FIXME: Go VariableDeclarations for shorthad ":=" is missing in new
-                            // Version!!
-                            // DeclaredReferenceExpression points to null
-                            is VariableDeclaration -> handleVariable(result, tu, t)
-                            is MemberCallExpression -> handleGinResponse(t)
-                        }
+                    fun visit(t: VariableDeclaration) {
+                        handleVariable(result, tu, t)
+                    }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleGinResponse(t)
                     }
                 }
             )
@@ -120,17 +123,22 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                     )
                 endpoint.name = Name(endpoint.path)
 
-                // get the endpoint's handler
+                // get the endpoint's handler and look through its mces
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
                     object : IVisitor<Node>() {
-                        override fun visit(t: Node) {
-                            when (t) {
-                                // look through its mces
-                                is MemberCallExpression -> handleBind(t, endpoint)
-                                // look through its mes
-                                is MemberExpression -> handleForm(t, endpoint)
-                            }
+                        fun visit(t: MemberCallExpression) {
+                            handleBind(t, endpoint)
+                        }
+                    }
+                )
+
+                // get the endpoint's handler and look through its mes
+                funcDeclaration?.accept(
+                    Strategy::AST_FORWARD,
+                    object : IVisitor<Node>() {
+                        fun visit(t: MemberExpression) {
+                            handleForm(t, endpoint)
                         }
                     }
                 )
@@ -243,6 +251,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         r: VariableDeclaration
     ) {
         // FIXME: we're missing the following VariableDeclarations:
+        //  (caused by bug in CPG missing VariableDeclarations in shorthand ":=")
         //      (TestD2Go):
         //      - in client.go (11:5 - 11:33) with initializer Literal
         //      - in client.go (12:10 - 15:3) with initializer ConstructExpression
@@ -288,10 +297,8 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             r.accept(
                 Strategy::EOG_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> handleMemberCall(result, tu, t)
-                        }
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t)
                     }
                 }
             )

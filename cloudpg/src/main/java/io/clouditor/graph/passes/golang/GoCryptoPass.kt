@@ -24,10 +24,8 @@ class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is CallExpression -> handleSign(result, tu, t)
-                        }
+                    fun visit(t: CallExpression) {
+                        handleSign(result, tu, t)
                     }
                 }
             )

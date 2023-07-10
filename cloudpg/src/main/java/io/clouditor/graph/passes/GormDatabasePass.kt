@@ -27,12 +27,8 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is CallExpression -> {
-                                findConnect(result, tu, t, app)
-                            }
-                        }
+                    fun visit(t: CallExpression) {
+                        findConnect(result, tu, t, app)
                     }
                 }
             )
@@ -44,10 +40,8 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> findQuery(result, tu, t, app)
-                        }
+                    fun visit(t: MemberCallExpression) {
+                        findQuery(result, tu, t, app)
                     }
                 }
             )

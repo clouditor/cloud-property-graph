@@ -19,10 +19,8 @@ class GolangLogPass(ctx: TranslationContext) : LogPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> handleMemeberCallExpression(result, tu, t)
-                        }
+                    fun visit(t: MemberCallExpression) {
+                        handleMemeberCallExpression(result, tu, t)
                     }
                 }
             )

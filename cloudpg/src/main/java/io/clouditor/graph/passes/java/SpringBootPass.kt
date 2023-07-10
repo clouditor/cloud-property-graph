@@ -30,11 +30,16 @@ class SpringBootPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is RecordDeclaration -> handleAnnotations(result, tu, t, t.annotations)
-                            is MemberExpression -> handleExpression(t)
-                        }
+                    fun visit(t: RecordDeclaration) {
+                        handleAnnotations(result, tu, t, t.annotations)
+                    }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberExpression) {
+                        handleExpression(t)
                     }
                 }
             )

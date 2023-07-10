@@ -40,10 +40,8 @@ class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is CallExpression -> handleCallExpression(result, tu, t)
-                        }
+                    fun visit(t: CallExpression) {
+                        handleCallExpression(result, tu, t)
                     }
                 }
             )

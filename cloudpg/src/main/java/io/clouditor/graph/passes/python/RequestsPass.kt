@@ -24,25 +24,19 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                // FIXME: first part of the name is UNKNOWN when it was previously
-                                //  not (e.g. UNKNOWN.Sprintf instead of fmt.Sprintf)
-                                //  this is not important for this check but still worth
-                                //  investigating
-                                // FIXME: it seems we are also missing some Expressions
-                                // look for requests.get()
-                                if (t.name.localName == "get" &&
-                                        t.base?.name?.localName == "requests"
-                                ) {
-                                    handleClientRequest(tu, result, t, "GET")
-                                } else if (t.name.localName == "post" &&
-                                        t.base?.name?.localName == "requests"
-                                ) {
-                                    handleClientRequest(tu, result, t, "POST")
-                                }
-                            }
+                    fun visit(t: MemberCallExpression) {
+                        // FIXME: first part of the name is UNKNOWN when it was previously
+                        //  not (e.g. UNKNOWN.Sprintf instead of fmt.Sprintf)
+                        //  this is not important for this check but still worth
+                        //  investigating
+                        // FIXME: it seems we are also missing some Expressions
+                        // look for requests.get()
+                        if (t.name.localName == "get" && t.base?.name?.localName == "requests") {
+                            handleClientRequest(tu, result, t, "GET")
+                        } else if (t.name.localName == "post" &&
+                                t.base?.name?.localName == "requests"
+                        ) {
+                            handleClientRequest(tu, result, t, "POST")
                         }
                     }
                 }

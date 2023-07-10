@@ -25,10 +25,8 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is VariableDeclaration -> handleVariableDeclaration(result, tu, t)
-                        }
+                    fun visit(t: VariableDeclaration) {
+                        handleVariableDeclaration(result, tu, t)
                     }
                 }
             )
@@ -52,17 +50,13 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 Strategy::AST_FORWARD, // EOG_FORWARD would be better but seems to be broken on top
                 // level statements
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> {
-                                val endpoint = handleEndpoint(result, tu, t, v)
+                    fun visit(t: MemberCallExpression) {
+                        val endpoint = handleEndpoint(result, tu, t, v)
 
-                                endpoint?.let {
-                                    requestHandler.httpEndpoints.plusAssign(it)
-                                    result += endpoint
-                                    app?.functionalities?.plusAssign(endpoint)
-                                }
-                            }
+                        endpoint?.let {
+                            requestHandler.httpEndpoints.plusAssign(it)
+                            result += endpoint
+                            app?.functionalities?.plusAssign(endpoint)
                         }
                     }
                 }
@@ -96,12 +90,8 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             func?.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberExpression -> {
-                                handleRequestUnpacking(func, t, endpoint)
-                            }
-                        }
+                    fun visit(t: MemberExpression) {
+                        handleRequestUnpacking(func, t, endpoint)
                     }
                 }
             )

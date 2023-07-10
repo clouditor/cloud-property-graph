@@ -24,29 +24,24 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is CallExpression -> {
-                                try {
-                                    // look for ClientBuilder.newClient (Jersey 3.x and 2.x)
-                                    if (t.name.toString() ==
-                                            "jakarta.ws.rs.client.ClientBuilder.newClient" ||
-                                            t.name.toString() ==
-                                                "javax.ws.rs.client.ClientBuilder.newClient"
-                                    ) {
-                                        handleClient(result, t, tu)
-                                    }
-
-                                    // or ClientBuilder.newBuilder
-                                    if (t.name.toString() ==
-                                            "javax.ws.rs.client.ClientBuilder.newBuilder"
-                                    ) {
-                                        handleBuilder(result, t, tu)
-                                    }
-                                } catch (t: Throwable) {
-                                    t.printStackTrace()
-                                }
+                    fun visit(t: CallExpression) {
+                        try {
+                            // look for ClientBuilder.newClient (Jersey 3.x and 2.x)
+                            if (t.name.toString() ==
+                                    "jakarta.ws.rs.client.ClientBuilder.newClient" ||
+                                    t.name.toString() ==
+                                        "javax.ws.rs.client.ClientBuilder.newClient"
+                            ) {
+                                handleClient(result, t, tu)
                             }
+
+                            // or ClientBuilder.newBuilder
+                            if (t.name.toString() == "javax.ws.rs.client.ClientBuilder.newBuilder"
+                            ) {
+                                handleBuilder(result, t, tu)
+                            }
+                        } catch (t: Throwable) {
+                            t.printStackTrace()
                         }
                     }
                 }
@@ -143,15 +138,11 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         targetCall.accept(
             Strategy::EOG_FORWARD,
             object : IVisitor<Node>() {
-                override fun visit(t: Node) {
-                    when (t) {
-                        is MemberCallExpression -> {
-                            // just look for a "get"
-                            // TODO: actually look for client/builder... Hacky for now
-                            if (t.name.localName == "get") {
-                                handleGetCall(result, url.toString(), t, app)
-                            }
-                        }
+                fun visit(t: MemberCallExpression) {
+                    // just look for a "get"
+                    // TODO: actually look for client/builder... Hacky for now
+                    if (t.name.localName == "get") {
+                        handleGetCall(result, url.toString(), t, app)
                     }
                 }
             }

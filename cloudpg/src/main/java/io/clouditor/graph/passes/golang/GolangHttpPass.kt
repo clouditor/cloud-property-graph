@@ -29,10 +29,8 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is VariableDeclaration -> handleVariable(result, tu, t)
-                        }
+                    fun visit(t: VariableDeclaration) {
+                        handleVariable(result, tu, t)
                     }
                 }
             )
@@ -43,10 +41,8 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberCallExpression -> handleMemberCall(result, tu, t)
-                        }
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t)
                     }
                 }
             )

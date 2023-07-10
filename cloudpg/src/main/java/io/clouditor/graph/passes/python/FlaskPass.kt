@@ -42,11 +42,8 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is VariableDeclaration ->
-                                handleVariableDeclarations(result, tu, t, t.annotations)
-                        }
+                    fun visit(t: VariableDeclaration) {
+                        handleVariableDeclarations(result, tu, t, t.annotations)
                     }
                 }
             )
@@ -72,17 +69,13 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is FunctionDeclaration -> {
-                                handleMapping(t)?.let {
-                                    handler.httpEndpoints.plusAssign(it)
+                    fun visit(t: FunctionDeclaration) {
+                        handleMapping(t)?.let {
+                            handler.httpEndpoints.plusAssign(it)
 
-                                    app?.functionalities?.plusAssign(it)
+                            app?.functionalities?.plusAssign(it)
 
-                                    result += it
-                                }
-                            }
+                            result += it
                         }
                     }
                 }
@@ -115,11 +108,17 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             func.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is MemberExpression -> handleRequestUnpacking(t, endpoint)
-                            is ReturnStatement -> handleReturnStatement(t)
-                        }
+                    fun visit(t: MemberExpression) {
+                        handleRequestUnpacking(t, endpoint)
+                    }
+                }
+            )
+
+            func.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: ReturnStatement) {
+                        handleReturnStatement(t)
                     }
                 }
             )

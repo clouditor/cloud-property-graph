@@ -47,10 +47,8 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    override fun visit(t: Node) {
-                        when (t) {
-                            is NewExpression -> handleNewClient(result, tu, t, app)
-                        }
+                    fun visit(t: NewExpression) {
+                        handleNewClient(result, tu, t, app)
                     }
                 }
             )
