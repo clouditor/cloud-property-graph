@@ -17,6 +17,9 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         body: Expression?,
         app: Application?
     ): HttpRequest {
+        // FIXME: url = null!
+        // FIXME: body.refersTo = null! (DeclaredReferenceExpression) -> named argument "json =
+        // personal_data"
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, body, endpoints)
         request.name = Name(method)

@@ -59,6 +59,10 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                         // map. This means that
                         // a database object is created from this client.
                         when (t) {
+                            // FIXME: we are missing MemberExpressions?
+                            //  "user_db_client.userdata" in server.py (7:11 - 7:34)
+                            //  "user_db.records" in server.py (8:22 - 8:34)
+                            //  "request.json" in server.oy (14:11 - 14:23)
                             is MemberExpression -> {
                                 clients[t.base]?.let { handleDBObjectCreate(result, t, app, it) }
                             }
@@ -90,14 +94,16 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 collections.size
             )
 
+            // FIXME: why are the MemberCallExpressions not evaluated here?
             tu.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
                 object : IVisitor<Node>() {
                     override fun visit(t: Node) {
                         when (t) {
-                            is MemberCallExpression ->
+                            is MemberCallExpression -> {
                                 collections[t.base!!]?.let { handleQuery(result, t, app, it) }
+                            }
                         }
                     }
                 }
@@ -121,11 +127,14 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         val connect = createDatabaseConnect(result, uri?.host ?: "", call, app)
 
         // the DFG target of this call expression is the client, we are interested in
-        // FIXME: Safety measures added later; they were not necessary with the previous CPG
-        //  version. This can mean that the expected value differs from before (not null/empty).
+        // FIXME: this is not true for the new CPG version -> bug?
+        //  CPG should usually return the associated VariableDeclaration as the next DFG Edge
+        //  However, we don't get any values at all for prev/next EOG/DFG edges
         if (call.nextDFG.iterator().hasNext()) {
             val target = call.nextDFG.iterator().next()
             storeDeclarationOrReference(clients, target, connect)
+        } else {
+            System.err.println("Failed to resolve target of Client creation")
         }
     }
 
