@@ -10,11 +10,14 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
+@DependsOn(GoExtraPass::class)
 class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
@@ -64,10 +67,8 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        val translationUnits =
-            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        val translationUnits = result.components.flatMap { it.translationUnits }
         for (tu in translationUnits) {
-
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
