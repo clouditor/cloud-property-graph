@@ -14,6 +14,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import io.clouditor.graph.frontends.ruby.RubyLanguage
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
@@ -130,6 +131,7 @@ object App : Callable<Int> {
                 .registerLanguage(PythonLanguage())
                 .registerLanguage(GoLanguage())
                 .debugParser(true)
+                .registerPass(GoExtraPass::class)           // This pass needs to be executed to have all VariableDeclarations
                 .registerPass(GitHubWorkflowPass::class)
                 .registerPass(SpringBootPass::class)
                 .registerPass(JaxRsPass::class)
