@@ -11,10 +11,12 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
+import io.clouditor.graph.testing.LocalTestingPass
 
 // This pass is needed only for the local testing mode, since in the testing pass we create the
 // endpoints and only after that we can create the respective requests
 @DependsOn(GoExtraPass::class)
+@DependsOn(LocalTestingPass::class)
 class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     override fun cleanup() {}
