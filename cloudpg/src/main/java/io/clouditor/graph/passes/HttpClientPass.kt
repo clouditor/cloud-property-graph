@@ -1,11 +1,13 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 
-abstract class HttpClientPass : Pass() {
+abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     protected fun createHttpRequest(
         t: TranslationResult,
@@ -15,9 +17,12 @@ abstract class HttpClientPass : Pass() {
         body: Expression?,
         app: Application?
     ): HttpRequest {
+        // FIXME (TODO): url = null!
+        // FIXME: body.refersTo = null! (DeclaredReferenceExpression) ä
+        //      -> named argument "json = personal_data"
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, body, endpoints)
-        request.name = method
+        request.name = Name(method)
         request.location = call.location
 
         endpoints.forEach { request.addNextDFG(it) }

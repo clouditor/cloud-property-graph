@@ -1,18 +1,21 @@
 package io.clouditor.graph.passes.golang
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-class GinGonicPass : Pass() {
+class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     private val httpMap: Map<String, String> =
@@ -60,37 +63,37 @@ class GinGonicPass : Pass() {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            // first, look for clients
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: VariableDeclaration) {
-                            handleVariable(result, tu, r)
-                        }
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
+
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: VariableDeclaration) {
+                        handleVariable(result, tu, t)
                     }
-                )
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: MemberCallExpression) {
-                            handleGinResponse(r)
-                        }
+                }
+            )
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleGinResponse(t)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
     private fun handleGinResponse(m: MemberCallExpression) {
-        if (m.base.type.name.startsWith("gin.Context") &&
+        if (m.base?.type?.name?.startsWith("gin.Context") == true &&
                 m.arguments.firstOrNull()?.name?.startsWith("http.Status") == true
         ) {
             // replace the status code name with the harmonized naming
             m.arguments.firstOrNull()?.name =
-                httpMap.get(m.arguments.firstOrNull()?.name).toString()
+                m.parseName(httpMap[m.arguments.firstOrNull()?.name?.toString()].toString())
         }
     }
 
@@ -107,24 +110,25 @@ class GinGonicPass : Pass() {
 
             val funcDeclaration =
                 (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
-            if (m.name == "GET" || m.name == "POST" || m.name == "PUT") {
+            if (m.name.localName == "GET" || m.name.localName == "POST" || m.name.localName == "PUT"
+            ) {
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
                         funcDeclaration,
-                        m.name,
+                        m.name.localName,
                         getPath(m),
                         null,
                         null
                     )
-                endpoint.name = endpoint.path
+                endpoint.name = Name(endpoint.path)
 
                 // get the endpoint's handler and look through its mces
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(mce: MemberCallExpression) {
-                            handleBind(mce, endpoint)
+                    object : IVisitor<Node>() {
+                        fun visit(t: MemberCallExpression) {
+                            handleBind(t, endpoint)
                         }
                     }
                 )
@@ -132,9 +136,9 @@ class GinGonicPass : Pass() {
                 // get the endpoint's handler and look through its mes
                 funcDeclaration?.accept(
                     Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(me: MemberExpression) {
-                            handleForm(me, endpoint)
+                    object : IVisitor<Node>() {
+                        fun visit(t: MemberExpression) {
+                            handleForm(t, endpoint)
                         }
                     }
                 )
@@ -149,17 +153,17 @@ class GinGonicPass : Pass() {
                 client?.httpEndpoints?.plusAssign(endpoint)
                 app?.functionalities?.plusAssign(endpoint)
                 result += endpoint
-            } else if (m.name == "Group") {
+            } else if (m.name.localName == "Group") {
                 // add a new (sub) client
-                val app = result.findApplicationByTU(tu)
+                val application = result.findApplicationByTU(tu)
 
                 val requestHandler =
                     HttpRequestHandler(
-                        app,
+                        application,
                         mutableListOf(),
                         client?.path?.appendPath(getPath(m)) ?: "/"
                     )
-                requestHandler.name = requestHandler.path
+                requestHandler.name = Name(requestHandler.path)
 
                 val subClient = m.nextDFG.filterIsInstance<VariableDeclaration>().firstOrNull()
                 subClient?.let {
@@ -174,14 +178,14 @@ class GinGonicPass : Pass() {
     }
 
     private fun handleBind(m: MemberCallExpression, e: HttpEndpoint) {
-        if (m.name == "BindJSON" || m.name == "Bind") {
-            var obj = (m.arguments.firstOrNull() as UnaryOperator).input
+        if (m.name.localName == "BindJSON" || m.name.localName == "Bind") {
+            val obj = (m.arguments.firstOrNull() as UnaryOperator).input
             if (obj is DeclaredReferenceExpression) {
                 obj.refersTo?.let { e.addNextDFG(it) }
             } else {
                 e.addNextDFG(obj)
             }
-        } else if (m.name == "Get") {
+        } else if (m.name.localName == "Get") {
             // lets see, whether we have a chain of member calls that go
             // to the base
             var memberCall: MemberExpression? = m.base as? MemberExpression
@@ -192,7 +196,7 @@ class GinGonicPass : Pass() {
 
                 // check, if its base is already of our gin type
                 if (memberCall.base.type is PointerType &&
-                        memberCall.base.type.name == "gin.Context*"
+                        memberCall.base.type.root.name.localName == "gin.Context"
                 ) {
                     // we can break immediately
                     break
@@ -207,7 +211,7 @@ class GinGonicPass : Pass() {
 
     // TODO consolidate duplicated code here and above in handleBind
     private fun handleForm(m: MemberExpression, e: HttpEndpoint) {
-        if (m.name == "Form") {
+        if (m.name.localName == "Form") {
             // lets see, whether we have a chain of member calls that go
             // to the base
             var memberCall: MemberExpression? = m.base as? MemberExpression
@@ -218,7 +222,7 @@ class GinGonicPass : Pass() {
 
                 // check, if its base is already of our gin type
                 if (memberCall.base.type is PointerType &&
-                        memberCall.base.type.name == "gin.Context*"
+                        memberCall.base.type.name.localName == "gin.Context*"
                 ) {
                     // we can break immediately
                     break
@@ -246,14 +250,42 @@ class GinGonicPass : Pass() {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
+        // FIXME: we're missing the following VariableDeclarations:
+        //  (caused by bug in CPG missing VariableDeclarations in shorthand ":=")
+        //      (TestD2Go):
+        //      - in client.go (11:5 - 11:33) with initializer Literal
+        //      - in client.go (12:10 - 15:3) with initializer ConstructExpression
+        //      - in server.go (16:2 - 16:16) with initializer CallExpression
+        //      (TestD2ValidationGo):
+        //      - in client.go (13:2 - 15:3) with initializer ConstructExpression
+        //      - in server.go (16:2 - 16:16) with initializer CallExpression
+        //      (TestD4Go):
+        //      - in client.go (10:5 - 10:33) with initializer Literal
+        //          [name := "firstname lastname"]
+        //      - in client.go (11:2 - 14:3) with initializer ConstructExpression
+        //          [data := url.Values{ "Name": {name}, "Message": {"helloworld"}, }]
+        //      - in server.go (26:5 - 31:6) with Initializer MemberCallExpression
+        //          [dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432
+        //           sslmode=disable", "postgres", "postgres", "postgres", "postgres", )]
+        //      - in server.go (39:2 - 39:16) with Initializer CallExpression
+        //          [r := gin.New()]
+        //      - in server.go (50:2 - 50:36) with Initializer MemberCallExpression
+        //          [name := c.Request.Form.Get("Name")]
+        //      - in server.go (51:2 - 51:42) with Initializer MemberCallExpression
+        //          [message := c.Request.Form.Get("Message")]
+        //      - in server.go (52:5 - 55:6) with Initializer UnaryOperator
+        //          [data := &Data{ Name: name, Message: message, }]
+        //      - in server.go (56:2 - 56:30) with Initializer MemberExpression
+        //          [err := db.Create(data).error]
+        //      (...)
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).fqn == "gin.Default" ||
-                (r.initializer as CallExpression).fqn == "gin.New"
+                ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
+                    (r.initializer as CallExpression).name.toString() == "gin.New")
         ) {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
-            requestHandler.name = requestHandler.path
+            requestHandler.name = Name(requestHandler.path)
 
             clients[r] = requestHandler
 
@@ -264,9 +296,9 @@ class GinGonicPass : Pass() {
             // look for calls to that client
             r.accept(
                 Strategy::EOG_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(m: MemberCallExpression) {
-                        handleMemberCall(result, tu, m)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t)
                     }
                 }
             )

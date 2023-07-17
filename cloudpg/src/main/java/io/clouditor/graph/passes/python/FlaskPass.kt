@@ -1,21 +1,22 @@
 package io.clouditor.graph.passes.python
 
-import de.fraunhofer.aisec.cpg.ExperimentalPython
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Annotation
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 
-@OptIn(ExperimentalPython::class)
-class FlaskPass : Pass() {
+@Suppress("UNUSED_PARAMETER")
+class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     // for now, assume, that we have one Flask application per analysis
     // this might not be the case everytime
 
@@ -35,18 +36,18 @@ class FlaskPass : Pass() {
 
     override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in result.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(v: VariableDeclaration) {
-                        handleVariableDeclarations(result, tu, v, v.annotations)
-                        // handleAnnotations(result, tu, r, r.annotations)
+                object : IVisitor<Node>() {
+                    fun visit(t: VariableDeclaration) {
+                        handleVariableDeclarations(result, tu, t, t.annotations)
                     }
                 }
             )
         }
-        // }
     }
 
     private fun handleVariableDeclarations(
@@ -57,7 +58,7 @@ class FlaskPass : Pass() {
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if ((v.initializer as? CallExpression)?.name == "Flask") {
+        if ((v.initializer as? CallExpression)?.name?.localName == "Flask") {
             // handle it as a request handler
             val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
@@ -67,9 +68,9 @@ class FlaskPass : Pass() {
             // look for functions
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(v: FunctionDeclaration) {
-                        handleMapping(v)?.let {
+                object : IVisitor<Node>() {
+                    fun visit(t: FunctionDeclaration) {
+                        handleMapping(t)?.let {
                             handler.httpEndpoints.plusAssign(it)
 
                             app?.functionalities?.plusAssign(it)
@@ -85,7 +86,7 @@ class FlaskPass : Pass() {
     }
 
     private fun handleMapping(func: FunctionDeclaration): HttpEndpoint? {
-        val mapping = func.annotations.firstOrNull { it.name == "route" }
+        val mapping = func.annotations.firstOrNull { it.name.localName == "route" }
         if (mapping != null) {
             // TE is not really interesting for us here, but we need to fill it. maybe make it
             // optional later
@@ -101,23 +102,23 @@ class FlaskPass : Pass() {
                     te,
                     null
                 )
-            endpoint.name = endpoint.path
+            endpoint.name = Name(endpoint.path)
 
             // get the endpoint's handler and look for assignments of the request's JSON body
             func.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(me: MemberExpression) {
-                        handleRequestUnpacking(me, endpoint)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberExpression) {
+                        handleRequestUnpacking(t, endpoint)
                     }
                 }
             )
 
             func.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(rs: ReturnStatement) {
-                        handleReturnStatement(rs)
+                object : IVisitor<Node>() {
+                    fun visit(t: ReturnStatement) {
+                        handleReturnStatement(t)
                     }
                 }
             )
@@ -129,7 +130,7 @@ class FlaskPass : Pass() {
     }
 
     private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
-        if (me.name == "json" && me.base.name == "request") {
+        if (me.name.localName == "json" && me.base.name.localName == "request") {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }
 
@@ -141,9 +142,10 @@ class FlaskPass : Pass() {
 
     private fun getMethod(mapping: Annotation): String {
         var method = "GET"
-        (mapping.members.firstOrNull { it.name == "methods" }?.value as? InitializerListExpression)
+        (mapping.members.firstOrNull { it.name.localName == "methods" }?.value as?
+                InitializerListExpression)
             ?.initializers?.firstOrNull()
-            .let { (it as? Literal<*>)?.let { method = it.value.toString() } }
+            .let { it -> (it as? Literal<*>)?.let { method = it.value.toString() } }
 
         return method
     }
@@ -161,10 +163,12 @@ class FlaskPass : Pass() {
     }
 
     private fun handleReturnStatement(rs: ReturnStatement) {
-        var returnValue = rs.returnValue as InitializerListExpression
+        val returnValue = rs.returnValue as InitializerListExpression
         // set the correct http status code by looking through the initializers
-        returnValue.initializers.first { it.name in httpMap }.let {
-            returnValue.name = httpMap.get(it.name).toString()
+        // FIXME: Safety measures added later; they were not necessary with the previous CPG
+        //  version. This can mean that the expected value differs from before (not null/empty).
+        returnValue.initializers.firstOrNull { it.name.toString() in httpMap }.let {
+            returnValue.name = Name(httpMap[it?.name.toString()].toString())
         }
     }
 }

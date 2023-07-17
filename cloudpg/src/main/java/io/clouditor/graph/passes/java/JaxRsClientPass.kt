@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.java
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration
@@ -15,24 +16,29 @@ import io.clouditor.graph.nodes.followDFGReverse
 import io.clouditor.graph.nodes.followEOG
 import io.clouditor.graph.passes.HttpClientPass
 
-class JaxRsClientPass : HttpClientPass() {
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
+class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(r: StaticCallExpression) {
+                object : IVisitor<Node>() {
+                    fun visit(t: CallExpression) {
                         try {
                             // look for ClientBuilder.newClient (Jersey 3.x and 2.x)
-                            if (r.fqn == "jakarta.ws.rs.client.ClientBuilder.newClient" ||
-                                    r.fqn == "javax.ws.rs.client.ClientBuilder.newClient"
+                            if (t.name.toString() ==
+                                    "jakarta.ws.rs.client.ClientBuilder.newClient" ||
+                                    t.name.toString() ==
+                                        "javax.ws.rs.client.ClientBuilder.newClient"
                             ) {
-                                handleClient(t, r, tu)
+                                handleClient(result, t, tu)
                             }
 
                             // or ClientBuilder.newBuilder
-                            if (r.fqn == "javax.ws.rs.client.ClientBuilder.newBuilder") {
-                                handleBuilder(t, r, tu)
+                            if (t.name.toString() == "javax.ws.rs.client.ClientBuilder.newBuilder"
+                            ) {
+                                handleBuilder(result, t, tu)
                             }
                         } catch (t: Throwable) {
                             t.printStackTrace()
@@ -45,7 +51,7 @@ class JaxRsClientPass : HttpClientPass() {
 
     private fun handleBuilder(
         t: TranslationResult,
-        r: StaticCallExpression,
+        r: CallExpression,
         tu: TranslationUnitDeclaration
     ) {
         var builder: VariableDeclaration? = null
@@ -60,7 +66,7 @@ class JaxRsClientPass : HttpClientPass() {
 
         val buildCall =
             builder
-                ?.followEOG { it.end is MemberCallExpression && it.end.name == "build" }
+                ?.followEOG { it.end is MemberCallExpression && it.end.name.localName == "build" }
                 ?.lastOrNull()
 
         (buildCall?.end as? MemberCallExpression)?.let { handleClient(t, it, tu) }
@@ -75,21 +81,16 @@ class JaxRsClientPass : HttpClientPass() {
         creationCall: CallExpression,
         tu: TranslationUnitDeclaration
     ) {
-        var client: VariableDeclaration? = null
         val clientRefs = mutableListOf<DeclaredReferenceExpression>()
-        var target: VariableDeclaration? = null
-        val targetRefs = mutableListOf<DeclaredReferenceExpression>()
-        var targetToClient = mutableMapOf<VariableDeclaration, VariableDeclaration>()
 
         // look for the client itself, probably it is the DFG target
         val pair = followDFGTargetToDeclaration(creationCall)
-        pair?.let {
-            client = it.second as VariableDeclaration
-            clientRefs += it.first
-        }
+        pair?.let { clientRefs += it.first }
 
         val edges =
-            creationCall.followEOG { it.end is MemberCallExpression && it.end.name == "target" }
+            creationCall.followEOG {
+                it.end is MemberCallExpression && it.end.name.localName == "target"
+            }
         edges?.let { it ->
             val last = it.last()
 
@@ -101,10 +102,10 @@ class JaxRsClientPass : HttpClientPass() {
 
     private fun handleTargetCall(
         targetCall: MemberCallExpression,
-        t: TranslationResult,
+        result: TranslationResult,
         tu: TranslationUnitDeclaration
     ) {
-        val app = t.findApplicationByTU(tu)
+        val app = result.findApplicationByTU(tu)
 
         // assume that we are only on one client
         val env =
@@ -117,9 +118,9 @@ class JaxRsClientPass : HttpClientPass() {
         val url =
             ValueResolver { node, resolver ->
                     when (node) {
-                        is StaticCallExpression -> {
+                        is CallExpression -> {
                             // support for some special calls, i.e. format
-                            if (node.name == "getenv") {
+                            if (node.name.localName == "getenv") {
                                 // environment lookup on Java
                                 val key = resolver.resolve(node.arguments.firstOrNull())
 
@@ -136,12 +137,12 @@ class JaxRsClientPass : HttpClientPass() {
 
         targetCall.accept(
             Strategy::EOG_FORWARD,
-            object : IVisitor<Node?>() {
-                fun visit(mce: MemberCallExpression) {
+            object : IVisitor<Node>() {
+                fun visit(t: MemberCallExpression) {
                     // just look for a "get"
                     // TODO: actually look for client/builder... Hacky for now
-                    if (mce.name == "get") {
-                        handleGetCall(t, url.toString(), mce, app)
+                    if (t.name.localName == "get") {
+                        handleGetCall(result, url.toString(), t, app)
                     }
                 }
             }

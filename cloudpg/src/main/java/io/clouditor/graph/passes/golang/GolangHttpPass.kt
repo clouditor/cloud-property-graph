@@ -1,6 +1,8 @@
 package io.clouditor.graph.passes.golang
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -12,37 +14,38 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
 
-class GolangHttpPass : HttpClientPass() {
+@Suppress("UNUSED_PARAMETER")
+class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        if (result != null) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
 
-            // first, look for clients
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: VariableDeclaration) {
-                            handleVariable(result, tu, r)
-                        }
+        // first, look for clients
+        for (tu in translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: VariableDeclaration) {
+                        handleVariable(result, tu, t)
                     }
-                )
-            }
+                }
+            )
+        }
 
-            // then for the member calls
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(m: MemberCallExpression) {
-                            handleMemberCall(result, tu, m)
-                        }
+        // then for the member calls
+        for (tu in translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -69,11 +72,9 @@ class GolangHttpPass : HttpClientPass() {
                         null,
                         null
                     )
-                endpoint.name = endpoint.path
+                endpoint.name = Name(endpoint.path)
                 funcDeclaration?.parameters?.forEach {
-                    if (it.type is PointerType && it.type.name == "http.Request*" ||
-                            it.type is HttpRequest
-                    ) {
+                    if (it.type is PointerType && it.type.root.name.toString() == "http.Request") {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
                         // stored in
                         endpoint.addNextDFG(it)
@@ -93,12 +94,12 @@ class GolangHttpPass : HttpClientPass() {
         // actually check for return types - but that does not work (yet) with the standard library
 
         if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).fqn == "http.NewServeMux"
+                (r.initializer as CallExpression).name.toString() == "http.NewServeMux"
         ) {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
-            requestHandler.name = requestHandler.path
+            requestHandler.name = Name(requestHandler.path)
 
             clients[r] = requestHandler
 

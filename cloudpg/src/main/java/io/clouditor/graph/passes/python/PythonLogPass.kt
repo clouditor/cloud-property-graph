@@ -1,23 +1,25 @@
 package io.clouditor.graph.passes.python
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
-import io.clouditor.graph.*
 import io.clouditor.graph.passes.LogPass
 
-class PythonLogPass : LogPass() {
-    override fun accept(t: TranslationResult) {
+class PythonLogPass(ctx: TranslationContext) : LogPass(ctx) {
+    override fun accept(result: TranslationResult) {
         // if (this.lang is PythonLanguageFrontend) {
-        for (tu in t.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(m: MemberCallExpression) {
-                        if (m.name == "info" && m.base?.name == "logging") {
-                            handleLog(t, m, m.name, tu)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        if (t.name.localName == "info" && t.base?.name?.localName == "logging") {
+                            handleLog(result, t, t.name.localName, tu)
                         }
                     }
                 }

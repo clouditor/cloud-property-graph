@@ -95,6 +95,7 @@ open class DetectabilityTest {
 
     // D3 Detectable Outliers out of scope
 
+    // FIXME: The new CPG fails to parse VariableDeclarations for ":=" statements
     @Test
     fun testD4Go() {
         val result =
@@ -123,6 +124,10 @@ open class DetectabilityTest {
         assertEquals(0, result.count())
     }
 
+    // FIXME: The new CPG gives no values for prev/next EOG/DFG for CallExpressions, but the CloudPG
+    //      depends on it to resolve the target of the Client creation!
+    // FIXME: DeclaredArgumentExpression has its "refersTo" value null for named arguments
+    //      (e.g. "requests.post(url, json = personal_data)"), was VariableDeclaration before
     @Test
     fun testD4Python() {
         val result =
