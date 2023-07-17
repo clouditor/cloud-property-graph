@@ -122,7 +122,6 @@ object App : Callable<Int> {
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
-                .defaultPasses()
                 .registerLanguage(RubyLanguage())
                 .registerLanguage(JavaLanguage())
                 .registerLanguage(CPPLanguage())
@@ -131,7 +130,9 @@ object App : Callable<Int> {
                 .registerLanguage(PythonLanguage())
                 .registerLanguage(GoLanguage())
                 .debugParser(true)
-                .registerPass(GoExtraPass::class)           // This pass needs to be executed to have all VariableDeclarations
+                .defaultPasses()
+                // This pass needs to be executed to have all VariableDeclarations
+                .registerPass(GoExtraPass::class)
                 .registerPass(GitHubWorkflowPass::class)
                 .registerPass(SpringBootPass::class)
                 .registerPass(JaxRsPass::class)
