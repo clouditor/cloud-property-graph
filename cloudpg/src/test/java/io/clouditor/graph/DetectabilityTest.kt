@@ -59,10 +59,13 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
+                "MATCH p=(i:PseudoIdentifier)-[*2]->()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        // we expect exactly one threat path
-        assertEquals(1, result.count())
+        // FIXME: we now expect two threat paths since the path changes as following:
+        //  (PseudoIdentifier) -[LabeledNode]> (=) -[RHS]> ("firstname lastname") -[DFG]> (name) ...
+        //  with a direct [Declarations] relation between (=) and (name)
+        //  Therefore there are two possible paths that lead to a "DFG-Path" to the Http-Request
+        assertEquals(2, result.count())
 
         // compare expected nodes
         result.first().apply {
@@ -87,7 +90,7 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
+                "MATCH p=(i:PseudoIdentifier)-[*2]->()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         // we expect exactly one threat path
         assertEquals(0, result.count())
@@ -95,7 +98,6 @@ open class DetectabilityTest {
 
     // D3 Detectable Outliers out of scope
 
-    // FIXME: The new CPG fails to parse VariableDeclarations for ":=" statements
     @Test
     fun testD4Go() {
         val result =
