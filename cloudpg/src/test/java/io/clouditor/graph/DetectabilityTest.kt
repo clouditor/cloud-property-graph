@@ -67,6 +67,8 @@ open class DetectabilityTest {
         //  Therefore there are two possible paths that lead to a "DFG-Path" to the Http-Request
         //  (in short: the Pseudo-Identifier now points at the "=" instead of the "name" declaration
         //  directly, is this intended or should we reverse this?)
+        //  Also: what if we mark a variable declaration instead of an Assignment?
+        //  -> we probably should not allow the above query as an easy fix...
         assertEquals(2, result.count())
 
         // compare expected nodes
