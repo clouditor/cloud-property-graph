@@ -65,6 +65,8 @@ open class DetectabilityTest {
         //  (PseudoIdentifier) -[LabeledNode]> (=) -[RHS]> ("firstname lastname") -[DFG]> (name) ...
         //  with a direct [Declarations] relation between (=) and (name)
         //  Therefore there are two possible paths that lead to a "DFG-Path" to the Http-Request
+        //  (in short: the Pseudo-Identifier now points at the "=" instead of the "name" declaration
+        //  directly, is this intended or should we reverse this?)
         assertEquals(2, result.count())
 
         // compare expected nodes
