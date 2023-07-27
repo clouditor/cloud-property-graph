@@ -59,16 +59,20 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(i:PseudoIdentifier)-[*2]->()-[:DFG*]->(:HttpRequest) RETURN p"
+                "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        // FIXME: we now expect two threat paths since the path changes as following:
+        // FIXME: The path changes as following:
         //  (PseudoIdentifier) -[LabeledNode]> (=) -[RHS]> ("firstname lastname") -[DFG]> (name) ...
         //  with a direct [Declarations] relation between (=) and (name)
         //  Therefore there are two possible paths that lead to a "DFG-Path" to the Http-Request
         //  (in short: the Pseudo-Identifier now points at the "=" instead of the "name" declaration
         //  directly, is this intended or should we reverse this?)
         //  Also: what if we mark a variable declaration instead of an Assignment?
-        //  -> we probably should not allow the above query as an easy fix...
+        //  -> we probably should not allow to just extend the query as an easy fix...
+        //  Also: current implementation does not handle "pulling apart the assignment" as:
+        //  var name string
+        //  name = "firstname lastname"
+        //  -> In this case, the Identifier is no longer connected to the HttpRequest!
         assertEquals(2, result.count())
 
         // compare expected nodes
@@ -94,7 +98,7 @@ open class DetectabilityTest {
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(i:PseudoIdentifier)-[*2]->()-[:DFG*]->(:HttpRequest) RETURN p"
+                "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         // we expect exactly one threat path
         assertEquals(0, result.count())
