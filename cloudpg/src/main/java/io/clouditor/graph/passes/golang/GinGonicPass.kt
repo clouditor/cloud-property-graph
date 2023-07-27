@@ -256,34 +256,6 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
-        // FIXME: we're missing the following VariableDeclarations:
-        //  (caused by bug in CPG missing VariableDeclarations in shorthand ":=")
-        //      (TestD2Go):
-        //      - in client.go (11:5 - 11:33) with initializer Literal
-        //      - in client.go (12:10 - 15:3) with initializer ConstructExpression
-        //      - in server.go (16:2 - 16:16) with initializer CallExpression
-        //      (TestD2ValidationGo):
-        //      - in client.go (13:2 - 15:3) with initializer ConstructExpression
-        //      - in server.go (16:2 - 16:16) with initializer CallExpression
-        //      (TestD4Go):
-        //      - in client.go (10:5 - 10:33) with initializer Literal
-        //          [name := "firstname lastname"]
-        //      - in client.go (11:2 - 14:3) with initializer ConstructExpression
-        //          [data := url.Values{ "Name": {name}, "Message": {"helloworld"}, }]
-        //      - in server.go (26:5 - 31:6) with Initializer MemberCallExpression
-        //          [dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432
-        //           sslmode=disable", "postgres", "postgres", "postgres", "postgres", )]
-        //      - in server.go (39:2 - 39:16) with Initializer CallExpression
-        //          [r := gin.New()]
-        //      - in server.go (50:2 - 50:36) with Initializer MemberCallExpression
-        //          [name := c.Request.Form.Get("Name")]
-        //      - in server.go (51:2 - 51:42) with Initializer MemberCallExpression
-        //          [message := c.Request.Form.Get("Message")]
-        //      - in server.go (52:5 - 55:6) with Initializer UnaryOperator
-        //          [data := &Data{ Name: name, Message: message, }]
-        //      - in server.go (56:2 - 56:30) with Initializer MemberExpression
-        //          [err := db.Create(data).error]
-        //      (...)
         if (r.initializer is CallExpression &&
                 ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
                     (r.initializer as CallExpression).name.toString() == "gin.New")
