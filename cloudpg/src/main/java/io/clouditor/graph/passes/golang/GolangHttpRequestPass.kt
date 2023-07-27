@@ -43,10 +43,16 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        // FIXME: There are invokes missing compared to the previous version! (However, there are
-        //  more CallExpressions (many of them being ConstructExpressions or MemberCallExpressions)
-        //  in total!)
         val requestFunction = c.invokes.firstOrNull()
+        // FIXME: the following change is necessary as the "prevDFG" containing the
+        //  "DeclaredReferenceExpression"
+        //  pointing to the declaration of the "data" variable is now in the function itself
+        //  instead of the parameter.
+        //  However, this feels unstable... will the order of the "prevDFG" values always be
+        //  [0]->Param_1, [1]->Param[0] ?
+        // TODO (old) request body: the default value is not correctly set, so we use the
+        //  value that has a dfg edge to the request parameter
+        val body = requestFunction?.prevDFG?.firstOrNull() as? DeclaredReferenceExpression
         if (c.name.toString() == "http.PostForm") {
             createHttpRequest(
                 result,
@@ -54,10 +60,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "POST",
-                // TODO request body: the default value is not correctly set, so we use the
-                // value that has a dfg edge to the request parameter
-                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as?
-                    DeclaredReferenceExpression,
+                body,
                 app
             )
         } else if (c.name.toString() == "http.PutForm") {

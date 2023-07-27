@@ -17,9 +17,6 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         body: Expression?,
         app: Application?
     ): HttpRequest {
-        // FIXME (TODO): url = null!
-        // FIXME: body.refersTo = null! (DeclaredReferenceExpression) ä
-        //      -> named argument "json = personal_data"
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, body, endpoints)
         request.name = Name(method)
@@ -32,6 +29,8 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         call.addPrevDFG(request)
 
         val i = endpoints.firstOrNull()
+        // FIXME: this is null when it previously contained the function "post_data"
+        //  (for test D4_Go with call http.PostForm)
         val f = i?.handler
 
         // for convenience, add DFG edges from return nodes to the point in the code where the
