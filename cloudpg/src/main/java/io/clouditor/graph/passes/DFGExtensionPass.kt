@@ -10,7 +10,9 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType
 import de.fraunhofer.aisec.cpg.graph.types.Type
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.plusAssign
 import java.util.*
 
@@ -20,6 +22,7 @@ import java.util.*
  * expression. Normally no data flows from the base to the member expression. FOr this use case,
  * however, the mere usage of a base causes labels to be relevant for the member expression.
  */
+@DependsOn(GoExtraPass::class)
 class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun accept(t: TranslationResult) {
