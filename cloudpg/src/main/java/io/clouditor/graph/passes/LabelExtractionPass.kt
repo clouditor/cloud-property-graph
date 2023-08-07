@@ -10,15 +10,19 @@ import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.nodes.labels.*
 import io.clouditor.graph.plusAssign
 import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
+@DependsOn(DFGExtensionPass::class)
 class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     private val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()
@@ -273,6 +277,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
     }
 
     inline fun <reified T : Label> labelCreationDispatcher(node: Node): T {
+        val node = node
         val label: T = initLabel<T>(node)
         when (node) {
             is FunctionDeclaration -> {
@@ -294,6 +299,11 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                         it.usageEdges
                     }
                 usages.forEach { addLabelToDFGBorderEdges(it.end, label) }
+            }
+            is AssignExpression -> {
+                val variableDeclarations =
+                    node.lhs.filterIsInstance<DeclaredReferenceExpression>().map { it.refersTo }
+                variableDeclarations.forEach { addLabelToDFGBorderEdges(it as Node, label) }
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)
