@@ -61,18 +61,6 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        // FIXME: The path changes as following:
-        //  (PseudoIdentifier) -[LabeledNode]> (=) -[RHS]> ("firstname lastname") -[DFG]> (name) ...
-        //  with a direct [Declarations] relation between (=) and (name)
-        //  Therefore there are two possible paths that lead to a "DFG-Path" to the Http-Request
-        //  (in short: the Pseudo-Identifier now points at the "=" instead of the "name" declaration
-        //  directly, is this intended or should we reverse this?)
-        //  Also: what if we mark a variable declaration instead of an Assignment?
-        //  -> we probably should not allow to just extend the query as an easy fix...
-        //  Also: current implementation does not handle "pulling apart the assignment" as:
-        //  var name string
-        //  name = "firstname lastname"
-        //  -> In this case, the Identifier is no longer connected to the HttpRequest!
         assertEquals(2, result.count())
 
         // compare expected nodes
