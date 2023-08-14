@@ -48,11 +48,12 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         //  "DeclaredReferenceExpression"
         //  pointing to the declaration of the "data" variable is now in the function itself
         //  instead of the parameter.
-        //  However, this feels unstable... will the order of the "prevDFG" values always be
-        //  [0]->Param_1, [1]->Param[0] ?
+        //  However, I'm not sure whether this is the best way to go about it
         // TODO (old) request body: the default value is not correctly set, so we use the
         //  value that has a dfg edge to the request parameter
-        val body = requestFunction?.prevDFG?.firstOrNull() as? DeclaredReferenceExpression
+        val body =
+            requestFunction?.prevDFG?.firstOrNull { it is DeclaredReferenceExpression } as
+                DeclaredReferenceExpression
         if (c.name.toString() == "http.PostForm") {
             createHttpRequest(
                 result,
