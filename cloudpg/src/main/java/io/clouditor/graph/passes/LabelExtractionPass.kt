@@ -24,6 +24,7 @@ import java.util.function.Predicate
 import java.util.stream.Collectors
 
 @DependsOn(GoExtraPass::class)
+@DependsOn(DFGExtensionPass::class)
 class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     private val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()

@@ -9,10 +9,13 @@ import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.*
+import io.clouditor.graph.passes.golang.GinGonicPass
 import io.clouditor.graph.passes.golang.appendPath
 import java.nio.file.Files
 
+@DependsOn(GinGonicPass::class)
 class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun accept(t: TranslationResult) {
