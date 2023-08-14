@@ -14,6 +14,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.nodes.labels.*
@@ -22,7 +23,7 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
-@DependsOn(DFGExtensionPass::class)
+@DependsOn(GoExtraPass::class)
 class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     private val predicatesToHandle: MutableMap<Predicate<Node>, Consumer<Node>> = mutableMapOf()

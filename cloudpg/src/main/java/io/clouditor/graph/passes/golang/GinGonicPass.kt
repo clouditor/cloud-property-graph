@@ -10,6 +10,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
@@ -17,10 +18,9 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.KubernetesPass
-import io.clouditor.graph.passes.LabelExtractionPass
 import io.clouditor.graph.testing.LocalTestingPass
 
-@DependsOn(LabelExtractionPass::class)
+@DependsOn(GoExtraPass::class)
 @ExecuteBefore(LocalTestingPass::class)
 @ExecuteBefore(KubernetesPass::class)
 class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
@@ -114,8 +114,11 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
             val app = result.findApplicationByTU(tu)
 
+            // FIXME: we are (again?) missing the "refersTo" field in our
+            // DeclaredReferenceExpression
             val funcDeclaration =
-                (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
+                (m.arguments.getOrNull(1) as? DeclaredReferenceExpression)?.refersTo as?
+                    FunctionDeclaration
             if (m.name.localName == "GET" || m.name.localName == "POST" || m.name.localName == "PUT"
             ) {
                 val endpoint =

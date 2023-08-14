@@ -5,17 +5,17 @@ import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
-import io.clouditor.graph.passes.LabelExtractionPass
 import io.clouditor.graph.testing.LocalTestingPass
 
 // This pass is needed only for the local testing mode, since in the testing pass we create the
 // endpoints and only after that we can create the respective requests
-@DependsOn(LabelExtractionPass::class)
+@DependsOn(GoExtraPass::class)
 @DependsOn(LocalTestingPass::class)
 class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
