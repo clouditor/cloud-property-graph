@@ -119,7 +119,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 // FIXME: we are missing the "refersTo" field in our DeclaredReferenceExpression.
                 //  Any references to FunctionDeclarations seem to be null;
                 //  It does not matter whether we do it indirectly (f := post_data)
-                var funcDeclaration =
+                val funcDeclaration =
                     (m.arguments.getOrNull(1) as? DeclaredReferenceExpression)?.refersTo as?
                         FunctionDeclaration
                 val endpoint =

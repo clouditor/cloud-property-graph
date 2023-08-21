@@ -13,7 +13,6 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
-import io.clouditor.graph.plusAssign
 import java.util.*
 
 /**
