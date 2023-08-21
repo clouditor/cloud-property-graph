@@ -114,13 +114,14 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
             val app = result.findApplicationByTU(tu)
 
-            // FIXME: we are (again?) missing the "refersTo" field in our
-            // DeclaredReferenceExpression
-            val funcDeclaration =
-                (m.arguments.getOrNull(1) as? DeclaredReferenceExpression)?.refersTo as?
-                    FunctionDeclaration
             if (m.name.localName == "GET" || m.name.localName == "POST" || m.name.localName == "PUT"
             ) {
+                // FIXME: we are missing the "refersTo" field in our DeclaredReferenceExpression.
+                //  Any references to FunctionDeclarations seem to be null;
+                //  It does not matter whether we do it indirectly (f := post_data)
+                var funcDeclaration =
+                    (m.arguments.getOrNull(1) as? DeclaredReferenceExpression)?.refersTo as?
+                        FunctionDeclaration
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),

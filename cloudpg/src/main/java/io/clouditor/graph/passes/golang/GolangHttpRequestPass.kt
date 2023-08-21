@@ -44,11 +44,6 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     ) {
         val app = result.findApplicationByTU(tu)
         val requestFunction = c.invokes.firstOrNull()
-        // FIXME: the following change is necessary as the "prevDFG" containing the
-        //  "DeclaredReferenceExpression"
-        //  pointing to the declaration of the "data" variable is now in the function itself
-        //  instead of the parameter.
-        //  However, I'm not sure whether this is the best way to go about it
         // TODO (old) request body: the default value is not correctly set, so we use the
         //  value that has a dfg edge to the request parameter
         val body =

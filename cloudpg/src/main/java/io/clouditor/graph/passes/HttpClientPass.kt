@@ -29,8 +29,6 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         call.addPrevDFG(request)
 
         val i = endpoints.firstOrNull()
-        // FIXME: this is null when it previously contained the function "post_data"
-        //  (for test D4_Go with call http.PostForm)
         val f = i?.handler
 
         // for convenience, add DFG edges from return nodes to the point in the code where the

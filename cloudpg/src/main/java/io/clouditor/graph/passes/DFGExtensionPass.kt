@@ -83,7 +83,6 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             derefType = type.dereference()
             type = tmp
         }
-        // FIXME: always null
         return type as? ObjectType
     }
 
