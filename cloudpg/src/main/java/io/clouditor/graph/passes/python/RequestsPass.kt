@@ -5,11 +5,14 @@ import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
+import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
 
+@DependsOn(GoExtraPass::class)
 class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     override fun cleanup() {
@@ -48,8 +51,6 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     ) {
         val app = t.findApplicationByTU(tu)
 
-        // FIXME: "refersTo" in DeclaredReferenceExpression of the first argument is null when it
-        //  should not be (testD2Python)
         val url = PythonValueResolver(app).resolve(r.arguments.first())
 
         createHttpRequest(t, url as String, r, method, r.arguments.getOrNull(1), app)
