@@ -20,7 +20,7 @@ open class NonRepudiationTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
-        assertEquals(2, result.count())
+        assertEquals(4, result.count())
 
         result.first().apply {
             val path = this.get("p") as Array<*>
