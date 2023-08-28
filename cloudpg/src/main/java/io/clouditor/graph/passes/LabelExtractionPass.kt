@@ -297,10 +297,11 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                 // To connect to all border edges, we first need to iterate through all declared
                 // variables and find their USAGEs
                 val usages =
-                    node.declarations.filterIsInstance<VariableDeclaration>().flatMap {
-                        it.usageEdges
-                    }
-                usages.forEach { addLabelToDFGBorderEdges(it.end, label) }
+                    node.declarations
+                        .filterIsInstance<VariableDeclaration>()
+                        .flatMap { it.usageEdges.map { edge -> edge.end.refersTo } }
+                        .toSet()
+                usages.forEach { addLabelToDFGBorderEdges(it as Node, label) }
             }
             is AssignExpression -> {
                 val variableDeclarations =
