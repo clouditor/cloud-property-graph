@@ -10,8 +10,10 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.passes.CallResolver
 import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.VariableUsageResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -21,6 +23,8 @@ import io.clouditor.graph.passes.KubernetesPass
 import io.clouditor.graph.testing.LocalTestingPass
 
 @DependsOn(GoExtraPass::class)
+@DependsOn(CallResolver::class)
+@DependsOn(VariableUsageResolver::class)
 @ExecuteBefore(LocalTestingPass::class)
 @ExecuteBefore(KubernetesPass::class)
 class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
