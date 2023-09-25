@@ -23,7 +23,7 @@ open class IdentifiabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
-        assertEquals(2, result.count())
+        assertEquals(4, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.js
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -12,10 +13,10 @@ import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
 import java.nio.file.Files
 
-class FetchPass : HttpClientPass() {
+class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     var map = mutableMapOf<String, String>()
 
-    override fun accept(t: TranslationResult) {
+    override fun accept(result: TranslationResult) {
         val applications = listOf(App.rootPath)
 
         for (rootPath in applications) {
@@ -33,12 +34,14 @@ class FetchPass : HttpClientPass() {
             }
         }
 
-        for (tu in t.translationUnits) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(call: CallExpression) {
-                        handleCallExpression(t, tu, call)
+                object : IVisitor<Node>() {
+                    fun visit(t: CallExpression) {
+                        handleCallExpression(result, tu, t)
                     }
                 }
             )
@@ -50,7 +53,7 @@ class FetchPass : HttpClientPass() {
         tu: TranslationUnitDeclaration,
         call: CallExpression
     ) {
-        if (call.name == "fetch") {
+        if (call.name.localName == "fetch") {
             handleFetch(t, tu, call)
         }
     }
@@ -80,7 +83,7 @@ class FetchPass : HttpClientPass() {
         ValueResolver()
             .resolve(
                 options?.initializers?.firstOrNull {
-                    it is KeyValueExpression && it.key?.name == "method"
+                    it is KeyValueExpression && it.key?.name?.localName == "method"
                 }
             )
             ?.let { method = it as String }
@@ -89,9 +92,9 @@ class FetchPass : HttpClientPass() {
     }
 
     private fun getBody(options: InitializerListExpression?): Expression? {
-        var body =
+        val body =
             (options?.initializers?.firstOrNull() {
-                    it is KeyValueExpression && it.key?.name == "body"
+                    it is KeyValueExpression && it.key?.name?.localName == "body"
                 } as
                     KeyValueExpression)
                 .value

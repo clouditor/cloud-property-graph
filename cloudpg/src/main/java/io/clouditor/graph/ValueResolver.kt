@@ -14,6 +14,8 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
  * literal values. Furthermore, its behaviour can be adjusted by implementing the [cannotResolve]
  * function, which is called when the default behaviour would not be able to resolve the value. This
  * way, language specific features such as string formatting can be modelled.
+ *
+ * TODO: Replace with Evaluator from the new cpg-analysis package
  */
 open class ValueResolver(
     /**

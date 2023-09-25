@@ -2,15 +2,21 @@ package io.clouditor.graph.testing
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.*
+import io.clouditor.graph.passes.golang.GinGonicPass
 import io.clouditor.graph.passes.golang.appendPath
 import java.nio.file.Files
 
-class LocalTestingPass : Pass() {
+@DependsOn(GinGonicPass::class)
+class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun accept(t: TranslationResult) {
         val applications = listOf(App.rootPath)
@@ -25,7 +31,16 @@ class LocalTestingPass : Pass() {
             rootPath.toFile().walkTopDown().iterator().forEach { file ->
                 if (file.name == "config.yml") {
                     val mapper = ObjectMapper(YAMLFactory())
-                    mapper.registerModule(KotlinModule())
+                    mapper.registerModule(
+                        KotlinModule.Builder()
+                            .withReflectionCacheSize(512)
+                            .configure(KotlinFeature.NullToEmptyCollection, false)
+                            .configure(KotlinFeature.NullToEmptyMap, false)
+                            .configure(KotlinFeature.NullIsSameAsDefault, false)
+                            .configure(KotlinFeature.SingletonSupport, false)
+                            .configure(KotlinFeature.StrictNullChecks, false)
+                            .build()
+                    )
 
                     Files.newBufferedReader(file.toPath()).use {
                         val config = mapper.readValue(it, TestConfig::class.java)
@@ -62,7 +77,7 @@ class LocalTestingPass : Pass() {
                     }
                 }
 
-                var tud =
+                val tud =
                     t.components.let {
                         var tud: TranslationUnitDeclaration? = null
                         for (component in it) {
@@ -84,10 +99,10 @@ class LocalTestingPass : Pass() {
                         // mutableListOf(if (tud != null) tud else null)
                         mutableListOf(tud)
                     )
-                application.name = service.name
+                application.name = Name(service.name)
                 t += application
             } else if (service.type.contains("client")) {
-                var tud =
+                val tud =
                     t.components.let {
                         var tud: TranslationUnitDeclaration? = null
                         for (component in it) {
@@ -107,7 +122,7 @@ class LocalTestingPass : Pass() {
                         mutableListOf(),
                         mutableListOf(tud)
                     )
-                application.name = service.name
+                application.name = Name(service.name)
                 t += application
             }
         }
@@ -125,7 +140,7 @@ class LocalTestingPass : Pass() {
                         null,
                         mapOf()
                     )
-                db.name = service.name
+                db.name = Name(service.name)
                 t += db
             }
             if (service.name == "mongo") {
@@ -140,7 +155,7 @@ class LocalTestingPass : Pass() {
                         null,
                         mapOf()
                     )
-                db.name = service.name
+                db.name = Name(service.name)
                 t += db
             }
         }

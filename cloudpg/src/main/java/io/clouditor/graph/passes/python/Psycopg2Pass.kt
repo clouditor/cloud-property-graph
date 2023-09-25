@@ -1,5 +1,6 @@
 package io.clouditor.graph.passes.python
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.edge.Properties
@@ -10,22 +11,26 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
 
-class Psycopg2Pass : DatabaseOperationPass() {
+@Suppress("UNUSED_PARAMETER")
+class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
     val clients: MutableMap<Node, Pair<DatabaseConnect, List<DatabaseStorage>>> = mutableMapOf()
     private val executes: MutableMap<Node, DatabaseQuery> = mutableMapOf()
 
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
-                        if (call.name == "connect" && call.base.name == "psycopg2") {
-                            handleConnect(t, call, app)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        if (t.name.localName == "connect" && t.base?.name?.localName == "psycopg2"
+                        ) {
+                            handleConnect(result, t, app)
                         }
                     }
                 }
@@ -39,42 +44,42 @@ class Psycopg2Pass : DatabaseOperationPass() {
 
             // in order to avoid ordering problems, we need to do this one step at a time, so first
             // looking for a cursor.
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
-                            if (call.name == "cursor") {
-                                handleCursor(call, it)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "cursor") {
+                                handleCursor(t, it)
                             }
                         }
                     }
                 }
             )
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
-                            if (call.name == "execute") {
-                                handleExecute(t, call, app, it)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "execute") {
+                                handleExecute(result, t, app, it)
                             }
                         }
                     }
                 }
             )
 
-            t.accept(
+            result.accept(
                 Strategy::AST_FORWARD, // actually we want to have EOG_FORWARD, but that doesn't
                 // work
-                object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
-                        clients[call.base]?.let {
-                            if (call.name == "fetchall") {
-                                handleFetchAll(t, call, app, it)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        clients[t.base!!]?.let {
+                            if (t.name.localName == "fetchall") {
+                                handleFetchAll(result, t, app, it)
                             }
                         }
                     }
@@ -146,7 +151,7 @@ class Psycopg2Pass : DatabaseOperationPass() {
         something?.let { matchResult ->
             val table = matchResult.groups[2]?.value
             val dbName = dbStorage.firstOrNull()?.name
-            val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName) }
+            val storage = connect.to.map { it.getStorageOrCreate(table ?: "", dbName?.localName) }
 
             val op = createDatabaseQuery(result, false, connect, storage, mutableListOf(call), app)
             op.name = call.name
@@ -182,15 +187,13 @@ class Psycopg2Pass : DatabaseOperationPass() {
         // resolve the connection details
         val host =
             resolver.resolve(
-                call.argumentsPropertyEdge
-                    .firstOrNull { it.getProperty(Properties.NAME) == "host" }
-                    ?.end
+                call.argumentEdges.firstOrNull { it.getProperty(Properties.NAME) == "host" }?.end
             ) as?
                 String
 
         val db =
             resolver.resolve(
-                call.argumentsPropertyEdge
+                call.argumentEdges
                     .firstOrNull { it.getProperty(Properties.NAME) == "database" }
                     ?.end
             ) as?

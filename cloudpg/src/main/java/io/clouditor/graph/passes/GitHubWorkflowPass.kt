@@ -2,15 +2,17 @@ package io.clouditor.graph.passes
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.App
 import io.clouditor.graph.github.Workflow
 import io.clouditor.graph.github.WorkflowHandler
 import java.nio.file.Files
 
-class GitHubWorkflowPass : Pass() {
+class GitHubWorkflowPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun cleanup() {}
 
     override fun accept(t: TranslationResult) {
@@ -22,7 +24,16 @@ class GitHubWorkflowPass : Pass() {
             workflowPath.toFile().walkTopDown().iterator().forEach { file ->
                 if (file.extension == "yml") {
                     val mapper = ObjectMapper(YAMLFactory())
-                    mapper.registerModule(KotlinModule())
+                    mapper.registerModule(
+                        KotlinModule.Builder()
+                            .withReflectionCacheSize(512)
+                            .configure(KotlinFeature.NullToEmptyCollection, false)
+                            .configure(KotlinFeature.NullToEmptyMap, false)
+                            .configure(KotlinFeature.NullIsSameAsDefault, false)
+                            .configure(KotlinFeature.SingletonSupport, false)
+                            .configure(KotlinFeature.StrictNullChecks, false)
+                            .build()
+                    )
 
                     Files.newBufferedReader(file.toPath()).use {
                         val workflow = mapper.readValue(it, Workflow::class.java)

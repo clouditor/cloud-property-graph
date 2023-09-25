@@ -4,14 +4,17 @@
 package io.clouditor.graph
 
 import de.fraunhofer.aisec.cpg.*
-import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguageFrontend
-import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguageFrontend
+import de.fraunhofer.aisec.cpg.frontends.cxx.CLanguage
+import de.fraunhofer.aisec.cpg.frontends.cxx.CPPLanguage
+import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguage
+import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage
+import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
+import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
 import de.fraunhofer.aisec.cpg.graph.Node
+import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.graph
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.ruby.RubyLanguageFrontend
+import io.clouditor.graph.frontends.ruby.RubyLanguage
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
@@ -34,12 +37,6 @@ import picocli.CommandLine
     name = "cloud-property-graph",
     mixinStandardHelpOptions = true,
     description = ["Builds the Cloud Property Graph and persists it into a graph database."]
-)
-@OptIn(
-    ExperimentalTypeScript::class,
-    ExperimentalPython::class,
-    ExperimentalGolang::class,
-    ExperimentalGraph::class
 )
 object App : Callable<Int> {
     @CommandLine.Option(
@@ -93,12 +90,13 @@ object App : Callable<Int> {
         val result = doTranslate()
 
         val nodes = mutableListOf<Node>()
-        nodes.addAll(result.graph.nodes)
-        nodes.addAll(result.translationUnits)
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        nodes.addAll(result.allChildren())
         nodes.addAll(result.images)
         nodes.addAll(result.builders)
         nodes.addAll(result.computes)
-        nodes.addAll(result.translationUnits)
+        nodes.addAll(translationUnits)
         nodes.addAll(result.additionalNodes)
 
         session.beginTransaction().use { transaction ->
@@ -123,67 +121,53 @@ object App : Callable<Int> {
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
-                .defaultPasses()
-                .defaultLanguages()
-                .registerLanguage(
-                    RubyLanguageFrontend::class.java,
-                    RubyLanguageFrontend.RUBY_EXTENSIONS
-                )
-                .registerLanguage(
-                    TypeScriptLanguageFrontend::class.java,
-                    TypeScriptLanguageFrontend.TYPESCRIPT_EXTENSIONS +
-                        TypeScriptLanguageFrontend.JAVASCRIPT_EXTENSIONS
-                )
-                .registerLanguage(
-                    PythonLanguageFrontend::class.java,
-                    PythonLanguageFrontend.PY_EXTENSIONS
-                )
-                .registerLanguage(
-                    GoLanguageFrontend::class.java,
-                    GoLanguageFrontend.GOLANG_EXTENSIONS
-                )
+                .registerLanguage(RubyLanguage())
+                .registerLanguage(JavaLanguage())
+                .registerLanguage(CPPLanguage())
+                .registerLanguage(CLanguage())
+                .registerLanguage(TypeScriptLanguage())
+                .registerLanguage(PythonLanguage())
+                .registerLanguage(GoLanguage())
                 .debugParser(true)
-                .registerPass(GitHubWorkflowPass())
-                .registerPass(SpringBootPass())
-                .registerPass(JaxRsPass())
-                .registerPass(GolangHttpPass())
-                .registerPass(GinGonicPass())
-                .registerPass(WebBrickPass())
-                .registerPass(JSHttpPass())
-                .registerPass(FlaskPass())
+                .defaultPasses()
+                .registerPass(GitHubWorkflowPass::class)
+                .registerPass(SpringBootPass::class)
+                .registerPass(JaxRsPass::class)
+                .registerPass(GolangHttpPass::class)
+                .registerPass(GinGonicPass::class)
+                .registerPass(WebBrickPass::class)
+                .registerPass(JSHttpPass::class)
+                .registerPass(FlaskPass::class)
                 .apply {
                     if (localMode) {
                         // register the localTestingPass after the HTTP Passes since it needs HTTP
                         // request handlers
-                        registerPass(LocalTestingPass())
-                        registerPass(GolangHttpRequestPass())
+                        registerPass(LocalTestingPass::class)
+                        registerPass(GolangHttpRequestPass::class)
                     } else {
-                        registerPass(AzurePass())
-                        registerPass(AzureClientSDKPass())
-                        registerPass(KubernetesPass())
-                        registerPass(IngressInvocationPass())
+                        registerPass(AzurePass::class)
+                        registerPass(AzureClientSDKPass::class)
+                        registerPass(KubernetesPass::class)
+                        registerPass(IngressInvocationPass::class)
                     }
                 }
-                .registerPass(CryptographyPass())
-                .registerPass(GoCryptoPass())
-                .registerPass(JaxRsClientPass())
-                .registerPass(FetchPass())
-                .registerPass(RequestsPass())
-                .registerPass(PythonLogPass())
-                .registerPass(GolangLogPass())
-                .registerPass(GormDatabasePass())
-                .registerPass(PyMongoPass())
-                .registerPass(Psycopg2Pass())
+                .registerPass(CryptographyPass::class)
+                .registerPass(GoCryptoPass::class)
+                .registerPass(JaxRsClientPass::class)
+                .registerPass(FetchPass::class)
+                .registerPass(RequestsPass::class)
+                .registerPass(PythonLogPass::class)
+                .registerPass(GolangLogPass::class)
+                .registerPass(GormDatabasePass::class)
+                .registerPass(PyMongoPass::class)
+                .registerPass(Psycopg2Pass::class)
                 .processAnnotations(true)
 
         if (labelsEnabled) {
-            val edgesCache: BidirectionalEdgesCachePass = BidirectionalEdgesCachePass()
-            val labelPass: LabelExtractionPass = LabelExtractionPass()
-            labelPass.edgesCachePass = edgesCache
             builder
-                .registerPass(DFGExtensionPass())
-                .registerPass(edgesCache)
-                .registerPass(labelPass)
+                .registerPass(DFGExtensionPass::class)
+                .registerPass(BidirectionalEdgesCachePass::class)
+                .registerPass(LabelExtractionPass::class)
                 .matchCommentsToNodes(true)
         }
 
@@ -196,7 +180,6 @@ object App : Callable<Int> {
     }
 }
 
-@OptIn(ExperimentalPython::class, ExperimentalTypeScript::class, ExperimentalGolang::class)
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(App).execute(*args))
 
 val TranslationResult.images: MutableList<Image>
@@ -211,11 +194,6 @@ val TranslationResult.computes: MutableList<Compute>
     get() =
         this.scratch.computeIfAbsent("computes") { mutableListOf<Compute>() } as
             MutableList<Compute>
-
-val TranslationResult.additionalNodes: MutableList<Node>
-    get() =
-        this.scratch.computeIfAbsent("additionalNodes") { mutableListOf<Node>() } as
-            MutableList<Node>
 
 fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Application? {
     return this.additionalNodes.filterIsInstance(Application::class.java).firstOrNull {

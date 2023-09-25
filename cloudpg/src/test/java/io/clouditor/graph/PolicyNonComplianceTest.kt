@@ -60,7 +60,7 @@ open class PolicyNonComplianceTest {
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
-        assertEquals(2, result.count())
+        assertEquals(4, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

@@ -1,7 +1,8 @@
 package io.clouditor.graph.frontends.ruby
 
 import de.fraunhofer.aisec.cpg.frontends.Handler
-import de.fraunhofer.aisec.cpg.graph.NodeBuilder
+import de.fraunhofer.aisec.cpg.graph.newCompoundStatement
+import de.fraunhofer.aisec.cpg.graph.newReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
@@ -22,11 +23,10 @@ class StatementHandler(lang: RubyLanguageFrontend) :
         }
 
         blockNode.containsVariableAssignment()
-        val compoundStatement = NodeBuilder.newCompoundStatement(lang.getCodeFromRawNode(blockNode))
+        val compoundStatement = newCompoundStatement(frontend.getCodeFromRawNode(blockNode))
 
         for (node in blockNode) {
-            val statement = lang.expressionHandler.handle(node)
-
+            val statement = frontend.expressionHandler.handle(node)
             statement?.let { compoundStatement.addStatement(it) }
         }
 
@@ -34,13 +34,13 @@ class StatementHandler(lang: RubyLanguageFrontend) :
 
         // get the last statement
         var lastStatement: Statement? = null
-        if (!statements.isEmpty()) {
-            lastStatement = statements.get(statements.size - 1)
+        if (statements.isNotEmpty()) {
+            lastStatement = statements[statements.size - 1]
         }
 
         // add an implicit return statement, if there is none
         if (lastStatement !is ReturnStatement) {
-            val returnStatement = NodeBuilder.newReturnStatement("return")
+            val returnStatement = newReturnStatement("return")
             returnStatement.isImplicit = true
             compoundStatement.addStatement(returnStatement)
         }

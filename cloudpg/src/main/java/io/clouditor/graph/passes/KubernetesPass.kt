@@ -1,8 +1,9 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import io.clouditor.graph.*
-import io.clouditor.graph.nodes.isInSelector
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
@@ -13,13 +14,10 @@ import io.kubernetes.client.openapi.models.V1Service
 import io.kubernetes.client.util.ClientBuilder
 import io.kubernetes.client.util.KubeConfig
 import java.io.FileReader
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
-import kotlin.collections.Map
 import kotlin.collections.emptyList
-import kotlin.collections.filter
 import kotlin.collections.filterIsInstance
 import kotlin.collections.first
 import kotlin.collections.firstOrNull
@@ -32,7 +30,8 @@ import kotlin.collections.plusAssign
 import kotlin.collections.toCollection
 import kotlin.collections.toMap
 
-class KubernetesPass : CloudResourceDiscoveryPass() {
+@Suppress("UNUSED_PARAMETER")
+class KubernetesPass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
 
     override fun cleanup() {}
 
@@ -109,14 +108,14 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 val container =
                     t.computes.filterIsInstance(Container::class.java).firstOrNull {
                         // not sure why/when there are more addresses
-                        it.name == subset.addresses?.get(0)?.targetRef?.name
+                        it.name.localName == subset.addresses?.get(0)?.targetRef?.name
                     }
 
                 // look for the service
                 val service =
                     t.additionalNodes.filterIsInstance(NetworkService::class.java).firstOrNull() {
                         // not sure if the name is really unique, probably need the namespace later
-                        it.name == item.metadata?.name
+                        it.name.localName == item.metadata?.name
                     }
 
                 // some quick and dirty database heuristics
@@ -148,7 +147,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
     }
 
     private fun heuristics(service: NetworkService?, container: Container?, t: TranslationResult) {
-        if (service?.name == "postgres") {
+        if (service?.name?.localName == "postgres") {
             val db =
                 RelationalDatabaseService(
                     mutableListOf<Storage>(),
@@ -164,7 +163,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
             t += db
         }
 
-        if (service?.name == "mongo") {
+        if (service?.name?.localName == "mongo") {
             val db =
                 DocumentDatabaseService(
                     mutableListOf<Storage>(),
@@ -192,7 +191,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         val image: Image =
             t.getImageByName(name)
                 ?: Image(null, null, mapOf()).let {
-                    name?.let { n -> it.name = n }
+                    name?.let { n -> it.name = Name(n) }
                     t += it
                     it
                 }
@@ -205,7 +204,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                         cluster?.geoLocation ?: GeoLocation("Europe"),
                         meta.labels?.toMap(HashMap())
                     )
-                c.name = meta.name ?: ""
+                c.name = Name(meta.name ?: "")
 
                 // add env to labels with env_ prefix
                 pod.spec?.containers?.first()?.env?.forEach {
@@ -250,7 +249,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                     mapOf()
                 )
             service.metadata?.name?.let {
-                node.name = it
+                node.name = Name(it)
 
                 // also add the name as IP / host
                 node.ips.add(it)
@@ -274,7 +273,7 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
                 // look for the service (TODO: add namespace to filter)
                 val service =
                     t.additionalNodes.filterIsInstance(NetworkService::class.java).firstOrNull {
-                        it.name == path.backend?.serviceName
+                        it.name.localName == path.backend?.serviceName
                     }
 
                 val hasTLS = ingress.spec?.tls?.isEmpty() ?: false
@@ -309,14 +308,5 @@ class KubernetesPass : CloudResourceDiscoveryPass() {
         }
 
         return list
-    }
-
-    private fun selectContainers(
-        t: TranslationResult,
-        selector: Map<String, String>
-    ): List<Container> {
-        return t.computes.filter { it is Container && it.isInSelector(selector) }.map {
-            it as Container
-        }
     }
 }

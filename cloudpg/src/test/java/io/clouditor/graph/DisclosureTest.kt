@@ -21,7 +21,7 @@ open class DisclosureTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

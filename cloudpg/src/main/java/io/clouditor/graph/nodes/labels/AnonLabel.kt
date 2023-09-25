@@ -8,13 +8,13 @@ class AnonLabel(labeledNode: Node) : Label(labeledNode) {
      * In the future on label will be used to label multiple nodes, with the purpose of havein one
      * unique label of the same type and properties.
      */
-    @field:Relationship(value = "ANONYMIZES", direction = "OUTGOING")
+    @field:Relationship(value = "ANONYMIZES", direction = Relationship.Direction.OUTGOING)
     var anonymizes: Label? =
         null // We can make this a list if we allow anonlabels to anonymize several
     // labels that are not mergeable between each other
 
     override fun areMergeable(l: Label): Boolean {
-        if (!(l::class == AnonLabel::class)) {
+        if (l::class != AnonLabel::class) {
             return false
         }
         (l as AnonLabel).anonymizes?.let {
@@ -28,7 +28,7 @@ class AnonLabel(labeledNode: Node) : Label(labeledNode) {
     }
 
     fun addAnonymize(l: Label) {
-        if (anonymizes?.labeledNodes?.isEmpty() ?: true) {
+        if (anonymizes?.labeledNodes?.isEmpty() != false) {
             anonymizes = l
         } else {
             anonymizes!!.mergeWith(l)

@@ -1,6 +1,7 @@
 package io.clouditor.graph.nodes
 
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import io.clouditor.graph.*
 
@@ -19,11 +20,13 @@ class Holder(
 
 fun TranslationResult.location(locationName: String): GeoLocation {
     var location =
-        this.additionalNodes.firstOrNull { it is GeoLocation && it.name == locationName } as?
+        this.additionalNodes.firstOrNull {
+            it is GeoLocation && it.name.localName == locationName
+        } as?
             GeoLocation
     if (location == null) {
         location = GeoLocation(locationName)
-        location.name = location.region
+        location.name = Name(location.region)
 
         this += location
     }

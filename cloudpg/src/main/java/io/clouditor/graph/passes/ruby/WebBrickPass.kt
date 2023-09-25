@@ -1,6 +1,8 @@
 package io.clouditor.graph.passes.ruby
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -8,37 +10,37 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.golang.appendPath
 
-class WebBrickPass : Pass() {
+class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {}
 
-    override fun accept(result: TranslationResult?) {
-        if (result != null) {
-            for (tu in result.translationUnits) {
-                val app = result.findApplicationByTU(tu)
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
-                // one handler per file
-                val handler = HttpRequestHandler(app, mutableListOf(), "/")
+            // one handler per file
+            val handler = HttpRequestHandler(app, mutableListOf(), "/")
 
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(mce: MemberCallExpression) {
-                            handleMemberCall(result, tu, mce, handler)
-                        }
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t, handler)
                     }
-                )
+                }
+            )
 
-                result += handler
+            result += handler
 
-                app?.functionalities?.plusAssign(handler)
-            }
+            app?.functionalities?.plusAssign(handler)
         }
     }
 
@@ -50,7 +52,7 @@ class WebBrickPass : Pass() {
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if (mce.name == "mount_proc") {
+        if (mce.name.localName == "mount_proc") {
             var path: String = (mce.arguments.first() as? Literal<*>)?.value as? String ?: "/"
 
             val func =
@@ -70,7 +72,7 @@ class WebBrickPass : Pass() {
                 ) {
                     val init = (statement.singleDeclaration as VariableDeclaration).initializer
 
-                    if (init is MemberCallExpression && init.name == "split") {
+                    if (init is MemberCallExpression && init.name.localName == "split") {
                         if (init.base is MemberCallExpression &&
                                 (init.base as MemberCallExpression).base is
                                     DeclaredReferenceExpression
@@ -87,7 +89,7 @@ class WebBrickPass : Pass() {
             }
 
             val endpoint = HttpEndpoint(NoAuthentication(), func, "GET", path, null, null)
-            endpoint.name = path
+            endpoint.name = Name(path)
 
             handler.httpEndpoints.plusAssign(endpoint)
             app?.functionalities?.plusAssign(endpoint)
