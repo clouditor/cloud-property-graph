@@ -112,10 +112,8 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         m: MemberCallExpression
     ) {
-        if (m.base is DeclaredReferenceExpression &&
-                clients.containsKey((m.base as DeclaredReferenceExpression).refersTo)
-        ) {
-            val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
+        if (m.base is Reference && clients.containsKey((m.base as Reference).refersTo)) {
+            val client = clients[(m.base as Reference).refersTo]
             val app = result.findApplicationByTU(tu)
 
             if (m.name.localName == "GET" || m.name.localName == "POST" || m.name.localName == "PUT"
@@ -124,8 +122,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 //  Any references to FunctionDeclarations seem to be null;
                 //  It does not matter whether we do it indirectly (f := post_data)
                 val funcDeclaration =
-                    (m.arguments.getOrNull(1) as? DeclaredReferenceExpression)?.refersTo as?
-                        FunctionDeclaration
+                    (m.arguments.getOrNull(1) as? Reference)?.refersTo as? FunctionDeclaration
                 val endpoint =
                     HttpEndpoint(
                         NoAuthentication(),
@@ -194,7 +191,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private fun handleBind(m: MemberCallExpression, e: HttpEndpoint) {
         if (m.name.localName == "BindJSON" || m.name.localName == "Bind") {
             val obj = (m.arguments.firstOrNull() as UnaryOperator).input
-            if (obj is DeclaredReferenceExpression) {
+            if (obj is Reference) {
                 obj.refersTo?.let { e.addNextDFG(it) }
             } else {
                 e.addNextDFG(obj)

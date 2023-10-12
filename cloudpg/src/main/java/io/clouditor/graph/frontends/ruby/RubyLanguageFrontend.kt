@@ -3,9 +3,11 @@ package io.clouditor.graph.frontends.ruby
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.frontends.Language
 import de.fraunhofer.aisec.cpg.frontends.LanguageFrontend
+import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.newFunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.newTranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.types.Type
 import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation
 import java.io.File
 import org.checkerframework.checker.nullness.qual.NonNull
@@ -18,7 +20,7 @@ import org.jruby.parser.ParserConfiguration
 class RubyLanguageFrontend(
     language: Language<RubyLanguageFrontend>,
     ctx: @NonNull TranslationContext
-) : LanguageFrontend(language, ctx) {
+) : LanguageFrontend<Node, Type>(language, ctx) {
     val declarationHandler: DeclarationHandler = DeclarationHandler(this)
     val expressionHandler: ExpressionHandler = ExpressionHandler(this)
     val statementHandler: StatementHandler = StatementHandler(this)
@@ -39,15 +41,29 @@ class RubyLanguageFrontend(
         return handleRootNode(node, file)
     }
 
+    override fun codeOf(astNode: Node): String {
+        return ""
+    }
+
+    override fun locationOf(astNode: Node): PhysicalLocation? {
+        return null
+    }
+
+    override fun typeOf(type: Type): Type {
+        TODO("Not yet implemented")
+    }
+
+    override fun setComment(node: Node, astNode: Node) {}
+
     private fun handleRootNode(node: RootNode, file: File): TranslationUnitDeclaration {
-        val tu = newTranslationUnitDeclaration(node.file, getCodeFromRawNode(node))
+        val tu = newTranslationUnitDeclaration(node.file, codeOf(node))
 
         scopeManager.resetToGlobal(tu)
 
         // wrap everything into a virtual global function because we only have declarations on the
         // top
         val func =
-            newFunctionDeclaration(file.nameWithoutExtension + "_global", getCodeFromRawNode(node))
+            newFunctionDeclaration(file.nameWithoutExtension + "_global", codeOf(node))
 
         scopeManager.enterScope(func)
 
@@ -59,14 +75,4 @@ class RubyLanguageFrontend(
 
         return tu
     }
-
-    override fun <T : Any?> getCodeFromRawNode(astNode: T): String? {
-        return ""
-    }
-
-    override fun <T : Any?> getLocationFromRawNode(astNode: T): PhysicalLocation? {
-        return null
-    }
-
-    override fun <S : Any?, T : Any?> setComment(s: S, ctx: T) {}
 }

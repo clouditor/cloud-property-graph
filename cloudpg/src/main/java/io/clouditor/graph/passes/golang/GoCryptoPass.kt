@@ -46,7 +46,7 @@ class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     ) {
         if (c.name.toString() == "ed25519.Sign") {
             // the text that is signed is the second argument
-            val textToBeSigned = c.arguments[1] as DeclaredReferenceExpression
+            val textToBeSigned = c.arguments[1] as Reference
             val plainText = textToBeSigned.refersTo as? VariableDeclaration
             val signature = Signature(plainText, c.nextDFG.firstOrNull() as? VariableDeclaration)
             t += signature

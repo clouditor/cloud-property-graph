@@ -76,8 +76,7 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         return if ((mce.name.localName == "onPost" ||
                 mce.name.localName == "onGet" ||
                 mce.name.localName == "post" ||
-                mce.name.localName == "get") &&
-                (mce.base as? DeclaredReferenceExpression)?.refersTo == v
+                mce.name.localName == "get") && (mce.base as? Reference)?.refersTo == v
         ) {
             val path: String =
                 unRegex((mce.arguments.first() as? Literal<*>)?.value as? String ?: "/")
@@ -108,7 +107,7 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         e: HttpEndpoint
     ) {
         if (me.name.localName == "body" &&
-                fd.parameters.first() == (me.base as? DeclaredReferenceExpression)?.refersTo
+                fd.parameters.first() == (me.base as? Reference)?.refersTo
         ) {
             // set the DFG target of this call to the DFG target of our http endpoints
             me.nextDFG.forEach { e.addNextDFG(it) }

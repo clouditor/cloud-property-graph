@@ -74,12 +74,10 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
                     if (init is MemberCallExpression && init.name.localName == "split") {
                         if (init.base is MemberCallExpression &&
-                                (init.base as MemberCallExpression).base is
-                                    DeclaredReferenceExpression
+                                (init.base as MemberCallExpression).base is Reference
                         ) {
-                            if (((init.base as MemberCallExpression).base as
-                                        DeclaredReferenceExpression)
-                                    .refersTo == req
+                            if (((init.base as MemberCallExpression).base as Reference).refersTo ==
+                                    req
                             ) {
                                 path = path.appendPath("{fragment}")
                             }

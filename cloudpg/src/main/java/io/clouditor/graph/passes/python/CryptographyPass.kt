@@ -35,7 +35,7 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                     fun visit(t: MemberCallExpression) {
                         // look for key.sign()
                         if (t.name.localName == "sign") {
-                            val privateKey = t.base as DeclaredReferenceExpression
+                            val privateKey = t.base as Reference
                             // FIXME: As with the other issues, the DeclaredReferenceExpression is
                             //  missing its target (refersTo)
                             val generator =
@@ -59,7 +59,7 @@ class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         mce: MemberCallExpression
     ) {
         // TODO check if it is always the first one
-        val textToBeSignedExpression = mce.arguments.first() as DeclaredReferenceExpression
+        val textToBeSignedExpression = mce.arguments.first() as Reference
         val plainText = textToBeSignedExpression.refersTo as VariableDeclaration
         val signature = Signature(plainText, mce.nextDFG.first() as VariableDeclaration)
         t += signature

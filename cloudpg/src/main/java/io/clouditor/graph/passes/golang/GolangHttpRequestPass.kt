@@ -46,9 +46,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         val requestFunction = c.invokes.firstOrNull()
         // TODO (old) request body: the default value is not correctly set, so we use the
         //  value that has a dfg edge to the request parameter
-        val body =
-            requestFunction?.prevDFG?.firstOrNull { it is DeclaredReferenceExpression } as
-                DeclaredReferenceExpression
+        val body = requestFunction?.prevDFG?.firstOrNull { it is Reference } as Reference
         if (c.name.toString() == "http.PostForm") {
             createHttpRequest(
                 result,
@@ -65,8 +63,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "PUT",
-                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as?
-                    DeclaredReferenceExpression,
+                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as? Reference,
                 app
             )
         } else if (c.toString() == "http.Get") {

@@ -57,13 +57,10 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         tu: TranslationUnitDeclaration?,
         m: MemberCallExpression
     ) {
-        if (m.base is DeclaredReferenceExpression &&
-                clients.containsKey((m.base as DeclaredReferenceExpression).refersTo)
-        ) {
-            val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
+        if (m.base is Reference && clients.containsKey((m.base as Reference).refersTo)) {
+            val client = clients[(m.base as Reference).refersTo]
 
-            val funcDeclaration =
-                (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
+            val funcDeclaration = (m.arguments[1] as? Reference)?.refersTo as? FunctionDeclaration
             val literal = m.arguments.first() as? Literal<*>
             literal.let {
                 val endpoint =

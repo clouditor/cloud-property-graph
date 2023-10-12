@@ -1,11 +1,11 @@
 package io.clouditor.graph.frontends.ruby
 
 import de.fraunhofer.aisec.cpg.frontends.Handler
-import de.fraunhofer.aisec.cpg.graph.newCompoundStatement
+import de.fraunhofer.aisec.cpg.graph.newBlock
 import de.fraunhofer.aisec.cpg.graph.newReturnStatement
-import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.ProblemExpression
 import org.jruby.ast.BlockNode
 import org.jruby.ast.Node
@@ -17,13 +17,13 @@ class StatementHandler(lang: RubyLanguageFrontend) :
         map.put(BlockNode::class.java, ::handleBlockNode)
     }
 
-    private fun handleBlockNode(blockNode: Node): CompoundStatement? {
+    private fun handleBlockNode(blockNode: Node): Block? {
         if (blockNode !is BlockNode) {
             return null
         }
 
         blockNode.containsVariableAssignment()
-        val compoundStatement = newCompoundStatement(frontend.getCodeFromRawNode(blockNode))
+        val compoundStatement = newBlock(frontend.getCodeFromRawNode(blockNode))
 
         for (node in blockNode) {
             val statement = frontend.expressionHandler.handle(node)

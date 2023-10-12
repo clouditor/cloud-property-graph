@@ -3,8 +3,10 @@ package io.clouditor.graph.frontends.ruby
 import de.fraunhofer.aisec.cpg.frontends.Handler
 import de.fraunhofer.aisec.cpg.graph.*
 import de.fraunhofer.aisec.cpg.graph.statements.Statement
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.ProblemExpression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference
 import de.fraunhofer.aisec.cpg.graph.types.UnknownType
 import org.jruby.ast.*
 import org.jruby.ast.Node
@@ -60,7 +62,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
             return null
         }
 
-        return newDeclaredReferenceExpression(
+        return Reference(
             node.name.idString(),
             UnknownType.getUnknownType(language),
             frontend.getCodeFromRawNode(node)
@@ -81,7 +83,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
 
         // either a binary operator or a variable declaration
         val lhs =
-            newDeclaredReferenceExpression(
+            Reference(
                 name.idString(),
                 UnknownType.getUnknownType(language),
                 frontend.getCodeFromRawNode(node)
@@ -160,7 +162,7 @@ class ExpressionHandler(lang: RubyLanguageFrontend) :
         val def = newDeclarationStatement(frontend.getCodeFromRawNode(node))
         def.singleDeclaration = func
 
-        val cse = newCompoundStatementExpression(frontend.getCodeFromRawNode(node))
+        val cse = Block(frontend.getCodeFromRawNode(node))
         cse.statement = def
 
         return cse
