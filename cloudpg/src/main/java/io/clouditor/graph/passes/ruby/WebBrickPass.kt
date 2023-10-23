@@ -55,8 +55,11 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             var path: String = (mce.arguments.first() as? Literal<*>)?.value as? String ?: "/"
 
             val func =
-                ((mce.arguments[mce.arguments.size - 1] as? Block)
-                        ?.statements?.map { it as? DeclarationStatement })?.filterNotNull()?.first()
+                ((mce.arguments[mce.arguments.size - 1] as? Block)?.statements?.map {
+                        it as? DeclarationStatement
+                    })
+                    ?.filterNotNull()
+                    ?.first()
                     ?.singleDeclaration as?
                     FunctionDeclaration
 

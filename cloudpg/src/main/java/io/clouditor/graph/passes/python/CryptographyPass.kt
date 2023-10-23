@@ -6,9 +6,8 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.CallResolver
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
-import de.fraunhofer.aisec.cpg.passes.VariableUsageResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -16,8 +15,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
 
 @Suppress("UNUSED_PARAMETER")
-@DependsOn(CallResolver::class)
-@DependsOn(VariableUsageResolver::class)
+@DependsOn(SymbolResolver::class)
 class CryptographyPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {
