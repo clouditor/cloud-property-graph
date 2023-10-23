@@ -72,7 +72,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
 
     // Move to JitPack dependency for newer versions
-    implementation("com.github.Fraunhofer-AISEC.cpg:cpg:a63fef15cb")
+    implementation("com.github.Fraunhofer-AISEC.cpg:cpg:v8.0.0-alpha.2")
 
     /**
     val version = "7.1.2"
