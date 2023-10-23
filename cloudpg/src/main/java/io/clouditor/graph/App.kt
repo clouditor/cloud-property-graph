@@ -14,7 +14,6 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.ruby.RubyLanguage
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
@@ -121,7 +120,6 @@ object App : Callable<Int> {
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
-                .registerLanguage(RubyLanguage())
                 .registerLanguage(JavaLanguage())
                 .registerLanguage(CPPLanguage())
                 .registerLanguage(CLanguage())
