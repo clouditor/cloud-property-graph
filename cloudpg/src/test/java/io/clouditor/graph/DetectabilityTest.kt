@@ -19,7 +19,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         assertEquals(1, result.count())
@@ -43,7 +43,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         // we expect exactly one threat path
@@ -58,7 +58,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         assertEquals(2, result.count())
@@ -85,7 +85,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D2-detectable-communication/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
         // we expect exactly one threat path
@@ -102,7 +102,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(2, result.count())
@@ -116,7 +116,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(0, result.count())
@@ -130,7 +130,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(2, result.count())
@@ -144,7 +144,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D4-detectable-at-storage/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(he:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (he)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.CONFLICT\"}) RETURN p"
             )
         assertEquals(0, result.count())
@@ -158,7 +158,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
         assertEquals(2, result.count())
@@ -172,7 +172,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
         assertEquals(0, result.count())
@@ -186,7 +186,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
         assertEquals(2, result.count())
@@ -200,7 +200,7 @@ open class DetectabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Detectability/D5-detectable-at-retrieval/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:HttpEndpoint)-[:DFG*]->(ds:DatabaseStorage) WHERE (:HttpRequest)-[:DFG*]->()<-[:DFG]-(ds) AND (:HttpEndpoint)--(:FunctionDeclaration)-[:EOG*]->({name:\"HttpStatus.NOT_FOUND\"}) RETURN p"
             )
         assertEquals(0, result.count())

@@ -20,7 +20,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(4, result.count())
@@ -42,7 +42,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(0, result.count())
@@ -56,7 +56,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(2, result.count())
@@ -78,7 +78,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L3-linkability-of-inbound-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(0, result.count())
@@ -94,7 +94,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py"), Path("third-party.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -116,7 +116,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py"), Path("third-party.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -130,7 +130,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go"), Path("third-party.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -152,7 +152,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L5-linkability-of-shared-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go"), Path("third-party.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -166,7 +166,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
 
@@ -189,7 +189,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(0, result.count())
@@ -203,7 +203,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(1, result.count())
@@ -225,7 +225,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L6-linkability-of-stored-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(0, result.count())
@@ -239,7 +239,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -261,7 +261,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -275,7 +275,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -297,7 +297,7 @@ open class LinkabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Linkability/L7-linkability-of-retrieved-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())

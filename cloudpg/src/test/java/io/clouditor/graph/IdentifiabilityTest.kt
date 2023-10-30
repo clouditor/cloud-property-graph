@@ -20,7 +20,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(4, result.count())
@@ -42,7 +42,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(0, result.count())
@@ -56,7 +56,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(2, result.count())
@@ -78,7 +78,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I3-identifying-inbound-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
         assertEquals(0, result.count())
@@ -94,7 +94,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go"), Path("third-party.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -116,7 +116,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go"), Path("third-party.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -130,7 +130,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py"), Path("third-party.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -152,7 +152,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I5-identifying-shared-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py"), Path("third-party.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -166,7 +166,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(1, result.count())
@@ -188,7 +188,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(0, result.count())
@@ -202,7 +202,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(1, result.count())
@@ -224,7 +224,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I6-identifying-stored-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(:DatabaseStorage) RETURN p"
             )
         assertEquals(0, result.count())
@@ -238,7 +238,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -260,7 +260,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
@@ -274,7 +274,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(1, result.count())
@@ -296,7 +296,7 @@ open class IdentifiabilityTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Identifiability/I7-identifying-retrieved-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (h2:HttpRequest), (a1:Application), (a2:Application) WHERE (h2)-[:DFG*]->()<--(ds) AND (h1)--(a1) AND (h2)--(a2) RETURN p"
             )
         assertEquals(0, result.count())
