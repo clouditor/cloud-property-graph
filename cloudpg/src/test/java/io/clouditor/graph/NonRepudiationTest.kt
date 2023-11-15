@@ -17,7 +17,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(4, result.count())
@@ -39,7 +39,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-DigitalSignature-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(0, result.count())
@@ -53,7 +53,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOperation) RETURN p"
             )
 
@@ -76,7 +76,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Python-Logging-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:Identifier)--()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(:LogOperation) RETURN p"
             )
         assertEquals(0, result.count())
@@ -90,7 +90,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:HttpEndpoint) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
@@ -114,7 +114,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-DigitalSignature-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(0, result.count())
@@ -128,7 +128,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-Logging"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOperation) RETURN p"
             )
         assertEquals(1, result.count())
@@ -150,7 +150,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR2-non-repudiation-of-sending/Go-Logging-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:Identifier)-[:LABELEDNODE]-()-[:DFG*]->()-[:ARGUMENTS]-()-[:CALL]-(g:LogOperation) RETURN p"
             )
         assertEquals(0, result.count())
@@ -168,7 +168,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Go-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(1, result.count())
@@ -190,7 +190,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Go-DigitalSignature-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(0, result.count())
@@ -206,7 +206,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Python-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]->(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(1, result.count())
@@ -228,7 +228,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR4-non-reputable-storage/Python-DigitalSignature-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(hr:HttpRequest)-[:DFG*]-(:DatabaseStorage) WHERE (:Signature)--(n)-[:DFG*]->(hr) AND (:Signature)-[:SIGNATURE]->()-[:DFG*]->(hr) RETURN p"
             )
         assertEquals(0, result.count())
@@ -244,7 +244,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR5-non-repudiation-of-retrieved-data/Python-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.py"), Path("client2.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(d:DatabaseStorage), (a:Application), (a2:Application), (h2:HttpRequest), (n) WHERE (n)--(:Signature) AND (h)--(a) AND (a2:Application)--(h2:HttpRequest)-[:DFG*]->()<--(:DatabaseStorage) RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
@@ -270,7 +270,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR5-non-repudiation-of-retrieved-data/Go-DigitalSignature"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client1.go"), Path("client2.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpRequest)-[:DFG*]->(d:DatabaseStorage), (a:Application), (a2:Application), (h2:HttpRequest), (n) WHERE (n)--(:Signature) AND (h)--(a) AND (a2:Application)--(h2:HttpRequest)-[:DFG*]->()<--(:DatabaseStorage) RETURN p"
             )
         assertEquals(1, result.count())
@@ -292,7 +292,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR5-non-repudiation-of-retrieved-data/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(h:HttpRequest)-[:DFG*]->(d:DatabaseStorage), (a:Application), (a2:Application), (h2:HttpRequest) WHERE (n)--(:Signature) AND (a)--(h) AND (a2:Application)--(h2:HttpRequest)-[:DFG*]->()<--(:DatabaseStorage) AND a<>a2 RETURN p"
             )
         assertEquals(0, result.count())
@@ -306,7 +306,7 @@ open class NonRepudiationTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Non-Repudiation/NR5-non-repudiation-of-retrieved-data/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--(n)-[:DFG*]->(h:HttpRequest)-[:DFG*]->(d:DatabaseStorage), (a:Application), (a2:Application), (h2:HttpRequest) WHERE (n)--(:Signature) AND (a)--(h) AND (a2:Application)--(h2:HttpRequest)-[:DFG*]->()<--(:DatabaseStorage) AND a<>a2 RETURN p"
             )
         assertEquals(0, result.count())

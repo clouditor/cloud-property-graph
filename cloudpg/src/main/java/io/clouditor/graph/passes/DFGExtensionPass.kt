@@ -2,11 +2,11 @@ package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.graph.HasType
 import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression
+import de.fraunhofer.aisec.cpg.graph.types.HasType
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType
 import de.fraunhofer.aisec.cpg.graph.types.Type
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
@@ -90,7 +90,7 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         visitedfields: MutableSet<FieldDeclaration> = mutableSetOf()
     ): MutableSet<FieldDeclaration> {
         var fields: MutableSet<FieldDeclaration> = mutableSetOf()
-        node.possibleSubTypes.map { it ->
+        node.assignedTypes.map { it ->
             val oType: ObjectType? = dereferenceToObjectType(it)
             oType?.let {
                 fields = it.recordDeclaration!!.fields.toMutableSet()

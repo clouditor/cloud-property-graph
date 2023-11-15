@@ -70,6 +70,11 @@ repositories {
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+
+    // Move to JitPack dependency for newer versions
+    implementation("com.github.Fraunhofer-AISEC.cpg:cpg:v8.0.0-alpha.2")
+
+    /**
     val version = "7.1.2"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
@@ -79,6 +84,7 @@ dependencies {
     implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
     implementation("de.fraunhofer.aisec:cpg-language-java:$version")
     implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")
+    */
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")

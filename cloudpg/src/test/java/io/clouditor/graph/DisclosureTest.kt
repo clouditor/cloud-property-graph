@@ -18,7 +18,7 @@ open class DisclosureTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
         assertEquals(2, result.count())
@@ -43,7 +43,7 @@ open class DisclosureTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
         assertEquals(0, result.count())
@@ -57,7 +57,7 @@ open class DisclosureTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -82,7 +82,7 @@ open class DisclosureTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Disclosure/unencrypted-transmission/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:ProxiedEndpoint) WHERE NOT EXISTS ((h)--(:TransportEncryption)) RETURN p"
             )
         assertEquals(0, result.count())

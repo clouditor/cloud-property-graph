@@ -20,7 +20,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (a:Application), (h2:HttpRequest) WHERE NOT EXISTS ((:HttpRequest)-[:DFG*]->()-[:CALLS]-()<-[:DFG]-(ds:DatabaseStorage)) AND ((h1)--(a)) AND ((h2)--(a)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -43,7 +43,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Go-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (a:Application), (h2:HttpRequest) WHERE NOT EXISTS ((:HttpRequest)-[:DFG*]->()-[:CALLS]-()<-[:DFG]-(ds:DatabaseStorage)) AND ((h1)--(a)) AND ((h2)--(a)) RETURN p"
             )
         assertEquals(0, result.count())
@@ -57,7 +57,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Python"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]->(ds:DatabaseStorage), (a:Application), (h2:HttpRequest) WHERE NOT EXISTS ((:HttpRequest)-[:DFG*]->()-[:CALLS]-()<-[:DFG]-(ds:DatabaseStorage)) AND ((h1)--(a)) AND ((h2)--(a)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -79,7 +79,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U3-no-access-or-portability/Python-validation"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (h2:HttpRequest) WHERE NOT EXISTS ((:HttpRequest)-[:DFG*]->()-[:CALLS]-()<-[:DFG]-(ds:DatabaseStorage)) AND ((h1)--(a)) AND ((h2)--(a)) RETURN p"
             )
         assertEquals(0, result.count())
@@ -94,7 +94,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Go-missing-DELETE"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -118,7 +118,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Go-missing-PUT"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.go"), Path("server.go")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -144,7 +144,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Go-missing-DELETE"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
         assertEquals(1, result.count())
@@ -168,7 +168,7 @@ open class UnawarenessTest {
                     System.getProperty("user.dir") +
                         "/../ppg-testing-library/Unawareness/U4-no-erasure-or-rectification/Go-missing-PUT"
                 ),
-                listOf(Path(".")),
+                listOf(Path("client.py"), Path("server.py")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(hr1:HttpRequest)-[:DFG*]-(do1:DatabaseOperation)-[:DFG]->(ds:DatabaseStorage), (a:Application), (hr2:HttpRequest) WHERE NOT EXISTS ((hr2)-[:DFG*]->()<-[:DFG]-(ds)) AND ((hr1)--(a)--(hr2)) RETURN p"
             )
         assertEquals(1, result.count())

@@ -55,7 +55,7 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         tu: TranslationUnitDeclaration
     ) {
         var builder: VariableDeclaration? = null
-        val builderRefs = mutableListOf<DeclaredReferenceExpression>()
+        val builderRefs = mutableListOf<Reference>()
 
         // look for the builder itself, probably it is the DFG target
         val pair = followDFGTargetToDeclaration(r)
@@ -81,7 +81,7 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         creationCall: CallExpression,
         tu: TranslationUnitDeclaration
     ) {
-        val clientRefs = mutableListOf<DeclaredReferenceExpression>()
+        val clientRefs = mutableListOf<Reference>()
 
         // look for the client itself, probably it is the DFG target
         val pair = followDFGTargetToDeclaration(creationCall)
@@ -168,14 +168,12 @@ class JaxRsClientPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         }
     }
 
-    private fun followDFGTargetToDeclaration(
-        n: Node
-    ): Pair<DeclaredReferenceExpression, Declaration?>? {
+    private fun followDFGTargetToDeclaration(n: Node): Pair<Reference, Declaration?>? {
         // get the next dfg
-        val ref = n.nextDFG.filterIsInstance<DeclaredReferenceExpression>().firstOrNull()
+        val ref = n.nextDFG.filterIsInstance<Reference>().firstOrNull()
 
         // it is probably a ref, so we need to follow it back to the declaration
-        if (ref is DeclaredReferenceExpression) {
+        if (ref is Reference) {
             return Pair(ref, ref.refersTo)
         }
 

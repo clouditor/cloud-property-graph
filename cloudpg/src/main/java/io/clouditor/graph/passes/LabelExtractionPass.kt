@@ -11,8 +11,8 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
@@ -305,7 +305,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             }
             is AssignExpression -> {
                 val variableDeclarations =
-                    node.lhs.filterIsInstance<DeclaredReferenceExpression>().map { it.refersTo }
+                    node.lhs.filterIsInstance<Reference>().map { it.refersTo }
                 variableDeclarations.forEach { addLabelToDFGBorderEdges(it as Node, label) }
             }
             else -> {
