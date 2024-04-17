@@ -14,6 +14,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
+import kotlin.streams.toList
 
 @Suppress("UNUSED_PARAMETER")
 class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {

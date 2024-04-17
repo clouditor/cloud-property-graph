@@ -70,7 +70,7 @@ repositories {
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    val version = "7.1.2"
+    val version = "8.1.2"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
@@ -84,9 +84,9 @@ dependencies {
     implementation ("org.xmlunit:xmlunit-core:2.9.0")
     implementation("org.xmlunit:xmlunit-matchers:2.9.0")
 
-    api("org.neo4j", "neo4j-ogm-core", "4.0.5")
-    api("org.neo4j", "neo4j-ogm", "4.0.5")
-    api("org.neo4j", "neo4j-ogm-bolt-driver", "4.0.5")
+    api("org.neo4j", "neo4j-ogm-core", "4.0.10")
+    api("org.neo4j", "neo4j-ogm", "4.0.10")
+    api("org.neo4j", "neo4j-ogm-bolt-driver", "4.0.10b  ")
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 

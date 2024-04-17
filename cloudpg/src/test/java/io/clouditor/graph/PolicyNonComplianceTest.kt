@@ -18,7 +18,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
@@ -42,7 +42,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Python-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }
@@ -56,7 +56,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         // in this case, 2 paths are expected because there are two HttpEndpoints that the
         // Identifier crosses: A proxied endpoint and the actual one
@@ -80,7 +80,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC1-disproportionate-collection/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) WHERE NOT EXISTS{ MATCH(h)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") AND NOT (i:IfStatement) AND NOT (i:WhileStatment) AND NOT (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }
@@ -176,7 +176,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Go"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -198,7 +198,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Go-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }
@@ -214,7 +214,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Python"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(1, result.count())
 
@@ -236,7 +236,7 @@ open class PolicyNonComplianceTest {
                         "/../ppg-testing-library/Policy-Non-Compliance/NC5-disproportionate-storage-wo-processing/Python-validation"
                 ),
                 listOf(Path(".")),
-                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:DeclaredReferenceExpression) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
+                "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(:DatabaseOperation)-[:DFG]->(s:DatabaseStorage) WHERE NOT EXISTS{ MATCH (s)-[:DFG*]->(i) WHERE (i:Expression) AND NOT (i:Reference) AND (NOT (i:BinaryOperator) OR i.operatorCode <> \"=\") OR (i:IfStatement) OR (i:WhileStatment) OR (i)<-[:ARGUMENTS]-()} RETURN p"
             )
         assertEquals(0, result.count())
     }

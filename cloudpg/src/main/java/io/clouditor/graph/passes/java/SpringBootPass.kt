@@ -15,6 +15,7 @@ import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
+import kotlin.streams.toList
 
 /**
  * This pass parses an application for spring boot annotations and creates services and end-points

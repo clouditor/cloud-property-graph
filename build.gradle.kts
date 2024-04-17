@@ -15,7 +15,7 @@ subprojects {
         mavenCentral()
 
         ivy {
-            setUrl("https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0/plugins")
+            setUrl("https://download.eclipse.org/tools/cdt/releases/11.3/cdt-11.3.1/plugins")
             metadataSources {
                 artifact()
             }

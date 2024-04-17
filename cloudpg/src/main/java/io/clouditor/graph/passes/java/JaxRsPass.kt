@@ -13,6 +13,7 @@ import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
+import kotlin.streams.toList
 
 class JaxRsPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     // for now, assume, that we have one JAX-RS Application per analysis

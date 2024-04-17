@@ -12,6 +12,7 @@ import io.clouditor.graph.ValueResolver
 import io.clouditor.graph.findApplicationByTU
 import io.clouditor.graph.passes.HttpClientPass
 import java.nio.file.Files
+import kotlin.streams.toList
 
 class FetchPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     var map = mutableMapOf<String, String>()

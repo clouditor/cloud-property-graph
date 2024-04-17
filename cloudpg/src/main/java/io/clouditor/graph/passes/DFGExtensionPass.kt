@@ -2,13 +2,14 @@ package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.graph.HasType
 import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.KeyValueExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression
+import de.fraunhofer.aisec.cpg.graph.types.HasType
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType
 import de.fraunhofer.aisec.cpg.graph.types.Type
+import de.fraunhofer.aisec.cpg.graph.types.recordDeclaration
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.GoExtraPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
@@ -18,7 +19,7 @@ import java.util.*
 /**
  * The purpose of this Pass os to enhance the DFG graph with additional edges that are needed for
  * DF-Label tracking. One such case is the labeling of a variable that is the base of a member
- * expression. Normally no data flows from the base to the member expression. FOr this use case,
+ * expression. Normally no data flows from the base to the member expression. For this use case,
  * however, the mere usage of a base causes labels to be relevant for the member expression.
  */
 @DependsOn(GoExtraPass::class)
@@ -43,7 +44,7 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
         stringifyFunctions.forEach {
             redirectDFGThroughFunctionCall(it)
-            drawDFGEgesFromNestedFields(it)
+            drawDFGEdgesFromNestedFields(it)
         }
 
         memberExpressions.forEach { it.addPrevDFG(it.base) }
@@ -67,7 +68,7 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         call.arguments.forEach { call.addPrevDFG(it) }
     }
 
-    private fun drawDFGEgesFromNestedFields(call: CallExpression) {
+    private fun drawDFGEdgesFromNestedFields(call: CallExpression) {
         call.arguments.forEach { it ->
             val nestedFields: MutableSet<FieldDeclaration> = getNestedFields(it)
             nestedFields.forEach { call.addPrevDFG(it) }
@@ -89,16 +90,7 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         node: HasType,
         visitedfields: MutableSet<FieldDeclaration> = mutableSetOf()
     ): MutableSet<FieldDeclaration> {
-        var fields: MutableSet<FieldDeclaration> = mutableSetOf()
-        node.possibleSubTypes.map { it ->
-            val oType: ObjectType? = dereferenceToObjectType(it)
-            oType?.let {
-                fields = it.recordDeclaration!!.fields.toMutableSet()
-                if (!visitedfields.addAll(fields)) {
-                    return visitedfields
-                }
-            }
-        }
+        var fields = node.type.recordDeclaration!!.fields.toMutableSet()
 
         fields.forEach {
             it.prevDFG.filterIsInstance<HasType>().forEach { getNestedFields(it, visitedfields) }

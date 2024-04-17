@@ -7,6 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.passes.LogPass
+import kotlin.streams.toList
 
 class PythonLogPass(ctx: TranslationContext) : LogPass(ctx) {
     override fun accept(result: TranslationResult) {

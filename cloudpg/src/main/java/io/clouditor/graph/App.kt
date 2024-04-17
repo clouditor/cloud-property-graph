@@ -14,7 +14,6 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.Benchmark
-import io.clouditor.graph.frontends.ruby.RubyLanguage
 import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
@@ -24,10 +23,10 @@ import io.clouditor.graph.passes.java.SpringBootPass
 import io.clouditor.graph.passes.js.FetchPass
 import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
-import io.clouditor.graph.passes.ruby.WebBrickPass
 import io.clouditor.graph.testing.LocalTestingPass
 import java.nio.file.Path
 import java.util.concurrent.Callable
+import kotlin.streams.toList
 import kotlin.system.exitProcess
 import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.session.SessionFactory
@@ -121,7 +120,6 @@ object App : Callable<Int> {
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
                 .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
-                .registerLanguage(RubyLanguage())
                 .registerLanguage(JavaLanguage())
                 .registerLanguage(CPPLanguage())
                 .registerLanguage(CLanguage())
@@ -135,7 +133,7 @@ object App : Callable<Int> {
                 .registerPass(JaxRsPass::class)
                 .registerPass(GolangHttpPass::class)
                 .registerPass(GinGonicPass::class)
-                .registerPass(WebBrickPass::class)
+                // .registerPass(WebBrickPass::class)
                 .registerPass(JSHttpPass::class)
                 .registerPass(FlaskPass::class)
                 .apply {

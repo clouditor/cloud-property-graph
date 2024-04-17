@@ -7,7 +7,6 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.statements.CompoundStatement
 import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
@@ -15,6 +14,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.golang.appendPath
+import kotlin.streams.toList
 
 class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
@@ -56,8 +56,7 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             var path: String = (mce.arguments.first() as? Literal<*>)?.value as? String ?: "/"
 
             val func =
-                ((mce.arguments[mce.arguments.size - 1] as? CompoundStatementExpression)
-                        ?.statement as?
+                ((mce.arguments[mce.arguments.size - 1] as? Block)?.statements as?
                         DeclarationStatement)
                     ?.singleDeclaration as?
                     FunctionDeclaration
@@ -65,7 +64,7 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             val req = func?.parameters?.get(0)
 
             // check, if path is further split
-            (func?.body as? CompoundStatement)?.statements?.forEach { statement ->
+            (func?.body as? Block)?.statements?.forEach { statement ->
                 // just look for the pattern for now
                 if (statement is DeclarationStatement &&
                         statement.singleDeclaration is VariableDeclaration
@@ -74,12 +73,10 @@ class WebBrickPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
                     if (init is MemberCallExpression && init.name.localName == "split") {
                         if (init.base is MemberCallExpression &&
-                                (init.base as MemberCallExpression).base is
-                                    DeclaredReferenceExpression
+                                (init.base as MemberCallExpression).base is Reference
                         ) {
-                            if (((init.base as MemberCallExpression).base as
-                                        DeclaredReferenceExpression)
-                                    .refersTo == req
+                            if (((init.base as MemberCallExpression).base as Reference).refersTo ==
+                                    req
                             ) {
                                 path = path.appendPath("{fragment}")
                             }

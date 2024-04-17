@@ -10,6 +10,7 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
 import io.clouditor.graph.passes.DatabaseOperationPass
+import kotlin.streams.toList
 
 @Suppress("UNUSED_PARAMETER")
 class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {

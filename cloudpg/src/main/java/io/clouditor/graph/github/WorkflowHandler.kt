@@ -15,6 +15,7 @@ import io.clouditor.graph.passes.locationForRegion
 import java.lang.IllegalArgumentException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.streams.toList
 
 @Suppress("UNUSED_PARAMETER")
 class WorkflowHandler(private val result: TranslationResult, private val rootPath: Path) {

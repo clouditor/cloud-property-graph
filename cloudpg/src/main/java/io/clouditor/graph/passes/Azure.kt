@@ -20,10 +20,7 @@ import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.ValueDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.*
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -32,6 +29,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.followDFGReverse
 import io.clouditor.graph.nodes.followEOG
 import io.clouditor.graph.nodes.location
+import kotlin.streams.toList
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
@@ -120,7 +118,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                         if (next is ValueDeclaration) {
                             next
                         } else {
-                            (next as DeclaredReferenceExpression).refersTo as ValueDeclaration?
+                            (next as Reference).refersTo as ValueDeclaration?
                         }
                 }
 
@@ -145,7 +143,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                                 (it.end as MemberCallExpression).base?.name?.localName ==
                                     "getBlobClient" &&
                                 (((it.end as CallExpression).callee as MemberCallExpression).base as
-                                        DeclaredReferenceExpression)
+                                        Reference)
                                     .refersTo == client
                         }
 
@@ -154,7 +152,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                         if (next is ValueDeclaration) {
                             next
                         } else {
-                            (next as DeclaredReferenceExpression).refersTo as ValueDeclaration?
+                            (next as Reference).refersTo as ValueDeclaration?
                         }
 
                     append?.let {
@@ -179,9 +177,8 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             base.followEOG {
                 it.end is MemberCallExpression &&
                     ((it.end as MemberCallExpression).base == base ||
-                        ((it.end as MemberCallExpression).base is DeclaredReferenceExpression &&
-                            ((it.end as MemberCallExpression).base as DeclaredReferenceExpression)
-                                .refersTo == base))
+                        ((it.end as MemberCallExpression).base is Reference &&
+                            ((it.end as MemberCallExpression).base as Reference).refersTo == base))
             }
 
         return path?.last()?.end as? MemberCallExpression
@@ -222,16 +219,15 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             // documented as a graph query in the paper
 
             // first parameter is always an input stream
-            val inputStreamRef = c.arguments[0] as DeclaredReferenceExpression
+            val inputStreamRef = c.arguments[0] as Reference
             val inputStream = inputStreamRef.refersTo as VariableDeclaration
             val newExpression = inputStream.initializer as NewExpression
             val construct = newExpression.initializer as ConstructExpression
 
             // this is very hacky, but we assume that it is always a new
             // ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8))
-            val sRef =
-                (construct.arguments[0] as MemberCallExpression).base as DeclaredReferenceExpression
-            val s = sRef.refersTo as ParamVariableDeclaration
+            val sRef = (construct.arguments[0] as MemberCallExpression).base as Reference
+            val s = sRef.refersTo as ParameterDeclaration
 
             // follow
             val param = s.followDFGReverse { it.second.name.localName == "password" }
