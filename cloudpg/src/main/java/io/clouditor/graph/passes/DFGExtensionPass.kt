@@ -11,7 +11,7 @@ import de.fraunhofer.aisec.cpg.graph.types.ObjectType
 import de.fraunhofer.aisec.cpg.graph.types.Type
 import de.fraunhofer.aisec.cpg.graph.types.recordDeclaration
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.ControlFlowSensitiveDFGPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import java.util.*
@@ -23,7 +23,7 @@ import java.util.*
  * however, the mere usage of a base causes labels to be relevant for the member expression.
  */
 // TODO: We do have these partial flows now, so this pass is probably obsolete
-@DependsOn(GoExtraPass::class)
+@DependsOn(ControlFlowSensitiveDFGPass::class)
 class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun accept(t: TranslationResult) {

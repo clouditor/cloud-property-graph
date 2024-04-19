@@ -296,6 +296,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             is DeclarationStatement -> {
                 // To connect to all border edges, we first need to iterate through all declared
                 // variables and find their USAGEs
+                // TODO: why?
                 val usages =
                     node.declarations
                         .filterIsInstance<VariableDeclaration>()
@@ -304,6 +305,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                 usages.forEach { addLabelToDFGBorderEdges(it, label) }
             }
             is AssignExpression -> {
+                // TODO: why?
                 val variableDeclarations =
                     node.lhs.filterIsInstance<Reference>().mapNotNull { it.refersTo }
                 val usages =
