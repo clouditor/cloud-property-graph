@@ -8,7 +8,7 @@ plugins {
     application
     idea
     `maven-publish`
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     // use this plugin to set all classes open which is required for kotlinx benchmark: id("org.jetbrains.kotlin.plugin.allopen") version "1.7.20-Beta"
 }
 
@@ -86,7 +86,7 @@ dependencies {
 
     api("org.neo4j", "neo4j-ogm-core", "4.0.10")
     api("org.neo4j", "neo4j-ogm", "4.0.10")
-    api("org.neo4j", "neo4j-ogm-bolt-driver", "4.0.10b  ")
+    api("org.neo4j", "neo4j-ogm-bolt-driver", "4.0.10")
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
@@ -120,7 +120,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "io.clouditor.graph.AppKt"
+    mainClass = "io.clouditor.graph.AppKt"
 }
 
 tasks.named("compileJava") {
@@ -161,7 +161,7 @@ kotlin {
     sourceSets {
         test {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
             }
         }
     }
