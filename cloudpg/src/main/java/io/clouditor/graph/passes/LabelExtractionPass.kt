@@ -14,7 +14,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import io.clouditor.graph.nodes.labels.*
@@ -23,7 +23,7 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 @DependsOn(DFGExtensionPass::class)
 class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
@@ -299,15 +299,19 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                 val usages =
                     node.declarations
                         .filterIsInstance<VariableDeclaration>()
-                        .flatMap { it.usageEdges.map { edge -> edge.end.refersTo } }
-                        .filterNotNull()
+                        .flatMap { it.usages }
                         .toSet()
                 usages.forEach { addLabelToDFGBorderEdges(it, label) }
             }
             is AssignExpression -> {
                 val variableDeclarations =
                     node.lhs.filterIsInstance<Reference>().mapNotNull { it.refersTo }
-                variableDeclarations.forEach { addLabelToDFGBorderEdges(it, label) }
+                val usages =
+                    variableDeclarations
+                        .filterIsInstance<VariableDeclaration>()
+                        .flatMap { it.usages }
+                        .toSet()
+                usages.forEach { addLabelToDFGBorderEdges(it, label) }
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)

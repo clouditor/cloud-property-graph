@@ -23,7 +23,7 @@ open class LinkabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(:PseudoIdentifier)--()-[:DFG*]->(h:HttpEndpoint) RETURN p"
             )
-        assertEquals(4, result.count())
+        assertEquals(8, result.count())
 
         result.first().apply {
             var path = this.get("p") as Array<*>

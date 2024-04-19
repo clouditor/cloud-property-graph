@@ -51,7 +51,7 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
     ): List<HttpEndpoint> {
         log.info("Looking for endpoints for {} request to {}", method, url)
 
-        return t.additionalNodes.filterIsInstance(HttpEndpoint::class.java).filter {
+        return t.additionalNodes.filterIsInstance<HttpEndpoint>().filter {
             endpointMatches(it, url) &&
                 (it.method == method || it.method == null) // TODO: make methods an array
         }

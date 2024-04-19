@@ -80,7 +80,12 @@ object App : Callable<Int> {
                 .build()
 
         val sessionFactory =
-            SessionFactory(configuration, "de.fraunhofer.aisec.cpg.graph", "io.clouditor.graph")
+            SessionFactory(
+                configuration,
+                "de.fraunhofer.aisec.cpg.graph",
+                "io.clouditor.graph",
+                "de.fraunhofer.aisec.cpg.frontends"
+            )
         val session = sessionFactory.openSession()
 
         val result = doTranslate()

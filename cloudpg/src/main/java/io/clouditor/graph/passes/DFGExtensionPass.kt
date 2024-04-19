@@ -22,6 +22,7 @@ import java.util.*
  * expression. Normally no data flows from the base to the member expression. For this use case,
  * however, the mere usage of a base causes labels to be relevant for the member expression.
  */
+// TODO: We do have these partial flows now, so this pass is probably obsolete
 @DependsOn(GoExtraPass::class)
 class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 

@@ -5,7 +5,7 @@ import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -16,7 +16,7 @@ import kotlin.streams.toList
 
 // This pass is needed only for the local testing mode, since in the testing pass we create the
 // endpoints and only after that we can create the respective requests
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 @DependsOn(LocalTestingPass::class)
 class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
@@ -44,10 +44,6 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
         c: CallExpression
     ) {
         val app = result.findApplicationByTU(tu)
-        val requestFunction = c.invokes.firstOrNull()
-        // TODO (old) request body: the default value is not correctly set, so we use the
-        //  value that has a dfg edge to the request parameter
-        val body = requestFunction?.prevDFG?.firstOrNull { it is Reference } as Reference
         if (c.name.toString() == "http.PostForm") {
             createHttpRequest(
                 result,
@@ -55,7 +51,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "POST",
-                body,
+                c.arguments[1],
                 app
             )
         } else if (c.name.toString() == "http.PutForm") {
@@ -64,7 +60,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[0] as? Literal<String>)?.value ?: "",
                 c,
                 "PUT",
-                requestFunction?.parameters?.get(1)?.prevDFG?.firstOrNull() as? Reference,
+                c.arguments[1],
                 app
             )
         } else if (c.toString() == "http.Get") {
@@ -82,7 +78,7 @@ class GolangHttpRequestPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                 (c.arguments[1] as? Literal<String>)?.value ?: "",
                 c,
                 "POST",
-                requestFunction?.parameters?.get(2)?.prevDFG?.firstOrNull() as? Expression,
+                c.arguments[2],
                 app
             )
         }

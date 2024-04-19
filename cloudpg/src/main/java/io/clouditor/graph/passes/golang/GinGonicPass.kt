@@ -13,13 +13,14 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.*
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
+import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.testing.LocalTestingPass
 
 @DependsOn(SymbolResolver::class)
-@DependsOn(
+@ExecuteBefore(
     LocalTestingPass::class /*, softDependency = true*/
 ) // should be "soft", but broken until #1532 is released
 // @DependsOn(KubernetesPass::class /*, softDependency = true*/)
