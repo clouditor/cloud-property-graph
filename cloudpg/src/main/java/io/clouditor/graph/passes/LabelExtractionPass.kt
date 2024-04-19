@@ -300,13 +300,14 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
                     node.declarations
                         .filterIsInstance<VariableDeclaration>()
                         .flatMap { it.usageEdges.map { edge -> edge.end.refersTo } }
+                        .filterNotNull()
                         .toSet()
-                usages.forEach { addLabelToDFGBorderEdges(it as Node, label) }
+                usages.forEach { addLabelToDFGBorderEdges(it, label) }
             }
             is AssignExpression -> {
                 val variableDeclarations =
-                    node.lhs.filterIsInstance<Reference>().map { it.refersTo }
-                variableDeclarations.forEach { addLabelToDFGBorderEdges(it as Node, label) }
+                    node.lhs.filterIsInstance<Reference>().mapNotNull { it.refersTo }
+                variableDeclarations.forEach { addLabelToDFGBorderEdges(it, label) }
             }
             else -> {
                 addLabelToDFGBorderEdges(node, label)

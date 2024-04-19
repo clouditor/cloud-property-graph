@@ -9,16 +9,18 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
+import io.clouditor.graph.testing.LocalTestingPass
 import kotlin.streams.toList
 
-@Suppress("UNUSED_PARAMETER")
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
+@DependsOn(LocalTestingPass::class, softDependency = true)
+// @DependsOn(KubernetesPass::class, softDependency = true)
 class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 

@@ -7,22 +7,22 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.firstAssignment
 import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.*
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
-import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
-import io.clouditor.graph.passes.KubernetesPass
 import io.clouditor.graph.testing.LocalTestingPass
 
-@DependsOn(GoExtraPass::class)
 @DependsOn(SymbolResolver::class)
-@ExecuteBefore(LocalTestingPass::class)
-@ExecuteBefore(KubernetesPass::class)
+@DependsOn(
+    LocalTestingPass::class /*, softDependency = true*/
+) // should be "soft", but broken until #1532 is released
+// @DependsOn(KubernetesPass::class /*, softDependency = true*/)
 class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
@@ -257,9 +257,10 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
-        if (r.initializer is CallExpression &&
-                ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
-                    (r.initializer as CallExpression).name.toString() == "gin.New")
+        val initializer = r.firstAssignment
+        if (initializer is CallExpression &&
+                (initializer.name.toString() == "gin.Default" ||
+                    initializer.name.toString() == "gin.New")
         ) {
             val app = result.findApplicationByTU(tu)
 

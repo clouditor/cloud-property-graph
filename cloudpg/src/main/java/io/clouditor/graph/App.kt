@@ -18,10 +18,7 @@ import io.clouditor.graph.nodes.Builder
 import io.clouditor.graph.passes.*
 import io.clouditor.graph.passes.golang.*
 import io.clouditor.graph.passes.java.JaxRsClientPass
-import io.clouditor.graph.passes.java.JaxRsPass
-import io.clouditor.graph.passes.java.SpringBootPass
 import io.clouditor.graph.passes.js.FetchPass
-import io.clouditor.graph.passes.js.JSHttpPass
 import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.testing.LocalTestingPass
 import java.nio.file.Path
@@ -119,7 +116,7 @@ object App : Callable<Int> {
         val builder =
             TranslationConfiguration.builder()
                 .topLevel(rootPath.toFile())
-                .sourceLocations(paths.map { rootPath.resolve(it).toFile() })
+                .sourceLocations(paths.map { rootPath.resolve(it).toFile().normalize() })
                 .registerLanguage(JavaLanguage())
                 .registerLanguage(CPPLanguage())
                 .registerLanguage(CLanguage())
@@ -129,13 +126,13 @@ object App : Callable<Int> {
                 .debugParser(true)
                 .defaultPasses()
                 .registerPass(GitHubWorkflowPass::class)
-                .registerPass(SpringBootPass::class)
-                .registerPass(JaxRsPass::class)
+                // .registerPass(SpringBootPass::class)
+                // .registerPass(JaxRsPass::class)
                 .registerPass(GolangHttpPass::class)
                 .registerPass(GinGonicPass::class)
                 // .registerPass(WebBrickPass::class)
-                .registerPass(JSHttpPass::class)
-                .registerPass(FlaskPass::class)
+                // .registerPass(JSHttpPass::class)
+                // .registerPass(FlaskPass::class)
                 .apply {
                     if (localMode) {
                         // register the localTestingPass after the HTTP Passes since it needs HTTP
@@ -194,7 +191,7 @@ val TranslationResult.computes: MutableList<Compute>
             MutableList<Compute>
 
 fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Application? {
-    return this.additionalNodes.filterIsInstance(Application::class.java).firstOrNull {
+    return this.additionalNodes.filterIsInstance<Application>().firstOrNull {
         it.translationUnits.contains(tu)
     }
 }
