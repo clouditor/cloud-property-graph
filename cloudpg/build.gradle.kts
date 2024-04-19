@@ -58,7 +58,7 @@ repositories {
     }
 
     ivy {
-        setUrl("https://download.eclipse.org/tools/cdt/releases/11.0/cdt-11.0.0/plugins")
+        setUrl("https://download.eclipse.org/tools/cdt/releases/11.3/cdt-11.3.1/plugins")
         metadataSources {
             artifact()
         }
@@ -72,10 +72,8 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
 
     // Move to JitPack dependency for newer versions
-    implementation("com.github.Fraunhofer-AISEC.cpg:cpg:v8.0.0-alpha.2")
-
-    /**
-    val version = "7.1.2"
+    // implementation("com.github.Fraunhofer-AISEC.cpg:cpg:v8.1.2")
+    val version = "8.1.2"
 
     implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
@@ -84,7 +82,6 @@ dependencies {
     implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
     implementation("de.fraunhofer.aisec:cpg-language-java:$version")
     implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")
-    */
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")

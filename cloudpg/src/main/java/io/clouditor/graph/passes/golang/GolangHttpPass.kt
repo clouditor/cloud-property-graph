@@ -7,9 +7,10 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.firstAssignment
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -17,7 +18,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
 
 @Suppress("UNUSED_PARAMETER")
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
@@ -92,10 +93,8 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     ) {
         // check initializers for http.NewServeMux()
         // actually check for return types - but that does not work (yet) with the standard library
-
-        if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).name.toString() == "http.NewServeMux"
-        ) {
+        var initializer = r.firstAssignment
+        if (initializer is CallExpression && initializer.name.toString() == "http.NewServeMux") {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")

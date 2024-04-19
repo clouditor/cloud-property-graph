@@ -7,10 +7,11 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.firstAssignment
 import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
@@ -20,7 +21,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.passes.KubernetesPass
 import io.clouditor.graph.testing.LocalTestingPass
 
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 @ExecuteBefore(LocalTestingPass::class)
 @ExecuteBefore(KubernetesPass::class)
 class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
@@ -257,9 +258,10 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         tu: TranslationUnitDeclaration,
         r: VariableDeclaration
     ) {
-        if (r.initializer is CallExpression &&
-                ((r.initializer as CallExpression).name.toString() == "gin.Default" ||
-                    (r.initializer as CallExpression).name.toString() == "gin.New")
+        var initializer = r.firstAssignment
+        if (initializer is CallExpression &&
+                (initializer.name.toString() == "gin.Default" ||
+                    initializer.name.toString() == "gin.New")
         ) {
             val app = result.findApplicationByTU(tu)
 

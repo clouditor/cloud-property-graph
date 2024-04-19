@@ -6,7 +6,7 @@ import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
@@ -15,7 +15,7 @@ import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
 
 @Suppress("UNUSED_PARAMETER")
-@DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 class GoCryptoPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     override fun cleanup() {}

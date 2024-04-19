@@ -52,8 +52,7 @@ class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     }
 
     private fun handleConf(conf: TestConfig, t: TranslationResult) {
-        val controllers =
-            t.additionalNodes.filter { it is HttpRequestHandler }.map { it as HttpRequestHandler }
+        val controllers = t.additionalNodes.filterIsInstance<HttpRequestHandler>()
 
         for (service in conf.services) {
             if (service.type == "server" || service.type == "third-party") {
