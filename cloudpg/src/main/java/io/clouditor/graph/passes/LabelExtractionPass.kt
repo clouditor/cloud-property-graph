@@ -160,10 +160,10 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             )
 
         regexes.entries.forEach { it ->
-            val matches = it.key.findAll(nodeWComment.comment!!)
-            if (matches.toList().isNotEmpty()) {
-                val labels = it.value(nodeWComment, matches)
-                labels.forEach {
+            val matches = nodeWComment.comment?.let { it1 -> it.key.findAll(it1) }
+            if (matches?.toList()?.isNotEmpty() == true) {
+                val labels = matches?.let { it1 -> it.value(nodeWComment, it1) }
+                labels?.forEach {
                     t += it // Adding Labels to the supplementary nodes of a translation unit
                 }
             }

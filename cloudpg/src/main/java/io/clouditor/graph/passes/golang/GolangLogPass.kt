@@ -7,6 +7,7 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.passes.GoExtraPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -14,6 +15,7 @@ import io.clouditor.graph.passes.LogPass
 import kotlin.streams.toList
 
 @DependsOn(GoExtraPass::class)
+@DependsOn(SymbolResolver::class)
 class GolangLogPass(ctx: TranslationContext) : LogPass(ctx) {
     override fun accept(result: TranslationResult) {
         val translationUnits =
