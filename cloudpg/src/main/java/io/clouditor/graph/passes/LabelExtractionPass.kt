@@ -59,7 +59,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
             }
         }
 
-        // Labels that are equal to each other are merged to reduce them in size and and allow
+        // Labels that are equal to each other are merged to reduce them in size and allow
         // associating them to Anonymization label
         mergeEqualLabels(t)
         // Connects labels and anonymization labels such that anonymization of labels can be
@@ -323,7 +323,7 @@ class LabelExtractionPass(ctx: TranslationContext) : TranslationResultPass(ctx) 
     }
 
     /**
-     * Function to just add labels to the annotated node, the type of Label can me specified through
+     * Function to just add labels to the annotated node, the type of Label can be specified through
      * the generic type specialization. Nodes that are in the Sub-AST of the annotated node, and
      * have an outgoing DFG-edge to another node not in the annotated nodes Sub-AST.
      */

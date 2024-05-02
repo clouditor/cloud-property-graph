@@ -70,15 +70,18 @@ repositories {
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    val version = "8.1.2"
 
-    implementation("de.fraunhofer.aisec:cpg-core:$version")
+    val version = "8.1.2"
+    implementation("com.github.Fraunhofer-AISEC.cpg:cpg:0198042dad")
+    implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
+
+    /*implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
     implementation("de.fraunhofer.aisec:cpg-language-go:$version")
-    implementation("de.fraunhofer.aisec:cpg-language-python:$version")
+    implementation("com.github.Fraunhofer-AISEC:cpg:0198042dad")
     implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
     implementation("de.fraunhofer.aisec:cpg-language-java:$version")
-    implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")*/
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")

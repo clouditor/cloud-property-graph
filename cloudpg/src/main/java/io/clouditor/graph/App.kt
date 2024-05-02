@@ -23,7 +23,6 @@ import io.clouditor.graph.passes.python.*
 import io.clouditor.graph.testing.LocalTestingPass
 import java.nio.file.Path
 import java.util.concurrent.Callable
-import kotlin.streams.toList
 import kotlin.system.exitProcess
 import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.session.SessionFactory
