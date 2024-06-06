@@ -16,7 +16,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
-import de.fraunhofer.aisec.cpg.passes.order.DependsOn
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
 import io.clouditor.graph.nodes.labels.*
 import io.clouditor.graph.plusAssign
 import java.util.function.Consumer

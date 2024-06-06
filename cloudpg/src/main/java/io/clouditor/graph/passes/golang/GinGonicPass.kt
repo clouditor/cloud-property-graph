@@ -12,8 +12,8 @@ import de.fraunhofer.aisec.cpg.graph.parseName
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.passes.*
-import de.fraunhofer.aisec.cpg.passes.order.DependsOn
-import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
+import de.fraunhofer.aisec.cpg.passes.configuration.ExecuteBefore
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*

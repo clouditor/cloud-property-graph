@@ -8,12 +8,11 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
-import de.fraunhofer.aisec.cpg.passes.order.DependsOn
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.Signature
-import kotlin.streams.toList
 
 @Suppress("UNUSED_PARAMETER")
 @DependsOn(SymbolResolver::class)

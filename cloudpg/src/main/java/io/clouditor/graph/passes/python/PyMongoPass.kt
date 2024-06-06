@@ -8,8 +8,8 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression
 import de.fraunhofer.aisec.cpg.passes.SymbolResolver
-import de.fraunhofer.aisec.cpg.passes.order.DependsOn
-import de.fraunhofer.aisec.cpg.passes.order.RequiredFrontend
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
+import de.fraunhofer.aisec.cpg.passes.configuration.RequiredFrontend
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
