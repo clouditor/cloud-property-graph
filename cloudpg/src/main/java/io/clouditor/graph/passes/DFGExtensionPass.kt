@@ -39,10 +39,6 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         // nodes.filterIsInstance<CallExpression>().filter { node -> node.name == "stringify" ||
         // node.name == "toString" }
 
-        val keyValueExpressions: List<KeyValueExpression> =
-            nodes.filterIsInstance<KeyValueExpression>()
-        connectDFGValuesToKeyValueExpression(keyValueExpressions)
-
         stringifyFunctions.forEach {
             redirectDFGThroughFunctionCall(it)
             drawDFGEdgesFromNestedFields(it)
