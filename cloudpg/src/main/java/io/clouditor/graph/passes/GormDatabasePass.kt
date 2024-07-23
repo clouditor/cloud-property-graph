@@ -2,6 +2,7 @@ package io.clouditor.graph.passes
 
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.analysis.ValueEvaluator
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
@@ -293,16 +294,16 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             }
                 ?: mutableMapOf()
 
-        return ValueResolver { node, resolver ->
+        return ValueEvaluator { node, resolver ->
                 when (node) {
                     is CallExpression -> {
                         // support for some special calls, i.e. format
                         if (node.name.localName == "Sprintf") {
-                            val str = resolver.resolve(node.arguments.firstOrNull()) as String
+                            val str = resolver.evaluate(node.arguments.firstOrNull()) as String
                             val arguments = node.arguments.drop(1)
 
-                            return@ValueResolver str.format(
-                                *arguments.map { resolver.resolve(it) }.toTypedArray()
+                            return@ValueEvaluator str.format(
+                                *arguments.map { resolver.evaluate(it) }.toTypedArray()
                             )
                         }
 
@@ -310,17 +311,17 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                         // stdlib doesnt have that built-in
                         if (node.name.localName == "EnvOrDefault") {
                             // environment lookup on python
-                            val key = resolver.resolve(node.arguments.firstOrNull())
+                            val key = resolver.evaluate(node.arguments.firstOrNull())
 
-                            return@ValueResolver env[key] ?: resolver.resolve(node.arguments[1])
+                            return@ValueEvaluator env[key] ?: resolver.evaluate(node.arguments[1])
                         }
 
                         // return placeholder
-                        return@ValueResolver "{${node.name}()}"
+                        return@ValueEvaluator "{${node.name}()}"
                     }
-                    else -> return@ValueResolver "{${node?.name}}"
+                    else -> return@ValueEvaluator "{${node?.name}}"
                 }
             }
-            .resolve(expr)
+            .evaluate(expr)
     }
 }

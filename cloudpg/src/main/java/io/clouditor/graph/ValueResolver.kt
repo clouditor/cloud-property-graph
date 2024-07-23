@@ -152,6 +152,9 @@ open class ValueResolver(
 
                 return cannotResolve(expr, this)
             }
+            is Reference -> {
+                return expr.refersTo
+            }
         }
 
         return cannotResolve(expr, this)
