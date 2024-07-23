@@ -10,13 +10,20 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.graph.types.Type
+import de.fraunhofer.aisec.cpg.passes.ControlFlowSensitiveDFGPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
+import io.clouditor.graph.testing.LocalTestingPass
 import kotlin.streams.toList
 
 @Suppress("UNUSED_PARAMETER")
+@DependsOn(SymbolResolver::class)
+@DependsOn(ControlFlowSensitiveDFGPass::class)
+@DependsOn(LocalTestingPass::class, softDependency = true)
 class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
     override fun accept(result: TranslationResult) {
         val translationUnits =

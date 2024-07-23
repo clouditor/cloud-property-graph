@@ -65,6 +65,7 @@ abstract class DatabaseOperationPass(ctx: TranslationContext) : TranslationResul
         log.info("Looking for databases hosted at {}", host)
 
         return t.additionalNodes.filterIsInstance(DatabaseService::class.java).filter {
+            // TODO IK should be localName?
             it.name.toString() == host
         }
     }
