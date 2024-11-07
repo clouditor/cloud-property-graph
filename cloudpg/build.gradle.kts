@@ -58,29 +58,32 @@ repositories {
     }
 
     ivy {
-        setUrl("https://download.eclipse.org/tools/cdt/releases/11.0/cdt-11.0.0/plugins")
+        setUrl("https://download.eclipse.org/tools/cdt/releases/")
         metadataSources {
             artifact()
         }
+
         patternLayout {
-            artifact("/[organisation].[module]_[revision].[ext]")
+            artifact("[organisation].[module]_[revision].[ext]")
         }
     }
 }
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    implementation("com.github.Fraunhofer-AISEC:cpg:4e7c0b862e")
+    //implementation("de.fraunhofer.aisec:cpg-language-cxx:8.3.0")
+    //val version = "8.2.0"
+    
+    implementation("de.fraunhofer.aisec:cpg-language-typescript:8.3.0")
 
-    val version = "8.2.0"
-    // implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
-
-    implementation("de.fraunhofer.aisec:cpg-core:$version")
+    /*implementation("de.fraunhofer.aisec:cpg-core:$version")
     implementation("de.fraunhofer.aisec:cpg-analysis:$version")
     implementation("de.fraunhofer.aisec:cpg-language-go:$version")
     implementation("de.fraunhofer.aisec:cpg-language-python:$version")
     implementation("de.fraunhofer.aisec:cpg-language-typescript:$version")
     implementation("de.fraunhofer.aisec:cpg-language-java:$version")
-    implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")
+    implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")*/
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
     implementation ("org.xmlunit:xmlunit-core:2.9.0")

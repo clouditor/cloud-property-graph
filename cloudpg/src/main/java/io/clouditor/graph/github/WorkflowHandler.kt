@@ -159,7 +159,7 @@ class WorkflowHandler(private val result: TranslationResult, private val rootPat
                 result.builders += builder
 
                 // build a DFG node from the builder to the image
-                builder.addNextDFG(image)
+                builder.nextDFGEdges.add(image)
             }
         }
     }
