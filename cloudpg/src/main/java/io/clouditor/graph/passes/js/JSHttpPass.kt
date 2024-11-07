@@ -111,7 +111,7 @@ class JSHttpPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 fd.parameters.first() == (me.base as? Reference)?.refersTo
         ) {
             // set the DFG target of this call to the DFG target of our http endpoints
-            me.nextDFG.forEach { e.addNextDFG(it) }
+            me.nextDFG.forEach { e.nextDFG.add(it) }
 
             // TODO(oxisto): Once we update the ontology, we should also set this as the
             // "request_body" property of the http endpoint

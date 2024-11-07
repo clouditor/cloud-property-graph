@@ -65,7 +65,7 @@ class IngressInvocationPass(ctx: TranslationContext) : TranslationResultPass(ctx
                         transportEncryption,
                         url
                     )
-                proxy.addNextDFG(endpoint)
+                proxy.nextDFG.add(endpoint)
                 t += proxy
             }
         }

@@ -189,9 +189,9 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         if (m.name.localName == "BindJSON" || m.name.localName == "Bind") {
             val obj = (m.arguments.firstOrNull() as UnaryOperator).input
             if (obj is Reference) {
-                obj.refersTo?.let { e.addNextDFG(it) }
+                obj.refersTo?.let { e.nextDFG.add(it) }
             } else {
-                e.addNextDFG(obj)
+                e.nextDFG.add(obj)
             }
         } else if (m.name.localName == "Get") {
             // lets see, whether we have a chain of member calls that go
@@ -213,7 +213,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 // otherwise, go to the next base
                 memberCall = memberCall.base as? MemberExpression
             }
-            e.addNextDFG(m)
+            e.nextDFG.add(m)
         }
     }
 
@@ -239,7 +239,7 @@ class GinGonicPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                 // otherwise, go to the next base
                 memberCall = memberCall.base as? MemberExpression
             }
-            e.addNextDFG(m)
+            e.nextDFG.add(m)
         }
     }
 

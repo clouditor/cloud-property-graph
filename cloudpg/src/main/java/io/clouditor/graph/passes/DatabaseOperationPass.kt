@@ -49,9 +49,9 @@ abstract class DatabaseOperationPass(ctx: TranslationContext) : TranslationResul
 
         storage.forEach {
             if (op.isModify) {
-                op.addNextDFG(it)
+                op.nextDFG.add(it)
             } else {
-                op.addPrevDFG(it)
+                op.prevDFG.add(it)
             }
         }
 

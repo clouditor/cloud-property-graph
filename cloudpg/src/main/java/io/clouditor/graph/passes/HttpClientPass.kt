@@ -22,11 +22,11 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         request.name = Name(method)
         request.location = call.location
 
-        endpoints.forEach { request.addNextDFG(it) }
-        body?.addNextDFG(request)
+        endpoints.forEach { request.nextDFG.add(it) }
+        body?.nextDFG?.add(request)
 
         // call.invokes = listOf(request)
-        call.addPrevDFG(request)
+        call.prevDFG.add(request)
 
         val i = endpoints.firstOrNull()
         val f = i?.handler
@@ -35,7 +35,7 @@ abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(c
         // remote call happens
         f?.prevDFG?.forEach {
             // for each return node, connect it to the get-call
-            it.addNextDFG(call)
+            it.nextDFG.add(call)
             println("Connecting $it to $call")
         }
 

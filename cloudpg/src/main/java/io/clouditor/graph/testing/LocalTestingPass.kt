@@ -68,7 +68,7 @@ class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                                 null,
                                 url
                             )
-                        proxy.addNextDFG(endpoint)
+                        proxy.nextDFG.add(endpoint)
                         t += proxy
                     }
                 }

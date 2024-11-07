@@ -222,7 +222,7 @@ class KubernetesPass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) 
         image.application?.runsOn?.add(container)
 
         // add dataflow from image to container
-        container?.let { image.addNextDFG(it) }
+        container?.let { image.nextDFG.add(it) }
 
         return container
     }

@@ -1,10 +1,10 @@
 package io.clouditor.graph.nodes
 
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge
+import de.fraunhofer.aisec.cpg.graph.edges.Edge
 
-fun Node.followEOG(predicate: (PropertyEdge<*>) -> Boolean): List<PropertyEdge<*>>? {
-    val path = mutableListOf<PropertyEdge<*>>()
+fun Node.followEOG(predicate: (Edge<*>) -> Boolean): List<Edge<*>>? {
+    val path = mutableListOf<Edge<*>>()
 
     for (edge in this.nextEOGEdges) {
         path.add(edge)

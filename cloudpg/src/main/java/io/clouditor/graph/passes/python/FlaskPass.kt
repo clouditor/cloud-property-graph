@@ -135,7 +135,7 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private fun handleRequestUnpacking(me: MemberExpression, e: HttpEndpoint) {
         if (me.name.localName == "json" && me.base.name.localName == "request") {
             // set the DFG target of this call to the DFG target of our http endpoints
-            me.nextDFG.forEach { e.addNextDFG(it) }
+            me.nextDFG.forEach { e.nextDFG.add(it) }
 
             // TODO(oxisto): Once we update the ontology, we should also set this as the
             // "request_body" property of the http endpoint

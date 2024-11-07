@@ -81,7 +81,7 @@ class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
                     if (it.type is PointerType && it.type.root.name.toString() == "http.Request") {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
                         // stored in
-                        endpoint.addNextDFG(it)
+                        endpoint.nextDFG.add(it)
                     }
                 }
                 client?.httpEndpoints?.plusAssign(endpoint)

@@ -186,16 +186,16 @@ class PyMongoPass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             op = createDatabaseQuery(t, true, connect, storage, listOf(mce), app)
 
             // data flows from first argument to op
-            mce.arguments.firstOrNull()?.addNextDFG(op)
+            mce.arguments.firstOrNull()?.nextDFG?.add(op)
         }
 
         if (mce.name.localName == "find" || mce.name.localName == "find_one") {
             op = createDatabaseQuery(t, false, connect, storage, listOf(mce), app)
             // data flows from first argument to op
-            mce.arguments.firstOrNull()?.addNextDFG(op)
+            mce.arguments.firstOrNull()?.nextDFG?.add(op)
 
             // and towards the DFG target(s) of the call
-            mce.nextDFG.forEach { op.addNextDFG(it) }
+            mce.nextDFG.forEach { op.nextDFG.add(it) }
         }
 
         if (op != null) {

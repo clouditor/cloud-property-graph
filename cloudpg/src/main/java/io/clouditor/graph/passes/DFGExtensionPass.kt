@@ -44,7 +44,7 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             drawDFGEdgesFromNestedFields(it)
         }
 
-        memberExpressions.forEach { it.addPrevDFG(it.base) }
+        memberExpressions.forEach { it.prevDFG.add(it.base) }
     }
 
     /**
@@ -57,18 +57,18 @@ class DFGExtensionPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     ) {
         keyValueExpressions.forEach {
             val keyValueExpression: KeyValueExpression = it
-            it.value?.let { keyValueExpression.addPrevDFG(it) }
+            it.value?.let { keyValueExpression.prevDFG.add(it) }
         }
     }
 
     private fun redirectDFGThroughFunctionCall(call: CallExpression) {
-        call.arguments.forEach { call.addPrevDFG(it) }
+        call.arguments.forEach { call.prevDFG.add(it) }
     }
 
     private fun drawDFGEdgesFromNestedFields(call: CallExpression) {
         call.arguments.forEach { it ->
             val nestedFields: MutableSet<FieldDeclaration> = getNestedFields(it)
-            nestedFields.forEach { call.addPrevDFG(it) }
+            nestedFields.forEach { call.prevDFG.add(it) }
         }
     }
 

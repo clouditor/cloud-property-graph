@@ -200,13 +200,13 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         // then, check if we have a second argument
         call.arguments.getOrNull(1)?.let {
             // add it as an incoming DFG edge
-            op.addPrevDFG(it)
+            op.prevDFG.add(it)
         }
     }
 
     private fun handleWhere(call: CallExpression, op: DatabaseQuery) {
         // simply add all arguments as incoming DFG edges
-        call.arguments.forEach { op.addPrevDFG(it) }
+        call.arguments.forEach { op.prevDFG.add(it) }
     }
 
     private fun handleFirst(call: CallExpression, op: DatabaseQuery) {
@@ -223,7 +223,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
         // add a DFG edge towards our target
         if (target != null) {
-            op.addNextDFG(target)
+            op.nextDFG.add(target)
 
             // add storage
             op.to.forEach {
@@ -232,9 +232,9 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
                 // also add DFG edges from or towards the storage, depending on the query type
                 if (op.isModify) {
-                    op.addNextDFG(storage)
+                    op.nextDFG.add(storage)
                 } else {
-                    op.addPrevDFG(storage)
+                    op.prevDFG.add(storage)
                 }
             }
         }
@@ -246,14 +246,14 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
         // add a DFG edge towards our target
         if (target != null) {
-            target.addNextDFG(op)
+            target.nextDFG.add(op)
 
             // add storage
             op.to.forEach {
                 val storage = it.getStorageOrCreate(deriveName(target.type))
                 op.storage.add(storage)
 
-                op.addNextDFG(storage)
+                op.nextDFG.add(storage)
             }
         }
     }
@@ -267,7 +267,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
         // add a DFG edge towards our target
         if (target != null) {
-            target.addNextDFG(op)
+            target.nextDFG.add(op)
 
             // add storage
             op.to.forEach {
@@ -275,7 +275,7 @@ class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
                 op.storage.add(storage)
 
                 // also add DFG edge towards the storage
-                op.addNextDFG(storage)
+                op.nextDFG.add(storage)
             }
         }
     }

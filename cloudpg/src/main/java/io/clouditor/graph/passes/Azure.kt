@@ -197,7 +197,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             println("We got an interesting call: create")
 
             val request = ObjectStorageRequest(c, listOf(storage), "create")
-            request.addNextDFG(storage)
+            request.nextDFG.add(storage)
             request.name = Name(request.type, null)
 
             t += request
@@ -208,7 +208,7 @@ class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
             // create an object storage request
             val request = ObjectStorageRequest(c, listOf(storage), "append")
-            request.addNextDFG(storage)
+            request.nextDFG.add(storage)
             request.name = Name(request.type, null)
 
             t += request
@@ -289,7 +289,7 @@ class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
 
                     // model data export as ObjectStorageRequest
                     val request = ObjectStorageRequest(log, listOf(storage), "append")
-                    storage?.let { request.addNextDFG(it) }
+                    storage?.let { request.nextDFG.add(it) }
 
                     // add DFG from the source to the sink
                     request.to.forEach { request.source.nextDFG.add(it) }

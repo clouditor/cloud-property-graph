@@ -3,7 +3,6 @@ package io.clouditor.graph.passes.python
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.edge.Properties
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
@@ -105,7 +104,7 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
             op.calls.plusAssign(call)
 
             // add DFG flow towards the target of the fetchall call
-            op.addNextDFG(target)
+            op.nextDFG.add(target)
         }
     }
 
@@ -159,7 +158,7 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
 
             // in the select case, the arguments are just arguments to the query itself and flow
             // towards the op
-            call.arguments.forEach { it.addNextDFG(op) }
+            call.arguments.forEach { it.nextDFG.add(op) }
 
             return op
         }
@@ -187,17 +186,10 @@ class Psycopg2Pass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
         val resolver = PythonValueResolver(app)
         // resolve the connection details
         val host =
-            resolver.resolve(
-                call.argumentEdges.firstOrNull { it.getProperty(Properties.NAME) == "host" }?.end
-            ) as?
-                String
+            resolver.resolve(call.argumentEdges.firstOrNull { it.name == "host" }?.end) as? String
 
         val db =
-            resolver.resolve(
-                call.argumentEdges
-                    .firstOrNull { it.getProperty(Properties.NAME) == "database" }
-                    ?.end
-            ) as?
+            resolver.resolve(call.argumentEdges.firstOrNull { it.name == "database" }?.end) as?
                 String
 
         // create a new DB operation (connect)
