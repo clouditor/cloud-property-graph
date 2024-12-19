@@ -22,7 +22,7 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
 
         result.first().apply {
             val path = this.get("p") as Array<*>

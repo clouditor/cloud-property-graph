@@ -10,6 +10,7 @@ import de.fraunhofer.aisec.cpg.frontends.golang.GoLanguage
 import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage
 import de.fraunhofer.aisec.cpg.frontends.python.PythonLanguage
 import de.fraunhofer.aisec.cpg.frontends.typescript.TypeScriptLanguage
+import de.fraunhofer.aisec.cpg.graph.Component
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.allChildren
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
@@ -136,7 +137,7 @@ object App : Callable<Int> {
                 .registerPass(GinGonicPass::class)
                 // .registerPass(WebBrickPass::class)
                 // .registerPass(JSHttpPass::class)
-                // .registerPass(FlaskPass::class)
+                .registerPass(FlaskPass::class)
                 .apply {
                     if (localMode) {
                         // register the localTestingPass after the HTTP Passes since it needs HTTP
@@ -195,7 +196,13 @@ val TranslationResult.computes: MutableList<Compute>
             MutableList<Compute>
 
 fun TranslationResult.findApplicationByTU(tu: TranslationUnitDeclaration): Application? {
-    return this.additionalNodes.filterIsInstance<Application>().firstOrNull {
+    return this.additionalNodes.filterIsInstance<Application>().firstOrNull() {
+        it.translationUnits.contains(tu)
+    }
+}
+
+fun TranslationResult.findComponentByTU(tu: TranslationUnitDeclaration): Component? {
+    return this.additionalNodes.filterIsInstance<Component>().firstOrNull() {
         it.translationUnits.contains(tu)
     }
 }

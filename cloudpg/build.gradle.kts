@@ -73,7 +73,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
     implementation("com.github.Fraunhofer-AISEC:cpg:4e7c0b862e")
     //implementation("de.fraunhofer.aisec:cpg-language-cxx:8.3.0")
-    //val version = "8.2.0"
+    //val version = "8.3.0"
 
     implementation("de.fraunhofer.aisec:cpg-language-typescript:8.3.0")
 
@@ -86,7 +86,7 @@ dependencies {
     implementation("de.fraunhofer.aisec:cpg-language-cxx:$version")*/
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
-    implementation ("org.xmlunit:xmlunit-core:2.9.0")
+    implementation("org.xmlunit:xmlunit-core:2.9.0")
     implementation("org.xmlunit:xmlunit-matchers:2.9.0")
 
     api("org.neo4j", "neo4j-ogm-core", "4.0.10")

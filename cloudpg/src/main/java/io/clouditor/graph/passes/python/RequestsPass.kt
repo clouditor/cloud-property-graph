@@ -4,6 +4,7 @@ import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
+import de.fraunhofer.aisec.cpg.graph.evaluate
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.SymbolResolver
 import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
@@ -11,9 +12,10 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
-import kotlin.streams.toList
+import io.clouditor.graph.testing.LocalTestingPass
 
 @DependsOn(SymbolResolver::class)
+@DependsOn(LocalTestingPass::class)
 class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
 
     override fun cleanup() {
@@ -28,13 +30,10 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(t: MemberCallExpression) {
-                        // look for requests.get()
-                        if (t.name.localName == "get" && t.base?.name?.localName == "requests") {
+                    fun visit(t: CallExpression) {
+                        if (t.name.toString() == "requests.get") {
                             handleClientRequest(tu, result, t, "GET")
-                        } else if (t.name.localName == "post" &&
-                                t.base?.name?.localName == "requests"
-                        ) {
+                        } else if (t.name.toString() == "requests.post") {
                             handleClientRequest(tu, result, t, "POST")
                         }
                     }
@@ -47,12 +46,12 @@ class RequestsPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private fun handleClientRequest(
         tu: TranslationUnitDeclaration,
         t: TranslationResult,
-        r: MemberCallExpression,
+        r: CallExpression,
         method: String
     ) {
         val app = t.findApplicationByTU(tu)
 
-        val url = PythonValueResolver(app).resolve(r.arguments.first())
+        val url = r.arguments.first().evaluate()
 
         createHttpRequest(t, url as String, r, method, r.arguments.getOrNull(1), app)
     }

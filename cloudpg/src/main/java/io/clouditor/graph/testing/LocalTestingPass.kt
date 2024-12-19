@@ -96,7 +96,7 @@ class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                         mutableListOf(tud)
                     )
                 application.name = Name(service.name)
-                t += application
+                t.additionalNodes += application
             } else if (service.type.contains("client")) {
                 val tud =
                     t.components.let {
@@ -119,7 +119,7 @@ class LocalTestingPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
                         mutableListOf(tud)
                     )
                 application.name = Name(service.name)
-                t += application
+                t.additionalNodes += application
             }
         }
 

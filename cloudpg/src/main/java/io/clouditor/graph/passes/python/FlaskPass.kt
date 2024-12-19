@@ -7,7 +7,6 @@ import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.passes.SymbolResolver
@@ -45,7 +44,7 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
             tu.accept(
                 Strategy::AST_FORWARD,
                 object : IVisitor<Node>() {
-                    fun visit(t: VariableDeclaration) {
+                    fun visit(t: FunctionDeclaration) {
                         handleVariableDeclarations(result, tu, t, t.annotations)
                     }
                 }
@@ -56,12 +55,12 @@ class FlaskPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private fun handleVariableDeclarations(
         result: TranslationResult,
         tu: TranslationUnitDeclaration,
-        v: VariableDeclaration,
+        v: FunctionDeclaration,
         annotations: MutableList<Annotation>
     ) {
         val app = result.findApplicationByTU(tu)
 
-        if ((v.initializer as? CallExpression)?.name?.localName == "Flask") {
+        if (v.name.localName == "Flask") {
             // handle it as a request handler
             val handler = HttpRequestHandler(app, mutableListOf(), "/")
             handler.name = v.name
