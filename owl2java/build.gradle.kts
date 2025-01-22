@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0"
     application
 }
 
@@ -19,5 +19,5 @@ dependencies {
 }
 
 application {
-    mainClassName = "io.clouditor.graph.SemanticNodeGenerator"
+    mainClass = "io.clouditor.graph.SemanticNodeGenerator"
 }

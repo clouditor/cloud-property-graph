@@ -1,11 +1,13 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 
-abstract class HttpClientPass : Pass() {
+abstract class HttpClientPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     protected fun createHttpRequest(
         t: TranslationResult,
@@ -17,14 +19,14 @@ abstract class HttpClientPass : Pass() {
     ): HttpRequest {
         val endpoints = getEndpointsForUrl(t, url, method)
         val request = HttpRequest(call, body, endpoints)
-        request.name = method
+        request.name = Name(method)
         request.location = call.location
 
-        endpoints.forEach { request.addNextDFG(it) }
-        body?.addNextDFG(request)
+        endpoints.forEach { request.nextDFG.add(it) }
+        body?.nextDFG?.add(request)
 
         // call.invokes = listOf(request)
-        call.addPrevDFG(request)
+        call.prevDFG.add(request)
 
         val i = endpoints.firstOrNull()
         val f = i?.handler
@@ -33,7 +35,7 @@ abstract class HttpClientPass : Pass() {
         // remote call happens
         f?.prevDFG?.forEach {
             // for each return node, connect it to the get-call
-            it.addNextDFG(call)
+            it.nextDFG.add(call)
             println("Connecting $it to $call")
         }
 
@@ -49,7 +51,7 @@ abstract class HttpClientPass : Pass() {
     ): List<HttpEndpoint> {
         log.info("Looking for endpoints for {} request to {}", method, url)
 
-        return t.additionalNodes.filterIsInstance(HttpEndpoint::class.java).filter {
+        return t.additionalNodes.filterIsInstance<HttpEndpoint>().filter {
             endpointMatches(it, url) &&
                 (it.method == method || it.method == null) // TODO: make methods an array
         }

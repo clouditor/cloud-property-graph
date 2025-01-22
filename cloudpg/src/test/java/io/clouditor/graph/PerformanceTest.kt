@@ -2,7 +2,6 @@ package io.clouditor.graph
 
 import kotlin.io.path.*
 import kotlinx.benchmark.Scope
-import kotlinx.benchmark.readFile
 import org.junit.Test
 import org.openjdk.jmh.annotations.*
 
@@ -70,7 +69,7 @@ open class PerformanceTest {
 
         // create ONE large file
         val tmp = createTempFile(dir, "detectability", ".py")
-        tmp.appendText(serverSrc.readFile())
+        tmp.appendText(Path(serverSrc).readText())
         // append the function i times to the temporary file
         for (i in 1..range.toInt()) {
             val sampleFunction =

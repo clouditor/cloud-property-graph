@@ -1,7 +1,7 @@
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.7.20-Beta" apply false
-    kotlin("plugin.serialization") version "1.7.20-Beta" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.9.20" apply false
+    kotlin("plugin.serialization") version "1.9.20" apply false
     id("com.diffplug.spotless") version "5.12.1"
 }
 
@@ -15,7 +15,7 @@ subprojects {
         mavenCentral()
 
         ivy {
-            setUrl("https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0/plugins")
+            setUrl("https://download.eclipse.org/tools/cdt/releases/11.3/cdt-11.3.1/plugins")
             metadataSources {
                 artifact()
             }

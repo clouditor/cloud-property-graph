@@ -1,14 +1,15 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.DeclaredReferenceExpression
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 
-abstract class DatabaseOperationPass : Pass() {
+abstract class DatabaseOperationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     /**
      * Creates a new [DatabaseConnect]. This also takes care of adding the query to the
@@ -48,9 +49,9 @@ abstract class DatabaseOperationPass : Pass() {
 
         storage.forEach {
             if (op.isModify) {
-                op.addNextDFG(it)
+                op.nextDFG.add(it)
             } else {
-                op.addPrevDFG(it)
+                op.prevDFG.add(it)
             }
         }
 
@@ -64,7 +65,8 @@ abstract class DatabaseOperationPass : Pass() {
         log.info("Looking for databases hosted at {}", host)
 
         return t.additionalNodes.filterIsInstance(DatabaseService::class.java).filter {
-            it.name == host
+            // TODO IK should be localName?
+            it.name.toString() == host
         }
     }
 
@@ -76,13 +78,13 @@ abstract class DatabaseOperationPass : Pass() {
         // them as well
         if (target is VariableDeclaration) {
             target.nextDFG.forEach {
-                if (it is DeclaredReferenceExpression && it.refersTo == target) {
+                if (it is Reference && it.refersTo == target) {
                     map[it] = obj
                 }
             }
             // sometimes there is only an EOG edge but not a DFG
             target.nextEOG.forEach {
-                if (it is DeclaredReferenceExpression && it.refersTo == target) {
+                if (it is Reference && it.refersTo == target) {
                     map[it] = obj
                 }
             }

@@ -7,9 +7,9 @@ import (
 
 func main() {
 	//@PseudoIdentifier
-    name := "firstname lastname"
+	name := "firstname lastname"
 	data := url.Values{
-		"Name": {name},
+		"Name":    {name},
 		"Message": {"hello world"},
 	}
 

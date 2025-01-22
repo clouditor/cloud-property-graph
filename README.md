@@ -19,7 +19,22 @@ Note that this project primarily serves as a research prototype, so please do no
 ## Setup and Build
 
 ### Python Setup
-Please follow the instruction at https://github.com/ninia/jep/wiki/Getting-Started#installing-jep to install jep. Also, make sure you are using Python 3.10.
+
+You need to install [jep](https://github.com/ninia/jep/). This can either be system-wide or in a virtual environment. Your jep version has to match the version used by the CPG (see [version catalog](./gradle/libs.versions.toml)).
+
+Currently, only Python 3.{9,10,11,12,13} is supported.
+
+##### System Wide
+
+Follow the instructions at https://github.com/ninia/jep/wiki/Getting-Started#installing-jep.
+
+##### Virtual Env
+
+- `python3 -m venv ~/.virtualenvs/cpg`
+- `source ~/.virtualenvs/cpg/bin/activate`
+- `pip3 install jep`
+
+Through the `JepSingleton`, the CPG library will look for well known paths on Linux and OS X. `JepSingleton` will prefer a virtualenv with the name `cpg`, this can be adjusted with the environment variable `CPG_PYTHON_VIRTUALENV`.
 
 ### Build
 Note that we recommend using Java 17. First, the graph classes need to be built from the Ontology definitions by calling `./build-ontology.sh`. We aim to automate this process using a Gradle plugin in the future. Then, build using `./gradlew installDist`.

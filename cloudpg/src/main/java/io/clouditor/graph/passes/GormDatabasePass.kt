@@ -1,6 +1,8 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.analysis.ValueEvaluator
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression
@@ -9,35 +11,46 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
 import de.fraunhofer.aisec.cpg.graph.types.Type
+import de.fraunhofer.aisec.cpg.passes.ControlFlowSensitiveDFGPass
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.getStorageOrCreate
+import io.clouditor.graph.testing.LocalTestingPass
+import kotlin.streams.toList
 
-class GormDatabasePass : DatabaseOperationPass() {
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+@Suppress("UNUSED_PARAMETER")
+@DependsOn(SymbolResolver::class)
+@DependsOn(ControlFlowSensitiveDFGPass::class)
+@DependsOn(LocalTestingPass::class, softDependency = true)
+class GormDatabasePass(ctx: TranslationContext) : DatabaseOperationPass(ctx) {
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             // we need to find the connect first
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(call: CallExpression) {
-                        findConnect(t, tu, call, app)
+                object : IVisitor<Node>() {
+                    fun visit(t: CallExpression) {
+                        findConnect(result, tu, t, app)
                     }
                 }
             )
         }
 
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+        for (tu in translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    fun visit(call: MemberCallExpression) {
-                        findQuery(t, tu, call, app)
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        findQuery(result, tu, t, app)
                     }
                 }
             )
@@ -50,7 +63,7 @@ class GormDatabasePass : DatabaseOperationPass() {
         call: CallExpression,
         app: Application?
     ) {
-        if (call.fqn == "postgres.Open") {
+        if (call.name.toString() == "postgres.Open") {
             call.arguments.firstOrNull()?.let { expr ->
                 val dsn = resolveDSN(expr, app) as? String
 
@@ -61,7 +74,6 @@ class GormDatabasePass : DatabaseOperationPass() {
                     }
 
                 val host = map?.get("host")
-                var port = map?.get("port")?.toShortOrNull() ?: 5432
 
                 if (host != null) {
                     createDatabaseConnect(result, host, call, app)
@@ -77,10 +89,11 @@ class GormDatabasePass : DatabaseOperationPass() {
         app: Application?
     ) {
         // it can either be a direct call, without any chained selectors, such as Where
-        val directCall = call.base.type is PointerType && call.base.type.name == "gorm.DB*"
+        val directCall =
+            call.base?.type is PointerType && call.base?.type?.name?.localName == "gorm.DB*"
 
         // make sure, the base call is really to a gorm DB object
-        if (call.name == "First" || call.name == "Find") {
+        if (call.name.localName == "First" || call.name.localName == "Find") {
             val calls = mutableListOf<CallExpression>(call)
 
             if (!directCall) {
@@ -94,8 +107,8 @@ class GormDatabasePass : DatabaseOperationPass() {
                     calls += memberCall
 
                     // check, if its base is already of our database type
-                    if (memberCall.base.type is PointerType &&
-                            memberCall.base.type.name == "gorm.DB*"
+                    if (memberCall.base?.type is PointerType &&
+                            memberCall.base!!.type.name.localName == "gorm.DB*"
                     ) {
                         // found it, yay!
                         found = true
@@ -121,7 +134,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
                     // loop through the calls and set DFG edges
                     calls.forEach {
-                        when (it.name) {
+                        when (it.name.localName) {
                             "First" -> handleFirst(it, op)
                             "Where" -> handleWhere(it, op)
                             "Find" -> handleFind(it, op)
@@ -134,7 +147,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
             }
-        } else if (call.name == "Create") {
+        } else if (call.name.localName == "Create") {
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
                     val op =
@@ -155,7 +168,7 @@ class GormDatabasePass : DatabaseOperationPass() {
             if (op != null) {
                 op.location = call.location
             }
-        } else if (call.name == "Update") {
+        } else if (call.name.localName == "Update") {
             val op =
                 app?.functionalities?.filterIsInstance<DatabaseConnect>()?.firstOrNull()?.let {
                     val op =
@@ -187,13 +200,13 @@ class GormDatabasePass : DatabaseOperationPass() {
         // then, check if we have a second argument
         call.arguments.getOrNull(1)?.let {
             // add it as an incoming DFG edge
-            op.addPrevDFG(it)
+            op.prevDFG.add(it)
         }
     }
 
     private fun handleWhere(call: CallExpression, op: DatabaseQuery) {
         // simply add all arguments as incoming DFG edges
-        call.arguments.forEach { op.addPrevDFG(it) }
+        call.arguments.forEach { op.prevDFG.add(it) }
     }
 
     private fun handleFirst(call: CallExpression, op: DatabaseQuery) {
@@ -210,7 +223,7 @@ class GormDatabasePass : DatabaseOperationPass() {
 
         // add a DFG edge towards our target
         if (target != null) {
-            op.addNextDFG(target)
+            op.nextDFG.add(target)
 
             // add storage
             op.to.forEach {
@@ -219,9 +232,9 @@ class GormDatabasePass : DatabaseOperationPass() {
 
                 // also add DFG edges from or towards the storage, depending on the query type
                 if (op.isModify) {
-                    op.addNextDFG(storage)
+                    op.nextDFG.add(storage)
                 } else {
-                    op.addPrevDFG(storage)
+                    op.prevDFG.add(storage)
                 }
             }
         }
@@ -229,32 +242,32 @@ class GormDatabasePass : DatabaseOperationPass() {
 
     private fun handleCreate(call: CallExpression, op: DatabaseQuery) {
         // create should have one argument, that specifies the object which is stored
-        var target = call.arguments.firstOrNull()
+        val target = call.arguments.firstOrNull()
 
         // add a DFG edge towards our target
         if (target != null) {
-            target.addNextDFG(op)
+            target.nextDFG.add(op)
 
             // add storage
             op.to.forEach {
                 val storage = it.getStorageOrCreate(deriveName(target.type))
                 op.storage.add(storage)
 
-                op.addNextDFG(storage)
+                op.nextDFG.add(storage)
             }
         }
     }
 
-    private fun handleUpdate(call: CallExpression, op: DatabaseQuery) {
+    private fun handleUpdate(call: MemberCallExpression, op: DatabaseQuery) {
         var target = call.arguments.firstOrNull()
         // for update calls, a model condition may be specified which has the actual target
-        if (call.base.name == "Model") {
-            target = (call.base as CallExpression).arguments.first()
+        if (call.base?.name?.localName == "Model") {
+            target = (call.callee as CallExpression).arguments.first()
         }
 
         // add a DFG edge towards our target
         if (target != null) {
-            target.addNextDFG(op)
+            target.nextDFG.add(op)
 
             // add storage
             op.to.forEach {
@@ -262,16 +275,13 @@ class GormDatabasePass : DatabaseOperationPass() {
                 op.storage.add(storage)
 
                 // also add DFG edge towards the storage
-                op.addNextDFG(storage)
+                op.nextDFG.add(storage)
             }
         }
     }
 
     private fun deriveName(type: Type): String {
-        // short name
-        val shortName = type.name.substringAfterLast(".").substringBefore("*")
-
-        return shortName.toLowerCase() + "s"
+        return type.name.localName
     }
 
     override fun cleanup() {}
@@ -284,34 +294,34 @@ class GormDatabasePass : DatabaseOperationPass() {
             }
                 ?: mutableMapOf()
 
-        return ValueResolver { node, resolver ->
+        return ValueEvaluator { node, resolver ->
                 when (node) {
                     is CallExpression -> {
                         // support for some special calls, i.e. format
-                        if (node.name == "Sprintf") {
-                            val str = resolver.resolve(node.arguments.firstOrNull()) as String
+                        if (node.name.localName == "Sprintf") {
+                            val str = resolver.evaluate(node.arguments.firstOrNull()) as String
                             val arguments = node.arguments.drop(1)
 
-                            return@ValueResolver str.format(
-                                *arguments.map { resolver.resolve(it) }.toTypedArray()
+                            return@ValueEvaluator str.format(
+                                *arguments.map { resolver.evaluate(it) }.toTypedArray()
                             )
                         }
 
                         // a little bit of a hack, this is specific to our use case, since the
                         // stdlib doesnt have that built-in
-                        if (node.name == "EnvOrDefault") {
+                        if (node.name.localName == "EnvOrDefault") {
                             // environment lookup on python
-                            val key = resolver.resolve(node.arguments.firstOrNull())
+                            val key = resolver.evaluate(node.arguments.firstOrNull())
 
-                            return@ValueResolver env[key] ?: resolver.resolve(node.arguments[1])
+                            return@ValueEvaluator env[key] ?: resolver.evaluate(node.arguments[1])
                         }
 
                         // return placeholder
-                        return@ValueResolver "{${node.name}()}"
+                        return@ValueEvaluator "{${node.name}()}"
                     }
-                    else -> return@ValueResolver "{${node?.name}}"
+                    else -> return@ValueEvaluator "{${node?.name}}"
                 }
             }
-            .resolve(expr)
+            .evaluate(expr)
     }
 }

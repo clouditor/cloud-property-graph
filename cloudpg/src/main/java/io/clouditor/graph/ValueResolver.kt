@@ -14,6 +14,8 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
  * literal values. Furthermore, its behaviour can be adjusted by implementing the [cannotResolve]
  * function, which is called when the default behaviour would not be able to resolve the value. This
  * way, language specific features such as string formatting can be modelled.
+ *
+ * TODO: Replace with Evaluator from the new cpg-analysis package
  */
 open class ValueResolver(
     /**
@@ -44,7 +46,7 @@ open class ValueResolver(
         when (expr) {
             is KeyValueExpression -> return resolve(expr.value)
             is Literal<*> -> return expr.value?.toString() ?: ""
-            is DeclaredReferenceExpression -> return resolveDeclaration(expr.refersTo)
+            // is Reference -> return resolveDeclaration(expr.refersTo)
             is BinaryOperator -> {
                 // resolve lhs
                 val lhsValue = resolve(expr.lhs)
@@ -117,10 +119,8 @@ open class ValueResolver(
             is CastExpression -> {
                 return this.resolve(expr.expression)
             }
-            is ArraySubscriptionExpression -> {
-                val array =
-                    (expr.arrayExpression as? DeclaredReferenceExpression)?.refersTo as?
-                        VariableDeclaration
+            is SubscriptExpression -> {
+                val array = (expr.arrayExpression as? Reference)?.refersTo as? VariableDeclaration
                 val ile = array?.initializer as? InitializerListExpression
 
                 ile?.let {
@@ -144,13 +144,16 @@ open class ValueResolver(
                     val rhs = resolve((expr.condition as? BinaryOperator)?.rhs)
 
                     return if (lhs == rhs) {
-                        resolve(expr.thenExpr)
+                        resolve(expr.thenExpression)
                     } else {
-                        resolve(expr.elseExpr)
+                        resolve(expr.elseExpression)
                     }
                 }
 
                 return cannotResolve(expr, this)
+            }
+            is Reference -> {
+                return resolveDeclaration(expr.refersTo)
             }
         }
 

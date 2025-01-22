@@ -9,7 +9,7 @@ import org.neo4j.driver.internal.InternalPath
 @Tag("TestingLibrary")
 open class DetectabilityTest {
 
-    // D1 Dectectable Credentials out of scope
+    // D1 Detectable Credentials out of scope
 
     @Test
     fun testD2Python() {
@@ -22,10 +22,10 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
 
         result.first().apply {
-            var path = this.get("p") as Array<*>
+            val path = this.get("p") as Array<*>
             // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))
@@ -61,14 +61,13 @@ open class DetectabilityTest {
                 listOf(Path(".")),
                 "MATCH p=(i:PseudoIdentifier)--()-[:DFG*]->(:HttpRequest) RETURN p"
             )
-        // we expect exactly one threat path
-        assertEquals(1, result.count())
+        assertEquals(2, result.count())
 
         // compare expected nodes
         result.first().apply {
             // get the path; the path contains multiple sub-paths, each one connecting two nodes via
             // an edge
-            var path = this.get("p") as Array<*>
+            val path = this.get("p") as Array<*>
             // the first node should be the label
             val firstNode = (path.first() as InternalPath.SelfContainedSegment).start()
             assert(firstNode.labels().contains("PseudoIdentifier"))

@@ -1,23 +1,25 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.ConstructExpression
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 
-class BidirectionalEdgesCachePass : Pass() {
+class BidirectionalEdgesCachePass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     enum class EdgeLabel {
         INSTANTIATES
     }
 
-    val predicatesToHandle: MutableMap<(Node) -> Boolean, Pair<EdgeLabel, (Node) -> List<Node>>> =
+    private val predicatesToHandle:
+        MutableMap<(Node) -> Boolean, Pair<EdgeLabel, (Node) -> List<Node>>> =
         mutableMapOf()
 
-    val outgoingEdgesCache: MutableMap<Node, MutableMap<EdgeLabel, MutableList<Node>>> =
+    private val outgoingEdgesCache: MutableMap<Node, MutableMap<EdgeLabel, MutableList<Node>>> =
         mutableMapOf()
-    val incomingEdgesCache: MutableMap<Node, MutableMap<EdgeLabel, MutableList<Node>>> =
+    private val incomingEdgesCache: MutableMap<Node, MutableMap<EdgeLabel, MutableList<Node>>> =
         mutableMapOf()
 
     override fun accept(t: TranslationResult) {
@@ -27,24 +29,20 @@ class BidirectionalEdgesCachePass : Pass() {
         // Register default extractor that gets Label from Annotation
         predicatesToHandle.put(
             { node -> node is ConstructExpression },
-            Pair(
-                EdgeLabel.INSTANTIATES,
-                { node: Node ->
-                    (node as ConstructExpression).instantiates?.let { listOf(it) }
-                        ?: emptyList<Node>()
-                }
-            )
+            Pair(EdgeLabel.INSTANTIATES) { node: Node ->
+                (node as ConstructExpression).instantiates?.let { listOf(it) } ?: emptyList<Node>()
+            }
         )
 
         nodes.forEach { node: Node ->
-            predicatesToHandle.forEach { predicate, pair ->
+            predicatesToHandle.forEach { (predicate, pair) ->
                 val targets: List<Node> =
                     if (predicate(node)) {
                         pair.second(node)
                     } else {
                         emptyList<Node>()
                     }
-                if (!targets.isEmpty()) {
+                if (targets.isNotEmpty()) {
                     if (!outgoingEdgesCache.containsKey(node))
                         outgoingEdgesCache[node] = mutableMapOf<EdgeLabel, MutableList<Node>>()
 
@@ -65,11 +63,11 @@ class BidirectionalEdgesCachePass : Pass() {
     }
 
     fun getEdgeTargetOf(source: Node, edgeLabel: EdgeLabel): List<Node>? {
-        return incomingEdgesCache.get(source)?.get(edgeLabel)
+        return incomingEdgesCache[source]?.get(edgeLabel)
     }
 
     fun getEdgeSourceOf(target: Node, edgeLabel: EdgeLabel): List<Node>? {
-        return outgoingEdgesCache.get(target)?.get(edgeLabel)
+        return outgoingEdgesCache[target]?.get(edgeLabel)
     }
 
     override fun cleanup() {}

@@ -7,8 +7,7 @@ import io.clouditor.graph.ValueResolver
 
 class JSValueResolver(
     app: Application?,
-    override val cannotResolve: (Node?, ValueResolver) -> Any? =
-            { node: Node?, resolver: ValueResolver ->
+    override val cannotResolve: (Node?, ValueResolver) -> Any? = { node: Node?, _: ValueResolver ->
         // assume that we are only on one client
         val env =
             app?.runsOn?.firstOrNull()?.labels?.filter { it.key.startsWith("env_") }?.mapKeys {
@@ -19,7 +18,7 @@ class JSValueResolver(
         when (node) {
             is Expression -> {
                 val s =
-                    if (node?.code?.startsWith("process.env.") == true) {
+                    if (node.code?.startsWith("process.env.") == true) {
                         val envVarName =
                             node.code?.split("process.env.")?.get(1)?.split("!")?.get(0)
                         env[envVarName]

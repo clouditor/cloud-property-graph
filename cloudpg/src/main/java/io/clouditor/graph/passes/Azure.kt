@@ -16,38 +16,37 @@ import com.azure.resourcemanager.loganalytics.LogAnalyticsManager
 import com.azure.resourcemanager.loganalytics.models.Workspace
 import com.azure.resourcemanager.storage.models.PublicAccess
 import com.azure.resourcemanager.storage.models.StorageAccount
-import de.fraunhofer.aisec.cpg.ExperimentalGolang
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.graph.declarations.ParamVariableDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.ValueDeclaration
-import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.declarations.*
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.nodes.followDFGReverse
 import io.clouditor.graph.nodes.followEOG
 import io.clouditor.graph.nodes.location
+import kotlin.streams.toList
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
 
-class AzureClientSDKPass : Pass() {
-    override fun accept(t: TranslationResult) {
-        for (tu in t.translationUnits) {
-            val app = t.findApplicationByTU(tu)
+@Suppress("UNUSED_PARAMETER")
+class AzureClientSDKPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
+    override fun accept(result: TranslationResult) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
+        for (tu in translationUnits) {
+            val app = result.findApplicationByTU(tu)
 
             tu.accept(
                 Strategy::AST_FORWARD,
-                object : IVisitor<Node?>() {
-                    /*fun visit(c: MemberCallExpression) {
-                        handleCall(t, tu, c)
-                    }*/
-                    fun visit(c: NewExpression) {
-                        handleNewClient(t, tu, c, app)
+                object : IVisitor<Node>() {
+                    fun visit(t: NewExpression) {
+                        handleNewClient(result, tu, t, app)
                     }
                 }
             )
@@ -61,7 +60,7 @@ class AzureClientSDKPass : Pass() {
         app: Application?
     ) {
         try {
-            if (c.type.name == "com.azure.storage.blob.BlobContainerClientBuilder") {
+            if (c.type.name.toString() == "com.azure.storage.blob.BlobContainerClientBuilder") {
                 // we need to follow the EOG until we have proper support for querying outgoing
                 // edges in the graph because
                 // we need to find call expressions which have the new expression as a base
@@ -72,15 +71,14 @@ class AzureClientSDKPass : Pass() {
                 var containerName: String
                 var url = ""
                 var client: ValueDeclaration? = null
-                var appendClient: ValueDeclaration
 
                 var eog: Node = c
 
                 var path =
                     eog.followEOG {
                         it.end is CallExpression &&
-                            it.end.name == "endpoint" &&
-                            (it.end as CallExpression).base == c
+                            it.end.name.localName == "endpoint" &&
+                            (it.end as MemberCallExpression).base == c
                     }
                 path?.let {
                     val call = it.last().end as CallExpression
@@ -94,7 +92,7 @@ class AzureClientSDKPass : Pass() {
                 path =
                     eog.followEOG {
                         it.end is CallExpression &&
-                            it.end.name ==
+                            it.end.name.localName ==
                                 "containerName" /*&& (it.end as CallExpression).base == c*/
                     }
                 path?.let {
@@ -109,7 +107,8 @@ class AzureClientSDKPass : Pass() {
                 path =
                     eog.followEOG {
                         it.end is CallExpression &&
-                            it.end.name == "buildClient" /*&& (it.end as CallExpression).base == c*/
+                            it.end.name.localName ==
+                                "buildClient" /*&& (it.end as CallExpression).base == c*/
                     }
                 path?.let {
                     val call = it.last().end as CallExpression
@@ -119,7 +118,7 @@ class AzureClientSDKPass : Pass() {
                         if (next is ValueDeclaration) {
                             next
                         } else {
-                            (next as DeclaredReferenceExpression).refersTo as ValueDeclaration?
+                            (next as Reference).refersTo as ValueDeclaration?
                         }
                 }
 
@@ -138,12 +137,13 @@ class AzureClientSDKPass : Pass() {
                     // AppendBlobClient
                     path =
                         eog.followEOG {
-                            it.end is CallExpression &&
-                                it.end.name == "getAppendBlobClient" &&
-                                (it.end as CallExpression).base is CallExpression &&
-                                (it.end as CallExpression).base.name == "getBlobClient" &&
-                                (((it.end as CallExpression).base as CallExpression).base as
-                                        DeclaredReferenceExpression)
+                            it.end is MemberCallExpression &&
+                                it.end.name.localName == "getAppendBlobClient" &&
+                                (it.end as MemberCallExpression).base is CallExpression &&
+                                (it.end as MemberCallExpression).base?.name?.localName ==
+                                    "getBlobClient" &&
+                                (((it.end as CallExpression).callee as MemberCallExpression).base as
+                                        Reference)
                                     .refersTo == client
                         }
 
@@ -152,7 +152,7 @@ class AzureClientSDKPass : Pass() {
                         if (next is ValueDeclaration) {
                             next
                         } else {
-                            (next as DeclaredReferenceExpression).refersTo as ValueDeclaration?
+                            (next as Reference).refersTo as ValueDeclaration?
                         }
 
                     append?.let {
@@ -177,9 +177,8 @@ class AzureClientSDKPass : Pass() {
             base.followEOG {
                 it.end is MemberCallExpression &&
                     ((it.end as MemberCallExpression).base == base ||
-                        ((it.end as MemberCallExpression).base is DeclaredReferenceExpression &&
-                            ((it.end as MemberCallExpression).base as DeclaredReferenceExpression)
-                                .refersTo == base))
+                        ((it.end as MemberCallExpression).base is Reference &&
+                            ((it.end as MemberCallExpression).base as Reference).refersTo == base))
             }
 
         return path?.last()?.end as? MemberCallExpression
@@ -194,23 +193,23 @@ class AzureClientSDKPass : Pass() {
         storage: ObjectStorage,
         app: Application?
     ) {
-        if (c.name == "create") {
+        if (c.name.localName == "create") {
             println("We got an interesting call: create")
 
             val request = ObjectStorageRequest(c, listOf(storage), "create")
-            request.addNextDFG(storage)
-            request.name = request.type
+            request.nextDFG.add(storage)
+            request.name = Name(request.type, null)
 
             t += request
 
             app?.functionalities?.plusAssign(request)
-        } else if (c.name == "appendBlock") {
+        } else if (c.name.localName == "appendBlock") {
             println("We got an interesting call: appendBlock")
 
             // create an object storage request
             val request = ObjectStorageRequest(c, listOf(storage), "append")
-            request.addNextDFG(storage)
-            request.name = request.type
+            request.nextDFG.add(storage)
+            request.name = Name(request.type, null)
 
             t += request
 
@@ -220,19 +219,18 @@ class AzureClientSDKPass : Pass() {
             // documented as a graph query in the paper
 
             // first parameter is always an input stream
-            val inputStreamRef = c.arguments[0] as DeclaredReferenceExpression
+            val inputStreamRef = c.arguments[0] as Reference
             val inputStream = inputStreamRef.refersTo as VariableDeclaration
             val newExpression = inputStream.initializer as NewExpression
             val construct = newExpression.initializer as ConstructExpression
 
             // this is very hacky, but we assume that it is always a new
             // ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8))
-            val sRef =
-                (construct.arguments[0] as MemberCallExpression).base as DeclaredReferenceExpression
-            val s = sRef.refersTo as ParamVariableDeclaration
+            val sRef = (construct.arguments[0] as MemberCallExpression).base as Reference
+            val s = sRef.refersTo as ParameterDeclaration
 
             // follow
-            val param = s.followDFGReverse { it.second.name == "password" }
+            val param = s.followDFGReverse { it.second.name.localName == "password" }
 
             if (param?.isEmpty() == false) {
                 println("Dude, you are probably leaking a password.")
@@ -241,10 +239,9 @@ class AzureClientSDKPass : Pass() {
     }
 }
 
-class AzurePass : CloudResourceDiscoveryPass() {
+class AzurePass(ctx: TranslationContext) : CloudResourceDiscoveryPass(ctx) {
     override fun cleanup() {}
 
-    @OptIn(ExperimentalGolang::class)
     override fun accept(t: TranslationResult) {
         val profile = AzureProfile(AzureEnvironment.AZURE)
         val credential: TokenCredential =
@@ -287,16 +284,16 @@ class AzurePass : CloudResourceDiscoveryPass() {
                     val storage =
                         t.additionalNodes.filterIsInstance<ObjectStorage>().firstOrNull {
                             // TODO:  unique names
-                            it.name == "am-containerlog"
+                            it.name.localName == "am-containerlog"
                         }
 
                     // model data export as ObjectStorageRequest
                     val request = ObjectStorageRequest(log, listOf(storage), "append")
-                    storage?.let { request.addNextDFG(it) }
+                    storage?.let { request.nextDFG.add(it) }
 
                     // add DFG from the source to the sink
                     request.to.forEach { request.source.nextDFG.add(it) }
-                    request.name = request.type
+                    request.name = Name(request.type, null)
 
                     t += request
                 }
@@ -314,10 +311,9 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 val compute = handleVirtualMachine(t, vm)
 
                 // look for the image tag to connect services
-                val name = vm.tags().getOrDefault("image", null)
 
-                val image = t.getImageByName(name)
-
+                // val name = vm.tags().getOrDefault("image", null)
+                // val image = t.getImageByName(name)
                 // image?.implements?.forEach { it.deployedOn.add(compute) }
                 t.computes += compute
             }
@@ -352,7 +348,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 workspace.retentionInDays().toDuration(DurationUnit.DAYS).toJavaDuration(),
                 loggingServices
             )
-        logging.name = workspace.name()
+        logging.name = Name(workspace.name(), null)
 
         return logging
     }
@@ -374,7 +370,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
                 log =
                     t.additionalNodes.filterIsInstance(ResourceLogging::class.java).firstOrNull {
-                        it.name == shortName
+                        it.name.localName == shortName
                     }
             }
         }
@@ -453,7 +449,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
         // loop through the containers (for our use case this is ok, for larger ones, probably not)
         val paged =
             azure.storageBlobContainers().listAsync(account.resourceGroupName(), account.name())
-        for (blob in paged.collectList().block()) {
+        for (blob in paged.collectList().block() ?: listOf()) {
 
             // TODO: also include other endpoints
 
@@ -461,15 +457,12 @@ class AzurePass : CloudResourceDiscoveryPass() {
             // accepts more methods
             // TODO: make methods an array?
 
-            val auth =
-                if (blob.publicAccess() == PublicAccess.NONE) {
-                    SingleSignOn(
-                        true
-                    ) // this is closest to how auth works in Azure. TokenBased would
-                    // be better
-                } else {
-                    NoAuthentication()
-                }
+            if (blob.publicAccess() == PublicAccess.NONE) {
+                SingleSignOn(true) // this is closest to how auth works in Azure. TokenBased would
+                // be better
+            } else {
+                NoAuthentication()
+            }
 
             // at rest seems to be default anyway now
             val storage =
@@ -480,7 +473,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                     t.locationForRegion(account.region()),
                     mapOf()
                 )
-            storage.name = blob.name()
+            storage.name = Name(blob.name(), null)
 
             storageList += storage
         }
@@ -507,7 +500,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
 
         val block =
             BlockStorage(null, mutableListOf(atRest), t.locationForRegion(disk.region()), mapOf())
-        block.name = disk.name()
+        block.name = Name(disk.name(), null)
 
         return block
     }
@@ -527,7 +520,7 @@ class AzurePass : CloudResourceDiscoveryPass() {
                 t.locationForRegion(vm.region()),
                 mapOf()
             )
-        compute.name = vm.name()
+        compute.name = Name(vm.name(), null)
         compute.labels = mapOf<String, String>()
 
         return compute
@@ -535,9 +528,10 @@ class AzurePass : CloudResourceDiscoveryPass() {
 }
 
 fun TranslationResult.getImageByName(name: String?): Image? {
-    return this.images.firstOrNull { it.name == name }
+    return this.images.firstOrNull { it.name.localName == name }
 }
 
+@Suppress("UNUSED_PARAMETER")
 fun TranslationResult.getObjectStorageByUrl(url: String?): ObjectStorage? {
     //    return this.additionalNodes.firstOrNull {
     //        // TODO(all): How to check that?

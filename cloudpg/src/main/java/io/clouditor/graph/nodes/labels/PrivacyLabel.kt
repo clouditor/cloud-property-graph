@@ -9,7 +9,8 @@ import org.neo4j.ogm.annotation.Relationship
  */
 class PrivacyLabel(labeledNode: Node) : DataLabel(labeledNode) {
 
-    @Relationship(value = "PROTECTION_LEVEL", direction = "OUTGOING") var protectionlevel: Int = 0
+    @Relationship(value = "PROTECTION_LEVEL", direction = Relationship.Direction.OUTGOING)
+    var protectionlevel: Int = 0
 
     override fun areMergeable(l: Label): Boolean {
         return l::class == PrivacyLabel::class &&

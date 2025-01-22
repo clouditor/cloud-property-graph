@@ -1,48 +1,58 @@
 package io.clouditor.graph.passes.golang
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration
+import de.fraunhofer.aisec.cpg.graph.firstAssignment
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.PointerType
+import de.fraunhofer.aisec.cpg.passes.SymbolResolver
+import de.fraunhofer.aisec.cpg.passes.configuration.DependsOn
 import de.fraunhofer.aisec.cpg.processing.IVisitor
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.HttpClientPass
+import io.clouditor.graph.testing.LocalTestingPass
+import kotlin.streams.toList
 
-class GolangHttpPass : HttpClientPass() {
+@DependsOn(SymbolResolver::class)
+@DependsOn(LocalTestingPass::class, softDependency = true)
+// @DependsOn(KubernetesPass::class, softDependency = true)
+class GolangHttpPass(ctx: TranslationContext) : HttpClientPass(ctx) {
     private val clients = mutableMapOf<VariableDeclaration, HttpRequestHandler>()
 
     override fun cleanup() {}
 
     override fun accept(result: TranslationResult) {
-        if (result != null) {
+        val translationUnits =
+            result.components.stream().flatMap { it.translationUnits.stream() }.toList()
 
-            // first, look for clients
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(r: VariableDeclaration) {
-                            handleVariable(result, tu, r)
-                        }
+        // first, look for clients
+        for (tu in translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: VariableDeclaration) {
+                        handleVariable(result, tu, t)
                     }
-                )
-            }
+                }
+            )
+        }
 
-            // then for the member calls
-            for (tu in result.translationUnits) {
-                tu.accept(
-                    Strategy::AST_FORWARD,
-                    object : IVisitor<Node?>() {
-                        fun visit(m: MemberCallExpression) {
-                            handleMemberCall(result, tu, m)
-                        }
+        // then for the member calls
+        for (tu in translationUnits) {
+            tu.accept(
+                Strategy::AST_FORWARD,
+                object : IVisitor<Node>() {
+                    fun visit(t: MemberCallExpression) {
+                        handleMemberCall(result, tu, t)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -51,13 +61,10 @@ class GolangHttpPass : HttpClientPass() {
         tu: TranslationUnitDeclaration?,
         m: MemberCallExpression
     ) {
-        if (m.base is DeclaredReferenceExpression &&
-                clients.containsKey((m.base as DeclaredReferenceExpression).refersTo)
-        ) {
-            val client = clients[(m.base as DeclaredReferenceExpression).refersTo]
+        if (m.base is Reference && clients.containsKey((m.base as Reference).refersTo)) {
+            val client = clients[(m.base as Reference).refersTo]
 
-            val funcDeclaration =
-                (m.arguments[1] as? DeclaredReferenceExpression)?.refersTo as? FunctionDeclaration
+            val funcDeclaration = (m.arguments[1] as? Reference)?.refersTo as? FunctionDeclaration
             val literal = m.arguments.first() as? Literal<*>
             literal.let {
                 val endpoint =
@@ -69,14 +76,12 @@ class GolangHttpPass : HttpClientPass() {
                         null,
                         null
                     )
-                endpoint.name = endpoint.path
+                endpoint.name = Name(endpoint.path)
                 funcDeclaration?.parameters?.forEach {
-                    if (it.type is PointerType && it.type.name == "http.Request*" ||
-                            it.type is HttpRequest
-                    ) {
+                    if (it.type is PointerType && it.type.root.name.toString() == "http.Request") {
                         // add a dfg from the endpoint to the paramvariabledeclaration the data is
                         // stored in
-                        endpoint.addNextDFG(it)
+                        endpoint.nextDFG.add(it)
                     }
                 }
                 client?.httpEndpoints?.plusAssign(endpoint)
@@ -91,14 +96,12 @@ class GolangHttpPass : HttpClientPass() {
     ) {
         // check initializers for http.NewServeMux()
         // actually check for return types - but that does not work (yet) with the standard library
-
-        if (r.initializer is CallExpression &&
-                (r.initializer as CallExpression).fqn == "http.NewServeMux"
-        ) {
+        val initializer = r.firstAssignment
+        if (initializer is CallExpression && initializer.name.toString() == "http.NewServeMux") {
             val app = result.findApplicationByTU(tu)
 
             val requestHandler = HttpRequestHandler(app, mutableListOf(), "/")
-            requestHandler.name = requestHandler.path
+            requestHandler.name = Name(requestHandler.path)
 
             clients[r] = requestHandler
 

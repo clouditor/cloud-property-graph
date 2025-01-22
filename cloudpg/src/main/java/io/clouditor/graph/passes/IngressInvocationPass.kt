@@ -1,11 +1,12 @@
 package io.clouditor.graph.passes
 
+import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.passes.Pass
+import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import io.clouditor.graph.*
 import io.clouditor.graph.passes.golang.appendPath
 
-class IngressInvocationPass : Pass() {
+class IngressInvocationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     override fun accept(t: TranslationResult) {
         // loop through services
         val services = t.additionalNodes.filterIsInstance(NetworkService::class.java)
@@ -64,7 +65,7 @@ class IngressInvocationPass : Pass() {
                         transportEncryption,
                         url
                     )
-                proxy.addNextDFG(endpoint)
+                proxy.nextDFG.add(endpoint)
                 t += proxy
             }
         }
